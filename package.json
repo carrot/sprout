@@ -1,0 +1,22 @@
+{
+  "name": "sprout",
+  "version": "0.0.1",
+  "author": "Carrot Creative <dev@carrotcreative.com>",
+  "description": "Simple project templating",
+  "main": "index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carrot/sprout"
+  },
+  "dependencies": {
+    "coffee-script": "1.6.x",
+    "colors": "0.6.x",
+    "optimist": "0.6.x",
+    "indx": "0.0.x"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  }
+}

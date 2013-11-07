@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+require('coffee-script');
+require('colors');
+
+var argv = require('optimist').argv,
+    Commands = require('../lib/commands');
+
+var cmd = Commands[argv._.splice(0,1)];
+if (!cmd) return help()
+
+try {
+  var cmd = new cmd(argv)  
+} catch (err) {
+  console.error("\nERROR: ".red + err.yellow)
+  return help()
+}
+
+cmd.execute()
+
+function help(){ (new Commands['help']).execute() }
