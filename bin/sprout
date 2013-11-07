@@ -4,18 +4,15 @@ require('coffee-script');
 require('colors');
 
 var argv = require('optimist').argv,
-    Commands = require('../lib/commands');
+    commands = require('../lib/commands');
 
-var cmd = Commands[argv._.splice(0,1)];
-if (!cmd) return help()
+var cmd = commands[argv._.splice(0,1)];
+if (!cmd) return commands.help()
 
 try {
-  var cmd = new cmd(argv)  
+  var cmd = cmd.apply(null, argv._)  
 } catch (err) {
   console.error("\nERROR: ".red + err.yellow)
-  return help()
+  commands.help()
+  process.exit(1)
 }
-
-cmd.execute()
-
-function help(){ (new Commands['help']).execute() }

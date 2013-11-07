@@ -13,7 +13,8 @@
     "coffee-script": "1.6.x",
     "colors": "0.6.x",
     "optimist": "0.6.x",
-    "indx": "0.0.x"
+    "indx": "0.0.x",
+    "shelljs": "~0.2.6"
   },
   "devDependencies": {
     "mocha": "*",
