@@ -32,6 +32,13 @@ describe 'add', ->
           fs.existsSync(sprout.path('foobar')).should.not.be.ok
           done()
 
+    it 'lists available templates', (done) ->
+      @cmd.list().length.should.eql(0)
+      @cmd.add 'foobar', 'https://github.com/carrot/sprout', (err, res) =>
+        should.not.exist(err)
+        @cmd.list().length.should.eql(1)
+        @cmd.remove('foobar', done)
+
   describe 'cli', ->
 
     it 'errors when no args provided', ->
@@ -49,3 +56,16 @@ describe 'add', ->
       rmcmd = @exec("#{@$} remove foobar")
       rmcmd.code.should.eql(0)
       fs.existsSync(sprout.path('foobar')).should.not.be.ok
+
+    it 'lists available templates', ->
+      cmd = @exec("#{@$} list")
+      cmd.code.should.eql(0)
+      cmd.output.should.match /Templates/
+      cmd.output.should.match /no templates present/
+      cmd = @exec("#{@$} add foobar https://github.com/carrot/sprout")
+      cmd.code.should.eql(0)
+      cmd = @exec("#{@$} list")
+      cmd.code.should.eql(0)
+      cmd.output.should.match /- foobar/
+      rmcmd = @exec("#{@$} remove foobar")
+      rmcmd.code.should.eql(0)

@@ -6,10 +6,20 @@ require('colors');
 var argv = require('optimist').argv,
     commands = require('../lib/commands');
 
+// get command
+
 var cmd = commands[argv._.splice(0,1)];
 if (!cmd) return commands.help()
 
-var cmd = cmd.apply(null, argv._.concat([cb]))
+// execute command
+
+if (cmd.sync) {
+  res = cmd({ pretty: true });
+  if (res.error) return console.error("ERROR: ".red + res.error)
+  console.log(res)
+} else {
+  var cmd = cmd.apply(null, argv._.concat([cb]))
+}
 
 function cb(err, res){
   if (err){
@@ -17,4 +27,4 @@ function cb(err, res){
     process.exit(64) // command line usage error
   }
   console.log(res)
-}  
+}
