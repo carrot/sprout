@@ -23,7 +23,7 @@ describe 'add', ->
         should.exist(err)
         done()
 
-    it 'saves the template when passed a valid url', (done) ->
+    it 'saves/removes the template when passed a valid url', (done) ->
       @cmd.add 'foobar', 'https://github.com/carrot/sprout', (err, res) =>
         should.not.exist(err)
         fs.existsSync(sprout.path('foobar')).should.be.ok
@@ -42,7 +42,7 @@ describe 'add', ->
       cmd = @exec("#{@$} add foobar")
       cmd.code.should.be.above(0)
 
-    it 'saves the template when passed a valid url', ->
+    it 'saves/removes the template when passed a valid url', ->
       cmd = @exec("#{@$} add foobar https://github.com/carrot/sprout")
       cmd.code.should.eql(0)
       fs.existsSync(sprout.path('foobar')).should.be.ok

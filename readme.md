@@ -65,19 +65,13 @@ sprout = require 'sprout'
 # Adding a template
 # -----------------
 sprout.add 'node', 'https://github.com/carrot/sprout-node', (err, res) ->
-  console.log 'template added!'
-
-# you can also use an object
-tmpl_config =
-  name: 'node'
-  clone_url: 'https://github.com/carrot/sprout-node'
-
-sprout.add tmpl_config, (err, res) ->
+  if err then return console.error(err)
   console.log 'template added!'
 
 # removing a template
 # -------------------
 sprout.remove 'node', (err, res) ->
+  if err then return console.error(err)
   console.log 'template removed!'
 
 # listing templates
@@ -94,14 +88,7 @@ console.log sprout.list(pretty: true)
 # -----------------------
 
 sprout.init 'node', path.join(process.cwd(), 'new_project'), (err, res) ->
-  console.log 'project structure initialized!'
-
-# you can also use an object here, like with `add`
-init_config =
-  name: 'node'
-  path: path.join(process.cwd(), 'new_project')
-
-sprout.init init_config, (err, res) ->
+  if err then return console.error(err)
   console.log 'project structure initialized!'
 
 # other things
