@@ -9,10 +9,12 @@ var argv = require('optimist').argv,
 var cmd = commands[argv._.splice(0,1)];
 if (!cmd) return commands.help()
 
-try {
-  var cmd = cmd.apply(null, argv._)  
-} catch (err) {
-  console.error("\nERROR: ".red + err.yellow)
-  commands.help()
-  process.exit(1)
-}
+var cmd = cmd.apply(null, argv._.concat([cb]))
+
+function cb(err, res){
+  if (err){
+    console.error("ERROR: ".red + err)
+    process.exit(64) // command line usage error
+  }
+  console.log(res)
+}  
