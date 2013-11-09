@@ -1,0 +1,55 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "SPROUT" "1" "November 2013" "" ""
+.
+.SH "NAME"
+\fBsprout\fR \- simple project templating
+.
+.SH "SYNOPSIS"
+\fBsprout add <name> <url>\fR
+.
+.br
+\fBsprout remove <name>\fR
+.
+.br
+\fBsprout list\fR
+.
+.br
+\fBsprout\fR
+.
+.SH "DESCRIPTION"
+Sprout helps with templating for new projects\. It allows management of different project templates that can be copied quickly when starting fresh, and provides an interface to customize the new projects as specified by the template author\.
+.
+.P
+Underlined parameters are required, non\-underlined optional\.
+.
+.P
+github repo \fIhttps://github\.com/carrot/sprout\fR
+.
+.SH "ADD"
+\fBadd\fR name \fIurl\fR
+.
+.br
+add the template at \fIurl\fR as \fIname\fR, if provided\. if not, uses the final portion of the url\. as the name
+.
+.SH "REMOVE"
+\fBremove\fR \fIname\fR
+.
+.br
+remove the template called \fIname\fR\.
+.
+.SH "LIST"
+\fBlist\fR
+.
+.br
+list all the templates that have been added to sprout\.
+.
+.SH "VERSION"
+\fBversion\fR
+.
+.br
+print the current version of sprout\.
+.
+.SH "DOCUMENTATION"
+Full docs can be found at http://github\.com/carrot/sprout

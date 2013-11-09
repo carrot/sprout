@@ -1,0 +1,41 @@
+sprout(1) -- simple project templating
+======================================
+
+## SYNOPSIS
+
+`sprout add <name> <url>`    
+`sprout remove <name>`    
+`sprout list`    
+`sprout `
+
+## DESCRIPTION
+
+Sprout helps with templating for new projects. It allows management of different project templates that can be copied quickly when starting fresh, and provides an interface to customize the new projects as specified by the template author.
+
+Underlined parameters are required, non-underlined optional.
+
+[github repo](https://github.com/carrot/sprout)
+
+## ADD
+
+  `add` name <url>    
+  add the template at <url> as <name>, if provided. if not, uses the final portion of the  url. as the name
+
+## REMOVE
+
+  `remove` <name>    
+  remove the template called <name>.
+
+## LIST
+
+  `list`    
+  list all the templates that have been added to sprout.
+
+## VERSION
+
+  `version`    
+  print the current version of sprout.
+
+## DOCUMENTATION
+
+Full docs can be found at http://github.com/carrot/sprout

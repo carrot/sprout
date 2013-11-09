@@ -9,6 +9,7 @@
     "type": "git",
     "url": "https://github.com/carrot/sprout"
   },
+  "man": "man/sprout.1",
   "dependencies": {
     "coffee-script": "1.6.x",
     "colors": "0.6.x",
