@@ -47,6 +47,17 @@ describe 'js api', ->
       should.exist(err)
       done()
 
+  it '[init] creates a project template correctly', (done) ->
+    basic_path = path.join(__dirname, 'fixtures/basic')
+    @cmd.add 'foobar', "file:////#{basic_path}", (err, res) =>
+      should.not.exist(err)
+      testpath = path.join(__dirname, 'testproj')
+      @cmd.init 'foobar', testpath, (err, res) =>
+        should.not.exist(err)
+        fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
+        rm('-rf', testpath)
+        @cmd.remove('foobar', done)
+
 describe 'cli', ->
 
   it '[add] errors when no args provided', ->
@@ -85,3 +96,13 @@ describe 'cli', ->
   it '[init] errors when passed a non-existant template', ->
     cmd = @exec("#{@$} init foobar")
     cmd.code.should.be.above(0)
+
+  it '[init] creates a project template correctly', ->
+    cmd = @exec("#{@$} add foobar file:////#{path.join(__dirname, 'fixtures/basic')}")
+    cmd.code.should.eql(0)
+    testpath = path.join(__dirname, 'testproj')
+    cmd = @exec("#{@$} init foobar #{testpath}")
+    cmd.code.should.eql(0)
+    fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
+    rm('-rf', testpath)
+    rmcmd = @exec("#{@$} remove foobar")
