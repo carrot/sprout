@@ -31,7 +31,7 @@ github repo \fIhttps://github\.com/carrot/sprout\fR
 \fBadd\fR name \fIurl\fR
 .
 .br
-add the template at \fIurl\fR as \fIname\fR, if provided\. if not, uses the final portion of the url\. as the name
+add the template at \fIurl\fR as \fIname\fR, if provided\. if not, uses the final portion of the url\. as the name\.
 .
 .SH "REMOVE"
 \fBremove\fR \fIname\fR
@@ -44,6 +44,12 @@ remove the template called \fIname\fR\.
 .
 .br
 list all the templates that have been added to sprout\.
+.
+.SH "INIT"
+\fBinit\fR \fIname\fR path
+.
+.br
+creates a new project with \fIname\fR template at \fIpath\fR, if provided\. if not, creates a new folder in the current directory called \fIname\fR for the project\.
 .
 .SH "VERSION"
 \fBversion\fR

@@ -59,6 +59,7 @@
     <a href="#ADD">ADD</a>
     <a href="#REMOVE">REMOVE</a>
     <a href="#LIST">LIST</a>
+    <a href="#INIT">INIT</a>
     <a href="#VERSION">VERSION</a>
     <a href="#DOCUMENTATION">DOCUMENTATION</a>
   </div>
@@ -92,7 +93,7 @@
 <h2 id="ADD">ADD</h2>
 
 <p>  <code>add</code> name <var>url</var>  <br />
-  add the template at <var>url</var> as <var>name</var>, if provided. if not, uses the final portion of the  url. as the name</p>
+  add the template at <var>url</var> as <var>name</var>, if provided. if not, uses the final portion of the  url. as the name.</p>
 
 <h2 id="REMOVE">REMOVE</h2>
 
@@ -103,6 +104,11 @@
 
 <p>  <code>list</code>  <br />
   list all the templates that have been added to sprout.</p>
+
+<h2 id="INIT">INIT</h2>
+
+<p>  <code>init</code> <var>name</var> path  <br />
+  creates a new project with <var>name</var> template at <var>path</var>, if provided. if not, creates a new folder in the current directory called <var>name</var> for the project.</p>
 
 <h2 id="VERSION">VERSION</h2>
 

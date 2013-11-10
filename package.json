@@ -17,7 +17,8 @@
     "indx": "0.0.x",
     "shelljs": "0.2.x",
     "osenv": "0.0.x",
-    "rimraf": "2.x.x"
+    "rimraf": "2.x.x",
+    "ncp": "0.4.x"
   },
   "devDependencies": {
     "mocha": "*",

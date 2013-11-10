@@ -49,7 +49,7 @@ _Description_: Lists all templates that you have added to sprout.
 
 * * *
 
-_Command Syntax_: **`sprout`** *`name`* *`[path]`*    
+_Command Syntax_: **`sprout init`** *`name`* *`[path]`*    
 _Description_: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
 
 Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.

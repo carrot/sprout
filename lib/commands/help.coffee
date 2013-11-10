@@ -9,4 +9,7 @@ module.exports = ->
     console.log '                not given, uses the last piece of the url.'
     console.log 'remove'.bold + ' name: removes the named template from sprout.'
     console.log 'list'.bold + ': lists templates that have been added to sprout.'
+    console.log 'init'.bold + ' name' + ' [path]'.italic + ': create a new project with the named template'
+    console.log '                  at the given path. if path is not given, creates a folder'
+    console.log '                  in the current directory.'
     console.log ''
