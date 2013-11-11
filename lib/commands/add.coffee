@@ -1,27 +1,22 @@
 require 'shelljs/global'
 exec = require('child_process').exec
 Base = require '../base'
+accord = require '../utils/accord'
 
 class Add extends Base
 
-  constructor: (name, url, done) ->
+  constructor: (name, url, opts, cb) ->
     super
+    accord.call(@, { name: name, url: url, options: opts, cb: cb })
 
-    if not name then return 'your template needs a name!'
-    if typeof name == 'function' then return name('your template needs a name!')
-    if name and typeof url == 'function'
-      done = url
-      url = null
-    if not which('git') then return done('you need to have git installed')
+    if not @name then return @cb('your template needs a name!')
+    if not which('git') then return @cb('you need to have git installed')
 
-    if name and not url
-      @url = name
+    if @name and not @url
+      @url = @name
       @name = @url.split('/')[@url.split('/').length-1]
-    else
-      @name = name
-      @url = url
 
-    @done = done
+    @done = @cb
 
   execute: ->
     error = null
@@ -37,6 +32,6 @@ class Add extends Base
 
       @done(error, "added template \"#{@name}\"".green)
 
-module.exports = (name, url, cb) ->
-  cmd = new Add(name, url, cb)
+module.exports = (name, url, opts, cb) ->
+  cmd = new Add(name, url, opts, cb)
   if cmd.done then cmd.execute()

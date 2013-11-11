@@ -8,25 +8,15 @@ ncp = require('ncp').ncp
 ejs = require 'ejs'
 prompt = require 'prompt'
 Base = require '../base'
+accord = require '../utils/accord'
 
 class Init extends Base
 
-  constructor: (@name, @target, @opts = {}, cb) ->
+  constructor: (name, target, opts, cb) ->
     super
-    # accord.call(@, { name: name, target: target, options: opts, done: cb })
-
-    # flexible args
-
-    if typeof @name == 'function' then return @name('please provide a template name')
-
-    if @name and typeof @target == 'function'
-      cb = @target
-      @target = path.join(process.cwd(), @name)
-
-    if @name and @target and typeof @opts == 'function'
-      cb = @opts
-
-    @cb = cb
+    accord.call(@, { name: name, target: target, options: opts, cb: cb })
+    if not @name then return @cb('please provide a template name')
+    @done = @cb
 
   execute: ->
     @error = null
@@ -62,10 +52,10 @@ class Init extends Base
     deferred = W.defer()
 
     if not @config.configure
-      @config_values = @opts
+      @config_values = @options
       return W.promise((r)-> r())
 
-    prompt.override = @opts
+    prompt.override = @options
     prompt.start()
     prompt.get @config, (err, result) ->
       if err then return deferred.reject(err)
@@ -99,4 +89,4 @@ class Init extends Base
 
 module.exports = (name, p, opts, cb) ->
   cmd = new Init(name, p, opts, cb)
-  if cmd.cb then cmd.execute()
+  if cmd.done then cmd.execute()

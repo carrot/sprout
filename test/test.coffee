@@ -13,10 +13,25 @@ before ->
 
 describe 'accord', ->
 
-  it 'works', ->
-    mock = {}
-    accord.call(mock, { foo: { some: 'config' }, done: (->) })
-    console.log mock
+  beforeEach ->
+    @mock = {}
+
+  it 'accepts a config object', ->
+    accord.call(@mock, { foo: { bar: 'baz' }, done: (->) })
+    @mock.bar.should.eql('baz')
+    @mock.done.should.be.type('function')
+
+  it 'accepts normal args', ->
+    accord.call(@mock, { foo: 'bar', baz: 'quux', snargle: 'blarg' })
+    @mock.foo.should.eql('bar')
+    @mock.baz.should.eql('quux')
+    @mock.snargle.should.eql('blarg')
+
+  it 'should shift callback', ->
+    accord.call(@mock, { foo: 'bar', baz: (->), snargle: undefined })
+    @mock.foo.should.eql('bar')
+    should.not.exist(@mock.baz)
+    @mock.snargle.should.be.type('function')
 
 describe 'js api', ->
 
@@ -62,6 +77,7 @@ describe 'js api', ->
       should.not.exist(err)
       testpath = path.join(__dirname, 'testproj')
       @cmd.init 'foobar', testpath, { foo: 'bar' }, (err, res) =>
+        if err then console.error(err.toString())
         should.not.exist(err)
         fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
         contents = fs.readFileSync(path.join(testpath, 'index.html'), 'utf8')
@@ -108,14 +124,14 @@ describe 'cli', ->
     cmd = @exec("#{@$} init foobar")
     cmd.code.should.be.above(0)
 
-  # waiting on accord to be finished
-  # it '[init] creates a project template correctly', ->
-  #   cmd = @exec("#{@$} add foobar file:////#{path.join(__dirname, 'fixtures/basic')}")
-  #   cmd.code.should.eql(0)
-  #   testpath = path.join(__dirname, 'testproj')
-  #   cmd = @exec("#{@$} init foobar #{testpath} --foo bar")
-  #   console.log cmd
-  #   cmd.code.should.eql(0)
-  #   fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
-  #   rm('-rf', testpath)
-  #   rmcmd = @exec("#{@$} remove foobar")
+  it '[init] creates a project template correctly', ->
+    cmd = @exec("#{@$} add foobar file:////#{path.join(__dirname, 'fixtures/basic')}")
+    cmd.code.should.eql(0)
+    testpath = path.join(__dirname, 'testproj')
+    cmd = @exec("#{@$} init foobar #{testpath} --foo bar")
+    cmd.code.should.eql(0)
+    fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
+    contents = fs.readFileSync(path.join(testpath, 'index.html'), 'utf8')
+    contents.should.match /bar/
+    rm('-rf', testpath)
+    rmcmd = @exec("#{@$} remove foobar")
