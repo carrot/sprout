@@ -134,14 +134,14 @@ exports.before = (sprout, done) ->
 # allows you to configure a slightly more customizable prompt.
 
 # The 'prompt' option in an object has a couple of preset values you
-# can use (you can see 'boolean' below), or you can directly specify the
-# text you'd like your users to see when entering a choice.
+# conforms to the configuration used by flatiron/prompt, found here:
+# https://github.com/flatiron/prompt#valid-property-settings
 exports.configure = [
   'name',
   'github_url',
   { name: 'travis'
-    text: 'Do you travis in this project?'
-    prompt: 'boolean' }
+    description: 'Do you want travis in this project?'
+    type: 'boolean' }
 ]
 
 # This function is executed after the configuration info is collected.

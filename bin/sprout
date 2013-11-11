@@ -18,7 +18,8 @@ if (cmd.sync) {
   if (res.error) return console.error("ERROR: ".red + res.error)
   console.log(res)
 } else {
-  var cmd = cmd.apply(null, argv._.concat([cb]))
+  // need a way to get the options in here
+  var cmd = cmd.apply(null, argv._.concat([cb]));
 }
 
 function cb(err, res){

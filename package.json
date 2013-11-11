@@ -18,7 +18,12 @@
     "shelljs": "0.2.x",
     "osenv": "0.0.x",
     "rimraf": "2.x.x",
-    "ncp": "0.4.x"
+    "ncp": "0.4.x",
+    "ejs": "0.8.x",
+    "prompt": "0.2.x",
+    "readdirp": "0.3.x",
+    "event-stream": "3.x.x",
+    "when": "2.6.x"
   },
   "devDependencies": {
     "mocha": "*",
