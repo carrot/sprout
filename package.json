@@ -23,7 +23,7 @@
     "prompt": "0.2.x",
     "readdirp": "0.3.x",
     "event-stream": "3.x.x",
-    "when": "2.6.x",
+    "when": "2.x.x",
     "sugar": "1.x.x"
   },
   "devDependencies": {
