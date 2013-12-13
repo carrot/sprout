@@ -22,7 +22,7 @@ class Init extends Base
   execute: ->
     @error = null
     @sprout_path = @path(@name)
-    if not fs.existsSync(@sprout_path) then return @cb('template does not exist')
+    if not fs.existsSync(@sprout_path) then return @cb("template #{@name} does not exist")
 
     get_user_config.call(@)
 
