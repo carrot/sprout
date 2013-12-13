@@ -6,7 +6,7 @@ sprout(1) -- simple project templating
 `sprout add <name> <url>`    
 `sprout remove <name>`    
 `sprout list`    
-`sprout `
+`sprout init`
 
 ## DESCRIPTION
 
