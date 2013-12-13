@@ -24,32 +24,34 @@ npm install sprout -g
 
 Sprout can be used directly through the command line to intitialize projects. Once installed, it exposes the `sprout` binary, which you can use to add, remove, and/or use your templates. The commands are more or less what you would expect, and are listed below. For reference, words in bold are necessary to type out as-is, words in italic represent placeholders for user input, and words in brackets represent optional arguments.
 
+Command params in `[brackets]` are optional, and in `<angle_brackets>` are required.
+
 ##### Add Template
 
 * * *
 
-_Command Syntax_: **`sprout add`** *`[name]`* *`clone_url`*    
+_Command Syntax_: `sprout add [name] <clone_url>`    
 _Description_: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout, and clone url is a url that `git clone` could be run with and it would be successful. If no name is provided, sprout will use the last piece of the clone url as the name.
 
 ##### Remove Template
 
 * * *
 
-_Command Syntax_: **`sprout remove`** *`name`*    
+_Command Syntax_: `sprout remove <name>`    
 _Description_: Removes the template with the specified name from sprout.
 
 ##### List Templates
 
 * * *
 
-_Command Syntax_: **`sprout list`**    
+_Command Syntax_: `sprout list`    
 _Description_: Lists all templates that you have added to sprout.
 
 ##### Initialize Template
 
 * * *
 
-_Command Syntax_: **`sprout init`** *`name`* *`[path]`*    
+_Command Syntax_: `sprout init <name> [path]`    
 _Description_: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
 
 Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.
