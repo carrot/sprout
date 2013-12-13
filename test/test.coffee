@@ -77,7 +77,7 @@ describe 'js api', ->
       should.not.exist(err)
       testpath = path.join(__dirname, 'testproj')
       @cmd.init 'foobar', testpath, { foo: 'bar' }, (err, res) =>
-        if err then console.error(err.toString())
+        if err then done(err)
         should.not.exist(err)
         fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
         contents = fs.readFileSync(path.join(testpath, 'index.html'), 'utf8')

@@ -23,7 +23,8 @@ if (cmd.sync) {
 
 function cb(err, res){
   if (err){
-    console.error("ERROR: ".red + err)
+    console.error("ERROR: ".red)
+    console.error(new Error(err).stack)
     process.exit(64) // command line usage error
   }
   console.log(res)

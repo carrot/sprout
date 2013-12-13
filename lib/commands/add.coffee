@@ -16,11 +16,17 @@ class Add extends Base
       @url = @name
       @name = @url.split('/')[@url.split('/').length-1]
 
+    @branch = ''
+    branch_matcher = /#(.*)$/
+    if @url.match(branch_matcher)
+      @branch = "-b #{@url.match(branch_matcher)[1]}"
+      @url = @url.replace(branch_matcher, '')
+
     @done = @cb
 
   execute: ->
     error = null
-    exec "git clone #{@url} #{@path(@name)}", (err, stdout, stderr) =>
+    exec "git clone #{@branch} #{@url} #{@path(@name)}", (err) =>
       if err and err.code > 0
         str = err.toString()
         if str.match /already exists and is not an empty directory/
