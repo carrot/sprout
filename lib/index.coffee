@@ -1,6 +1,5 @@
 Base = require('./base')
 base = new Base
 
-module.exports =
-  commands: require('./commands')
-  path: base.path.bind(base)
+module.exports = require('./commands')
+module.exports.path = base.path.bind(base)

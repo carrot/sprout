@@ -6,7 +6,6 @@ sprout = require '../'
 accord = require '../lib/utils/accord'
 
 before ->
-  @cmd = sprout.commands
   @exec = (cmd) -> exec(cmd, {silent: true})
   @$ = path.join(__dirname, '../bin/sprout')
 
@@ -36,54 +35,54 @@ describe 'accord', ->
 describe 'js api', ->
 
   it '[add] errors when no args provided', (done)->
-    @cmd.add (err, res) ->
+    sprout.add (err, res) ->
       should.exist(err)
       done()
 
   it '[add] errors when passed an invalid repo url', (done) ->
-    @cmd.add 'foobar', (err, res) ->
+    sprout.add 'foobar', (err, res) ->
       should.exist(err)
       done()
 
   it '[add] saves/removes the template when passed a valid url', (done) ->
-    @cmd.add 'foobar', 'https://github.com/carrot/sprout', (err, res) =>
+    sprout.add 'foobar', 'https://github.com/carrot/sprout', (err, res) ->
       should.not.exist(err)
       fs.existsSync(sprout.path('foobar')).should.be.ok
-      @cmd.remove 'foobar', (err) ->
+      sprout.remove 'foobar', (err) ->
         should.not.exist(err)
         fs.existsSync(sprout.path('foobar')).should.not.be.ok
         done()
 
   it '[list] lists available templates', (done) ->
-    @cmd.list().length.should.eql(0)
-    @cmd.add 'foobar', 'https://github.com/carrot/sprout', (err, res) =>
+    sprout.list().length.should.eql(0)
+    sprout.add 'foobar', 'https://github.com/carrot/sprout', (err, res) ->
       should.not.exist(err)
-      @cmd.list().length.should.eql(1)
-      @cmd.remove('foobar', done)
+      sprout.list().length.should.eql(1)
+      sprout.remove('foobar', done)
 
   it '[init] errors when no args provided', (done) ->
-    @cmd.init (err, res) ->
+    sprout.init (err, res) ->
       should.exist(err)
       done()
 
   it '[init] errors when passed a non-existant template', (done) ->
-    @cmd.init 'foobar', (err, res) ->
+    sprout.init 'foobar', (err, res) ->
       should.exist(err)
       done()
 
   it '[init] creates a project template correctly', (done) ->
     basic_path = path.join(__dirname, 'fixtures/basic')
-    @cmd.add 'foobar', "file:////#{basic_path}", (err, res) =>
+    sprout.add 'foobar', "file:////#{basic_path}", (err, res) ->
       should.not.exist(err)
       testpath = path.join(__dirname, 'testproj')
-      @cmd.init 'foobar', testpath, { foo: 'bar' }, (err, res) =>
+      sprout.init 'foobar', testpath, { foo: 'bar' }, (err, res) =>
         if err then done(err)
         should.not.exist(err)
         fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
         contents = fs.readFileSync(path.join(testpath, 'index.html'), 'utf8')
         contents.should.match /bar/
         rm('-rf', testpath)
-        @cmd.remove('foobar', done)
+        sprout.remove('foobar', done)
 
 describe 'cli', ->
 
