@@ -24,7 +24,8 @@
     "readdirp": "0.3.x",
     "event-stream": "3.x.x",
     "when": "2.x.x",
-    "sugar": "1.x.x"
+    "sugar": "1.x.x",
+    "mkdirp": "0.3.x"
   },
   "devDependencies": {
     "mocha": "*",
