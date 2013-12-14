@@ -1,4 +1,4 @@
-require 'shelljs/global'
+which = require 'which'
 exec = require('child_process').exec
 Base = require '../base'
 accord = require '../utils/accord'
@@ -10,7 +10,7 @@ class Add extends Base
     accord.call(@, { name: name, url: url, options: opts, cb: cb })
 
     if not @name then return @cb('your template needs a name!')
-    if not which('git') then return @cb('you need to have git installed')
+    if not which.sync('git') then return @cb('you need to have git installed')
 
     if @name and not @url
       @url = @name

@@ -2,5 +2,5 @@ var g = require('gulp'),
     coffee = require('gulp-coffee');
 
 g.task('build', function(){
-  g.src('src/**/*.coffee').pipe(coffee({ bare: true })).pipe(g.dest('lib'))
+  g.src('src/**/*.coffee').pipe(coffee()).pipe(g.dest('lib'))
 });
