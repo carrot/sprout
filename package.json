@@ -1,6 +1,6 @@
 {
   "name": "sprout",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Carrot Creative <dev@carrotcreative.com>",
   "description": "Simple project templating",
   "main": "index.js",
