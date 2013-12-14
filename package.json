@@ -33,6 +33,7 @@
     "gulp-coffee": "1.x.x"
   },
   "scripts": {
+    "test": "mocha",
     "prepublish": "mv lib/ src; gulp build",
     "postpublish": "rm -rf lib; mv src/ lib"
   }
