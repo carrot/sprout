@@ -53,14 +53,16 @@ class Init extends Base
       @config_values = @options
       return W.resolve()
 
-    console.log '\nplease enter the following information:'.yellow
     prompt.override = @options
     prompt.message = ''
     prompt.delimiter = ''
+
+    if not prompt.override then console.log '\nplease enter the following information:'.yellow
+
     prompt.start()
     nodefn.call(prompt.get, @config.configure).tap (res) =>
       @config_values = res
-      console.log('')
+      if not prompt.override then console.log('')
 
   user_after_fn = ->
     if not @config.before then return W.resolve()

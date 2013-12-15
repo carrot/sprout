@@ -9,7 +9,6 @@ before ->
   @exec = (cmd) -> exec(cmd, {silent: true})
   @$ = path.join(__dirname, '../bin/sprout')
 
-
 describe 'accord', ->
 
   beforeEach ->
@@ -72,7 +71,7 @@ describe 'js api', ->
 
   it '[init] creates a project template correctly', (done) ->
     basic_path = path.join(__dirname, 'fixtures/basic')
-    sprout.add 'foobar', "file:////#{basic_path}", (err, res) ->
+    sprout.add 'foobar', "https://github.com/jenius/sprout-test-template.git", (err, res) ->
       should.not.exist(err)
       testpath = path.join(__dirname, 'testproj')
       sprout.init 'foobar', testpath, { foo: 'bar' }, (err, res) =>
@@ -124,7 +123,7 @@ describe 'cli', ->
     cmd.code.should.be.above(0)
 
   it '[init] creates a project template correctly', ->
-    cmd = @exec("#{@$} add foobar file:////#{path.join(__dirname, 'fixtures/basic')}")
+    cmd = @exec("#{@$} add foobar https://github.com/jenius/sprout-test-template.git")
     cmd.code.should.eql(0)
     testpath = path.join(__dirname, 'testproj')
     cmd = @exec("#{@$} init foobar #{testpath} --foo bar")
