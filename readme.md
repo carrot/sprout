@@ -6,7 +6,7 @@
 
 Simple new project templating
 
-> Note: This project is in early development and is not currently in a useable state, although you are more than welcome to follow along with development if you'd like!
+> **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
 
 ### Why should you care?
 
