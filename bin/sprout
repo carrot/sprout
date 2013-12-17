@@ -4,11 +4,12 @@ require('coffee-script');
 require('colors');
 
 var argv = require('optimist').argv,
-    commands = require('../lib/commands');
+    commands = require('../lib/api');
 
 // get command
 
-var cmd = commands[argv._.splice(0,1)];
+var name = argv._.splice(0,1)[0];
+var cmd = commands[name];
 if (!cmd) return commands.help()
 
 // execute command
@@ -18,16 +19,22 @@ if (cmd.sync) {
   if (res.error) return console.error("ERROR: ".red + res.error)
   console.log(res)
 } else {
-  var cmd = cmd.apply(null, argv._.concat([opts_only(argv), cb]));
-}
-
-function cb(err, res){
-  if (err){
-    console.error("ERROR: ".red)
-    console.error(new Error(err).stack)
-    process.exit(64) // command line usage error
+  var p;
+  switch (name) {
+    case 'add':
+      p = cmd({ name: argv._[0], url: argv._[1] }); break;
+    case 'remove':
+      p = cmd(argv._[0]); break;
+    case 'list':
+      p = cmd({ pretty: true }); break;
+    case 'init':
+      p = cmd({ template: argv._[0], path: argv._[1], options: opts_only(argv) }); break;
   }
-  console.log(res)
+
+  p.done(console.log.bind(console), function(err){
+    console.error("ERROR: ".red + err);
+    process.exit(64); // command line usage error
+  });
 }
 
 function opts_only(args){

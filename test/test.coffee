@@ -2,86 +2,59 @@ require 'shelljs/global'
 path = require 'path'
 fs = require 'fs'
 should = require 'should'
-sprout = require '../'
-accord = require '../lib/utils/accord'
+sprout = require '..'
+
+test_template_url = 'https://github.com/jenius/sprout-test-template.git'
 
 before ->
   @exec = (cmd) -> exec(cmd, {silent: true})
   @$ = path.join(__dirname, '../bin/sprout')
 
-describe 'accord', ->
-
-  beforeEach ->
-    @mock = {}
-
-  it 'accepts a config object', ->
-    accord.call(@mock, { foo: { bar: 'baz' }, done: (->) })
-    @mock.bar.should.eql('baz')
-    @mock.done.should.be.type('function')
-
-  it 'accepts normal args', ->
-    accord.call(@mock, { foo: 'bar', baz: 'quux', snargle: 'blarg' })
-    @mock.foo.should.eql('bar')
-    @mock.baz.should.eql('quux')
-    @mock.snargle.should.eql('blarg')
-
-  it 'should shift callback', ->
-    accord.call(@mock, { foo: 'bar', baz: (->), snargle: undefined })
-    @mock.foo.should.eql('bar')
-    should.not.exist(@mock.baz)
-    @mock.snargle.should.be.type('function')
-
 describe 'js api', ->
 
   it '[add] errors when no args provided', (done)->
-    sprout.add (err, res) ->
-      should.exist(err)
-      done()
+    sprout.add()
+      .catch((err) -> should.exist(err); done())
 
   it '[add] errors when passed an invalid repo url', (done) ->
-    sprout.add 'foobar', (err, res) ->
-      should.exist(err)
-      done()
+    sprout.add(name: 'foobar')
+      .catch((err) -> should.exist(err); done())
 
   it '[add] saves/removes the template when passed a valid url', (done) ->
-    sprout.add 'foobar', 'https://github.com/carrot/sprout', (err, res) ->
-      should.not.exist(err)
-      fs.existsSync(sprout.path('foobar')).should.be.ok
-      sprout.remove 'foobar', (err) ->
-        should.not.exist(err)
-        fs.existsSync(sprout.path('foobar')).should.not.be.ok
-        done()
+    sprout.add(name: 'foobar', url: test_template_url)
+      .tap(-> fs.existsSync(sprout.path('foobar')).should.be.ok)
+      .then(-> sprout.remove('foobar'))
+      .tap(-> fs.existsSync(sprout.path('foobar')).should.not.be.ok)
+      .done((-> done()), done)
 
   it '[list] lists available templates', (done) ->
     sprout.list().length.should.eql(0)
-    sprout.add 'foobar', 'https://github.com/carrot/sprout', (err, res) ->
-      should.not.exist(err)
-      sprout.list().length.should.eql(1)
-      sprout.remove('foobar', done)
+    sprout.add(name: 'foobar', url: 'https://github.com/carrot/sprout')
+      .tap(-> sprout.list().length.should.eql(1))
+      .then(-> sprout.remove('foobar'))
+      .done((-> done()), done)
 
   it '[init] errors when no args provided', (done) ->
-    sprout.init (err, res) ->
-      should.exist(err)
-      done()
+    sprout.init()
+      .catch((err) -> should.exist(err); done())
 
   it '[init] errors when passed a non-existant template', (done) ->
-    sprout.init 'foobar', (err, res) ->
-      should.exist(err)
-      done()
+    sprout.init('foobar')
+      .catch((err) -> should.exist(err); done())
 
   it '[init] creates a project template correctly', (done) ->
     basic_path = path.join(__dirname, 'fixtures/basic')
-    sprout.add 'foobar', "https://github.com/jenius/sprout-test-template.git", (err, res) ->
-      should.not.exist(err)
-      testpath = path.join(__dirname, 'testproj')
-      sprout.init 'foobar', testpath, { foo: 'bar' }, (err, res) =>
-        if err then done(err)
-        should.not.exist(err)
-        fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
-        contents = fs.readFileSync(path.join(testpath, 'index.html'), 'utf8')
+    test_path = path.join(__dirname, 'testproj')
+
+    sprout.add(name: 'foobar', url: test_template_url)
+      .then(-> sprout.init(template: 'foobar', path: test_path, options: { foo: 'bar' }))
+      .tap(->
+        fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+        contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
         contents.should.match /bar/
-        rm('-rf', testpath)
-        sprout.remove('foobar', done)
+        rm('-rf', test_path)
+      ).then(-> sprout.remove('foobar'))
+      .done((-> done()), done)
 
 describe 'cli', ->
 
@@ -94,7 +67,7 @@ describe 'cli', ->
     cmd.code.should.be.above(0)
 
   it '[add] saves/removes the template when passed a valid url', ->
-    cmd = @exec("#{@$} add foobar https://github.com/carrot/sprout")
+    cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
     fs.existsSync(sprout.path('foobar')).should.be.ok
     rmcmd = @exec("#{@$} remove foobar")
@@ -106,7 +79,7 @@ describe 'cli', ->
     cmd.code.should.eql(0)
     cmd.output.should.match /Templates/
     cmd.output.should.match /no templates present/
-    cmd = @exec("#{@$} add foobar https://github.com/carrot/sprout")
+    cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
     cmd = @exec("#{@$} list")
     cmd.code.should.eql(0)
@@ -123,13 +96,14 @@ describe 'cli', ->
     cmd.code.should.be.above(0)
 
   it '[init] creates a project template correctly', ->
-    cmd = @exec("#{@$} add foobar https://github.com/jenius/sprout-test-template.git")
+    test_path = path.join(__dirname, 'testproj')
+
+    cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
-    testpath = path.join(__dirname, 'testproj')
-    cmd = @exec("#{@$} init foobar #{testpath} --foo bar")
+    cmd = @exec("#{@$} init foobar #{test_path} --foo bar")
     cmd.code.should.eql(0)
-    fs.existsSync(path.join(testpath, 'index.html')).should.be.ok
-    contents = fs.readFileSync(path.join(testpath, 'index.html'), 'utf8')
+    fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+    contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
     contents.should.match /bar/
-    rm('-rf', testpath)
+    rm('-rf', test_path)
     rmcmd = @exec("#{@$} remove foobar")

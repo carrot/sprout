@@ -58,7 +58,7 @@ Sprout also comes with a [man page](man) and will display a help menu as a refre
 
 ### Javascript API
 
-Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Example code given in coffeescript:
+Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [when.js](https://github.com/cujojs/when)) Example code given in coffeescript:
 
 ```coffee
 path = require 'path'
@@ -66,15 +66,15 @@ sprout = require 'sprout'
 
 # Adding a template
 # -----------------
-sprout.add 'node', 'https://github.com/carrot/sprout-node', (err, res) ->
-  if err then return console.error(err)
-  console.log 'template added!'
+sprout.add({ name: 'node', url: 'https://github.com/carrot/sprout-node' })
+  .catch(console.error.bind(console))
+  .done(-> console.log('template added!'))
 
 # removing a template
 # -------------------
-sprout.remove 'node', (err, res) ->
-  if err then return console.error(err)
-  console.log 'template removed!'
+sprout.remove('node')
+  .catch(console.error.bind(console))
+  .done(-> console.log('template removed!'))
 
 # listing templates
 # -----------------
@@ -89,9 +89,12 @@ console.log sprout.list(pretty: true)
 # initializing a template
 # -----------------------
 
-sprout.init 'node', path.join(process.cwd(), 'new_project'), (err, res) ->
-  if err then return console.error(err)
-  console.log 'project structure initialized!'
+sprout.init({
+  template: 'node',
+  path: path.join(process.cwd(), 'new_project'),
+  options: { foo: 'bar' } # optional, will prompt if not provided
+}).catch(console.error.bind(console))
+  .done(-> console.log('project initialized!'))
 
 # other things
 # ------------
