@@ -20,8 +20,8 @@ class Base
   # @api private
   #
 
+  # h/t to configstore for this logic
   generate_fake_user: ->
-    # h/t to configstore for this logic
     uid = [process.pid, Date.now(), Math.floor(Math.random() * 1000000)].join('-')
     crypto.createHash('md5').update(uid).digest('hex')
 
