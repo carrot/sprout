@@ -56,6 +56,19 @@ describe 'js api', ->
       ).then(-> sprout.remove('foobar'))
       .done((-> done()), done)
 
+  it '[init] creates a project template from a branch', (done) ->
+    basic_path = path.join(__dirname, 'fixtures/basic')
+    test_path = path.join(__dirname, 'testproj')
+
+    sprout.add(name: 'foobar', url: "#{test_template_url}#alt")
+      .then(-> sprout.init(template: 'foobar', path: test_path, options: { foo: 'bar' }))
+      .tap(->
+        contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+        contents.should.match /alternate/
+        rm('-rf', test_path)
+      ).then(-> sprout.remove('foobar'))
+      .done((-> done()), done)
+
 describe 'cli', ->
 
   it '[add] errors when no args provided', ->

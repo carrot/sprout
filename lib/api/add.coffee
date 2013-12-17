@@ -11,7 +11,7 @@ class Add extends Base
   execute: (opts) ->
     configure_options.call(@, opts)
       .then(nodefn.lift(exec, "git clone #{@url} #{@path(@name)}"))
-      .then(=> if @branch then nodefn.call(exec, "git checkout #{@branch}"))
+      .then(=> if @branch then nodefn.call(exec, "cd #{@path(@name)}; git checkout #{@branch}"))
       .yield("template '#{@name}' added")
 
   # @api private
@@ -28,7 +28,7 @@ class Add extends Base
       @url = @name
       @name = @url.split('/')[@url.split('/').length-1]
 
-    @branch = ''
+    @branch = null
     branch_matcher = /#(.*)$/
     if @url.match(branch_matcher)
       @branch = "#{@url.match(branch_matcher)[1]}"
