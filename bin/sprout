@@ -31,7 +31,7 @@ if (cmd.sync) {
       p = cmd({ template: argv._[0], path: argv._[1], options: opts_only(argv) }); break;
   }
 
-  p.done(console.log.bind(console), function(err){
+  p.done(function(r){ console.log(r.green) }, function(err){
     console.error("ERROR: ".red + err);
     process.exit(64); // command line usage error
   });

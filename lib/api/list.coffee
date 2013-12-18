@@ -13,11 +13,11 @@ class List extends Base
     if @pretty
       plist = "\n"
       plist += "Templates\n".bold.blue
-      plist += "---------\n\n".bold.blue
+      plist += "---------\n".bold.blue
       if list.length
-        plist += "- #{item}" for item in list
+        plist += "\n- #{item}" for item in list
       else
-        plist += 'no templates present'
+        plist += '\nno templates present'
       plist += "\n"
       return plist
     return list
