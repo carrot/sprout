@@ -69,8 +69,8 @@ class Init extends Base
       if not prompt.override then console.log('')
 
   user_after_fn = ->
-    if not @config.before then return W.resolve()
-    nodefn.call(@config.before, @)
+    if not @config.after then return W.resolve()
+    nodefn.call(@config.after, @)
 
   update_template = ->
     nodefn.call(exec, "cd #{@sprout_path}; git pull")
