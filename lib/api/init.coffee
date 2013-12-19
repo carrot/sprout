@@ -19,11 +19,16 @@ class Init extends Base
       .then(get_user_config.bind(@))
       .then(user_before_fn.bind(@))
       .then(prompt_for_info.bind(@))
-      .then(user_after_fn.bind(@))
       .then(update_template.bind(@))
       .then(copy_template.bind(@))
       .then(replace_ejs.bind(@))
+      .then(user_after_fn.bind(@))
       .yield("project #{@template} created!")
+
+  # intended for use in the after function, quick way to remove
+  # files/folders that users wanted to nix after the prompts.
+  remove: (f) ->
+    fs.unlinkSync(path.resolve(@target, f))
 
   #
   # @api private
