@@ -145,20 +145,18 @@ exports.configure = [
   'name',
   'github_url',
   { name: 'travis'
-    description: 'Do you want travis in this project?'
-    type: 'boolean' }
+    message: 'use travis-ci? (y/n)'
+    validator: /y|n/
+    default: 'y' }
 ]
 
 # This function is executed after the configuration info is collected.
 # It's a good place to do any other custom config you need, like building
 # extra files etc. You have the full power of node at your fingertips here.
 exports.after = (sprout, done) ->
-  console.log sprout.config # all the config values you collected
-  console.log sprout.files # list of files that will be copied
-
-  if not sprout.config.travis then sprout.files.remove('.travis.yml')
-
-  done(sprout)
+  console.log sprout.config_values # all the config values you collected
+  if not sprout.config_values.travis == 'y' then sprout.remove('.travis.yml')
+  done()
 
 ```
 
