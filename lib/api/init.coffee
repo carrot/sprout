@@ -23,7 +23,7 @@ class Init extends Base
       .then(copy_template.bind(@))
       .then(replace_ejs.bind(@))
       .then(user_after_fn.bind(@))
-      .yield("project #{@template} created!")
+      .yield("project created at #{@path}!")
 
   # intended for use in the after function, quick way to remove
   # files/folders that users wanted to nix after the prompts.
@@ -33,7 +33,7 @@ class Init extends Base
   #
   # @api private
   #
-  
+
   configure_options = (opts) ->
     if not opts then return W.reject('please provide a template name')
     @template = opts.template
