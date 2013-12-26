@@ -40,9 +40,7 @@
     "shelljs": "0.2.x"
   },
   "scripts": {
-    "test": "mocha",
-    "prepublish": "mv lib/ src; gulp build",
-    "postpublish": "rm -rf lib; mv src/ lib"
+    "test": "mocha"
   },
   "engines": {
     "node": ">=0.10.0"
