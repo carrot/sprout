@@ -23,7 +23,7 @@ class Init extends Base
       .then(copy_template.bind(@))
       .then(replace_ejs.bind(@))
       .then(user_after_fn.bind(@))
-      .yield("project created at #{@path}!")
+      .yield("project created at ./#{@target}!")
 
   # intended for use in the after function, quick way to remove
   # files/folders that users wanted to nix after the prompts.
