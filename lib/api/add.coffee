@@ -10,7 +10,7 @@ class Add extends Base
 
   execute: (opts) ->
     configure_options.call(@, opts)
-      .then(nodefn.lift(exec, "git clone #{@url} #{@path(@name)}"))
+      .then(link_project.bind(@))
       .then(=> if @branch then nodefn.call(exec, "cd #{@path(@name)}; git checkout #{@branch}"))
       .yield("template '#{@name}' added")
 
@@ -20,6 +20,7 @@ class Add extends Base
     if not opts then return W.reject('your template needs a name!')
     @name = opts.name
     @url = opts.url
+    @options = opts.options || {}
 
     if not @name then return W.reject('your template needs a name!')
     if not which.sync('git') then return W.reject('you need to have git installed')
@@ -35,6 +36,14 @@ class Add extends Base
       @url = @url.replace(branch_matcher, '')
 
     W.resolve()
+
+
+  link_project = ->
+    if not @options.local
+      nodefn.call(exec, "git clone #{@url} #{@path(@name)}")
+    else
+      nodefn.call(exec, "rm -rf #{@path(@name)}; ln -s #{@url} #{@path(@name)}")
+
 
 module.exports = (opts) ->
   (new Add()).execute(opts)
