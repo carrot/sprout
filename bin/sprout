@@ -22,7 +22,7 @@ if (cmd.sync) {
   var p;
   switch (name) {
     case 'add':
-      p = cmd({ name: argv._[0], url: argv._[1] }); break;
+      p = cmd({ name: argv._[0], url: argv._[1], options: opts_only(argv) }); break;
     case 'remove':
       p = cmd(argv._[0]); break;
     case 'list':
