@@ -2,7 +2,7 @@
 
 [![npm](https://badge.fury.io/js/sprout.png)](http://badge.fury.io/js/sprout)
 [![tests](https://travis-ci.org/carrot/sprout.png?branch=master)](https://travis-ci.org/carrot/sprout)
-[![dependencies](https://david-dm.org/carrot/sprout.png)](https://david-dm.org/carrot/sprout)
+[![dependencies](https://david-dm.org/carrot/sprout.png?theme=shields.io)](https://david-dm.org/carrot/sprout)
 
 Simple new project templating
 
