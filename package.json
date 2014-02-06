@@ -17,25 +17,23 @@
   },
   "man": "man/sprout.1",
   "dependencies": {
-    "coffee-script": "1.6.x",
+    "coffee-script": "1.7.x",
     "colors": "0.6.x",
     "optimist": "0.6.x",
     "indx": "0.0.x",
     "osenv": "0.0.x",
-    "rimraf": "2.x.x",
-    "ncp": "0.4.x",
+    "rimraf": "2.x",
+    "ncp": "0.5.x",
     "ejs": "0.8.x",
     "prompt": "0.2.x",
     "readdirp": "0.3.x",
-    "when": "2.x.x",
+    "when": "2.x",
     "mkdirp": "0.3.x",
     "which": "1.0.x"
   },
   "devDependencies": {
     "mocha": "*",
     "should": "*",
-    "gulp": "3.x.x",
-    "gulp-coffee": "1.x.x",
     "shelljs": "0.2.x"
   },
   "scripts": {
