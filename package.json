@@ -28,7 +28,6 @@
     "prompt": "0.2.x",
     "readdirp": "0.3.x",
     "when": "2.x.x",
-    "sugar": "1.x.x",
     "mkdirp": "0.3.x",
     "which": "1.0.x"
   },
