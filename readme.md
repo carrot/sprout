@@ -30,8 +30,10 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 
 * * *
 
-_Command Syntax_: `sprout add [name] <clone_url>`    
-_Description_: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout, and clone url is a url that `git clone` could be run with and it would be successful. If no name is provided, sprout will use the last piece of the clone url as the name.
+_Command Syntax_: `sprout add [name] <clone_url> [options]`     
+_Description_: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout, and clone url is a url that `git clone` could be run with and it would be successful. If no name is provided, sprout will use the last piece of the clone url as the name.  
+_Options:_  `--local` allows you to symlink a local project for active development. use a `path` instead of a `clone_url`
+
 
 ##### Remove Template
 
@@ -66,7 +68,7 @@ sprout = require 'sprout'
 
 # Adding a template
 # -----------------
-sprout.add({ name: 'node', url: 'https://github.com/carrot/sprout-node' })
+sprout.add({ name: 'node', url: 'https://github.com/carrot/sprout-node', options: {local: false} })
   .catch(console.error.bind(console))
   .done(-> console.log('template added!'))
 
