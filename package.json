@@ -20,7 +20,7 @@
     "coffee-script": "1.7.x",
     "colors": "0.6.x",
     "optimist": "0.6.x",
-    "indx": "0.0.x",
+    "indx": "0.1.x",
     "osenv": "0.0.x",
     "rimraf": "2.x",
     "ncp": "0.5.x",
