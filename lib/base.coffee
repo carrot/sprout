@@ -8,7 +8,7 @@ mkdirp = require 'mkdirp'
 class Base
 
   constructor: ->
-    user = (osenv.user() || generate_fake_user()).replace(/\\/g, '-')
+    user = (osenv.user() || @generate_fake_user()).replace(/\\/g, '-')
     tmp_dir = path.join((if os.tmpdir then os.tmpdir() else os.tmpDir()), user)
     @config_dir = process.env.XDG_CONFIG_HOME || path.join((osenv.home() || tmp_dir), '.config/sprout')
     if not fs.existsSync(@config_dir) then mkdirp.sync(@config_dir)
