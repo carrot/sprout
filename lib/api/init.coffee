@@ -78,7 +78,7 @@ class Init extends Base
     nodefn.call(@config.after, @)
 
   update_template = ->
-    nodefn.call(exec, "cd #{@sprout_path}; git pull")
+    nodefn.call(exec, "cd #{@sprout_path} && git pull")
 
   copy_template = ->
     nodefn.call(ncp, path.join(@sprout_path, 'root'), @target)
