@@ -3,6 +3,9 @@ W = require 'when'
 nodefn = require 'when/node/function'
 exec = require('child_process').exec
 Base = require '../base'
+fs = require 'fs'
+prompt = require 'prompt'
+rimraf = require 'rimraf'
 
 class Add extends Base
 
@@ -10,6 +13,7 @@ class Add extends Base
 
   execute: (opts) ->
     configure_options.call(@, opts)
+      .then(prompt_for_overwrite.bind(@))
       .then(link_project.bind(@))
       .then(=> if @branch then nodefn.call(exec, "cd #{@path(@name)}; git checkout #{@branch}"))
       .yield("template '#{@name}' added")
@@ -37,6 +41,17 @@ class Add extends Base
 
     W.resolve()
 
+  prompt_for_overwrite = ->
+    if fs.existsSync(@path(@name))
+      options = { 
+        name: 'override', 
+        message: "overwrite '#{@name}'? (y/n)", 
+        validator: /y|n/, 
+        default: 'y' 
+      }
+      prompt.start()
+      nodefn.call(prompt.get, options).tap (res) =>
+        nodefn.call(rimraf, @path(@name)) if res.override == 'y'
 
   link_project = ->
     if not @options.local
