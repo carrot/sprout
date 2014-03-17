@@ -2,7 +2,9 @@
   "name": "sprout",
   "version": "0.0.8",
   "author": "Carrot Creative <dev@carrotcreative.com>",
-  "contibutors": ["Jeff Escalante <hello@jenius.me>"],
+  "contibutors": [
+    "Jeff Escalante <hello@jenius.me>"
+  ],
   "description": "Simple project templating",
   "main": "index.js",
   "license": "MIT",
@@ -10,7 +12,12 @@
     "type": "git",
     "url": "https://github.com/carrot/sprout"
   },
-  "keywords": ["new", "project", "templating", "configuration"],
+  "keywords": [
+    "new",
+    "project",
+    "templating",
+    "configuration"
+  ],
   "bugs": "https://github.com/carrot/sprout/issues",
   "bin": {
     "sprout": "bin/sprout"
@@ -25,11 +32,11 @@
     "rimraf": "2.x",
     "ncp": "0.5.x",
     "ejs": "0.8.x",
-    "prompt": "0.2.x",
     "readdirp": "0.3.x",
     "when": "2.x",
     "mkdirp": "0.3.x",
-    "which": "1.0.x"
+    "which": "1.0.x",
+    "inquirer": "^0.4.1"
   },
   "devDependencies": {
     "mocha": "*",
