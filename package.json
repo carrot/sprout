@@ -27,7 +27,7 @@
     "ejs": "0.8.x",
     "prompt": "0.2.x",
     "readdirp": "0.3.x",
-    "when": "2.x",
+    "when": "3.x",
     "mkdirp": "0.3.x",
     "which": "1.0.x"
   },

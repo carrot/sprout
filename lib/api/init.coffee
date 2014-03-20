@@ -15,14 +15,14 @@ class Init extends Base
 
   execute: (opts) ->
 
-    configure_options.call(@, opts)
-      .then(get_user_config.bind(@))
-      .then(user_before_fn.bind(@))
-      .then(prompt_for_info.bind(@))
-      .then(update_template.bind(@))
-      .then(copy_template.bind(@))
-      .then(replace_ejs.bind(@))
-      .then(user_after_fn.bind(@))
+    configure_options.call(@, opts).with(@)
+      .then(get_user_config)
+      .then(user_before_fn)
+      .then(prompt_for_info)
+      .then(update_template)
+      .then(copy_template)
+      .then(replace_ejs)
+      .then(user_after_fn)
       .yield("project created at ./#{@target}!")
 
   # intended for use in the after function, quick way to remove

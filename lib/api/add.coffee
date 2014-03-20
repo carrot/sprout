@@ -9,8 +9,8 @@ class Add extends Base
   constructor: -> super
 
   execute: (opts) ->
-    configure_options.call(@, opts)
-      .then(link_project.bind(@))
+    configure_options.call(@, opts).with(@)
+      .then(link_project)
       .then(=> if @branch then nodefn.call(exec, "cd #{@path(@name)}; git checkout #{@branch}"))
       .yield("template '#{@name}' added")
 
