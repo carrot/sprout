@@ -21,16 +21,16 @@ describe 'js api', ->
       .catch((err) -> should.exist(err); done())
 
   it '[add] saves/removes the template when passed a valid url', (done) ->
-    sprout.add(name: 'foobar', url: test_template_url)
+    sprout.add(name: 'foobar', template: test_template_url)
       .tap(-> fs.existsSync(sprout.path('foobar')).should.be.ok)
       .then(-> sprout.remove('foobar'))
       .tap(-> fs.existsSync(sprout.path('foobar')).should.not.be.ok)
       .done((-> done()), done)
 
   it '[list] lists available templates', (done) ->
-    sprout.list().length.should.eql(0)
-    sprout.add(name: 'foobar', url: 'https://github.com/carrot/sprout')
-      .tap(-> sprout.list().length.should.eql(1))
+    start = sprout.list().length
+    sprout.add(name: 'foobar', template: test_template_url)
+      .tap(-> sprout.list().length.should.eql(start + 1))
       .then(-> sprout.remove('foobar'))
       .done((-> done()), done)
 
@@ -46,8 +46,8 @@ describe 'js api', ->
     basic_path = path.join(__dirname, 'fixtures/basic')
     test_path = path.join(__dirname, 'testproj')
 
-    sprout.add(name: 'foobar', url: test_template_url)
-      .then(-> sprout.init(template: 'foobar', path: test_path, options: { foo: 'bar' }))
+    sprout.add(name: 'foobar', template: test_template_url)
+      .then(-> sprout.init(name: 'foobar', path: test_path, options: { foo: 'bar' }))
       .tap(->
         fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
         contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
@@ -60,8 +60,8 @@ describe 'js api', ->
     basic_path = path.join(__dirname, 'fixtures/basic')
     test_path = path.join(__dirname, 'testproj')
 
-    sprout.add(name: 'foobar', url: "#{test_template_url}#alt")
-      .then(-> sprout.init(template: 'foobar', path: test_path, options: { foo: 'bar' }))
+    sprout.add(name: 'foobar', template: "#{test_template_url}#alt")
+      .then(-> sprout.init(name: 'foobar', path: test_path, options: { foo: 'bar' }))
       .tap(->
         contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
         contents.should.match /alternate/
@@ -90,8 +90,6 @@ describe 'cli', ->
   it '[list] lists available templates', ->
     cmd = @exec("#{@$} list")
     cmd.code.should.eql(0)
-    cmd.output.should.match /Templates/
-    cmd.output.should.match /no templates present/
     cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
     cmd = @exec("#{@$} list")
@@ -108,9 +106,8 @@ describe 'cli', ->
     cmd = @exec("#{@$} init foobar")
     cmd.code.should.be.above(0)
 
-  it '[init] creates a project template correctly', ->
+  it '[init] creates a project template correctly target', ->
     test_path = path.join(__dirname, 'testproj')
-
     cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
     cmd = @exec("#{@$} init foobar #{test_path} --foo bar")

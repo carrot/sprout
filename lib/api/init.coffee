@@ -35,16 +35,16 @@ class Init extends Base
   #
 
   configure_options = (opts) ->
-    if not opts then return W.reject('please provide a template name')
-    @template = opts.template
+    if not opts then return W.reject('you must provide options for your template')
+    @name = opts.name
     @target = opts.path
     @options = opts.options
 
-    if not @template then return W.reject('please provide a template name')
-    if not @target then @target = path.join(process.cwd(), @template)
+    if not @name then return W.reject('please provide a template name')
+    if not @target then @target = path.join(process.cwd(), @name)
 
-    @sprout_path = @path(@template)
-    if not fs.existsSync(@sprout_path) then return W.reject("template #{@template} does not exist")
+    @sprout_path = @path(@name)
+    if not fs.existsSync(@sprout_path) then return W.reject("template #{@name} does not exist")
 
     W.resolve()
 
