@@ -17,39 +17,42 @@ class Add extends Base
       .then(assure_local_template_exists)
       .then(set_branch)
       .then(link_project)
-      .then(=> if @branch then nodefn.call(exec, "cd #{@path(@name)}; git checkout #{@branch}"))
+      .then(handle_branch_checkout)
       .yield("template '#{@name}' added")
 
   # @api private
 
   configure_options = (opts) ->
-    if not opts then return W.reject('your template needs a name!')
-    @name = opts.name
-    @template = opts.template
-    @options = opts.options || {}
-    @local = false
+    if not opts or not opts.name
+      return W.reject('your template needs a name!')
 
-    if not @name then return W.reject('your template needs a name!')
-    if not which.sync('git') then return W.reject('you need to have git installed')
+    @name     = opts.name
+    @template = opts.template
+    @options  = opts.options || {}
+    @local    = false
 
     if @name and not @template
       @template = @name
       @name = @template.split('/')[@template.split('/').length-1]
+
     W.resolve()
 
   determine_if_local = ->
     # set @local to true if @template isn't an http or git url
     url  = url.parse(@template)
-    test = url.pathname.split('.')[url.pathname.split('.').length-1] == 'git'
-    if not test
+    remote = url.pathname.split('.')[url.pathname.split('.').length-1] == 'git'
+    if not remote
       @local = true
     W.resolve()
 
   assure_local_template_exists = ->
     if not @local then return W.resolve()
+    if not which.sync('git')
+      return W.reject('you need to have git installed')
 
     test = fs.existsSync(path.normalize(@template))
-    if not test then return W.reject("there is no sprout template located at '#{@template}'")
+    if not test
+      return W.reject("there is no sprout template located at '#{@template}'")
     W.resolve()
 
   set_branch = ->
@@ -62,11 +65,13 @@ class Add extends Base
     W.resolve()
 
   link_project = ->
-    if @local
-      nodefn.call(exec, "rm -rf #{@path(@name)}; ln -s #{@template} #{@path(@name)}")
-    else
-      nodefn.call(exec, "git clone #{@template} #{@path(@name)}")
+    cmd = "git clone #{@template} #{@path(@name)}"
+    cmd = "rm -rf #{@path(@name)}; ln -s #{@template} #{@path(@name)}" if @local
+    nodefn.call(exec, cmd)
 
+  handle_branch_checkout = ->
+    if not @branch then return W.resolve()
+    nodefn.call(exec, "cd #{@path(@name)}; git checkout #{@branch}")
 
 module.exports = (opts) ->
   (new Add()).execute(opts)
