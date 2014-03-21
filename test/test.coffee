@@ -2,9 +2,15 @@ require 'shelljs/global'
 path = require 'path'
 fs = require 'fs'
 should = require 'should'
+_path  = path.join(__dirname, 'fixtures')
 sprout = require '..'
 
-test_template_url = 'https://github.com/jenius/sprout-test-template.git'
+# remote templates
+test_template_url  = 'https://github.com/jenius/sprout-test-template.git'
+test_template_git  = 'git@github.com:jenius/sprout-test-template.git'
+
+# local template
+test_template_path = path.join(_path, 'basic')
 
 before ->
   @exec = (cmd) -> exec(cmd, {silent: true})
@@ -20,8 +26,22 @@ describe 'js api', ->
     sprout.add(name: 'foobar')
       .catch((err) -> should.exist(err); done())
 
-  it '[add] saves/removes the template when passed a valid url', (done) ->
+  it '[add] saves/removes the template when passed a valid http url', (done) ->
     sprout.add(name: 'foobar', template: test_template_url)
+      .tap(-> fs.existsSync(sprout.path('foobar')).should.be.ok)
+      .then(-> sprout.remove('foobar'))
+      .tap(-> fs.existsSync(sprout.path('foobar')).should.not.be.ok)
+      .done((-> done()), done)
+
+  it '[add] saves/removes the template when passed a valid git url', (done) ->
+   sprout.add(name: 'foobar', template: test_template_git)
+     .tap(-> fs.existsSync(sprout.path('foobar')).should.be.ok)
+     .then(-> sprout.remove('foobar'))
+     .tap(-> fs.existsSync(sprout.path('foobar')).should.not.be.ok)
+     .done((-> done()), done)
+
+  it '[add] saves/removes the template when passed a local path', (done) ->
+    sprout.add(name: 'foobar', template: test_template_path)
       .tap(-> fs.existsSync(sprout.path('foobar')).should.be.ok)
       .then(-> sprout.remove('foobar'))
       .tap(-> fs.existsSync(sprout.path('foobar')).should.not.be.ok)
@@ -56,11 +76,11 @@ describe 'js api', ->
       ).then(-> sprout.remove('foobar'))
       .done((-> done()), done)
 
-  it '[init] creates a project template from a branch', (done) ->
+  it '[init] creates a project template from a branch target', (done) ->
     basic_path = path.join(__dirname, 'fixtures/basic')
     test_path = path.join(__dirname, 'testproj')
 
-    sprout.add(name: 'foobar', template: "#{test_template_url}#alt")
+    sprout.add(name: 'foobar', template: "#{test_template_git}#alt")
       .then(-> sprout.init(name: 'foobar', path: test_path, options: { foo: 'bar' }))
       .tap(->
         contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
@@ -106,7 +126,7 @@ describe 'cli', ->
     cmd = @exec("#{@$} init foobar")
     cmd.code.should.be.above(0)
 
-  it '[init] creates a project template correctly target', ->
+  it '[init] creates a project template correctly', ->
     test_path = path.join(__dirname, 'testproj')
     cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
