@@ -153,15 +153,27 @@ describe 'cli', ->
     rm('-rf', test_path)
     rmcmd = @exec("#{@$} remove foobar")
 
+  it '[new] runs sprout.init when `sprout new` is attempted', ->
+    test_path = path.join(__dirname, 'testproj')
+    cmd = @exec("#{@$} add foobar #{test_template_url}")
+    cmd.code.should.eql(0)
+    cmd = @exec("#{@$} new foobar #{test_path} --foo bar")
+
+    cmd.code.should.eql(0)
+    fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+    contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+    contents.should.match /bar/
+    rm('-rf', test_path)
+    rmcmd = @exec("#{@$} remove foobar")
+
   it '[init] creates a project with multiple inquirer inputs'
   it '[init] errors when prompt entry doesn\'t pass validation'
   it '[init] executes before function'
   it '[init] executes after function'
   it '[init] includes String.js in ejs compilation'
   it '[init] errors when template does not have `root` directory'
-  it '[init] errors when template does not have and `init.coffee` in root dir'
+  it '[init] errors when template does not have `init.coffee` in root dir'
   it '[init] errors when template has malformed `init.coffee`'
   it '[init] errors when template does not have and `init.coffee` in root dir'
   it '[init] does not error when ejs has a key not present in @config_values'
-  it '[new] runs sprout.init when `sprout new` is attempted'
   it '[add] replaces existing template on add'
