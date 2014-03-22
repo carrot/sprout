@@ -104,7 +104,9 @@ class Init extends Base
 
   run_user_after_function = ->
     if not @config.after then return W.resolve()
+    console.log "this has an after hook"
     nodefn.call(@config.after, @)
+      .done(-> W.resolve())
 
 module.exports = (opts) ->
   (new Init()).execute(opts)

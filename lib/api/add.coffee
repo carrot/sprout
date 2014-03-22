@@ -16,6 +16,7 @@ class Add extends Base
       .then(determine_if_local)
       .then(assure_local_template_exists)
       .then(set_branch)
+      .then(remove_existing_template)
       .then(link_project)
       .then(handle_branch_checkout)
       .yield("template '#{@name}' added")
@@ -63,6 +64,9 @@ class Add extends Base
       @branch = "#{@template.match(branch_matcher)[1]}"
       @template = @template.replace(branch_matcher, '')
     W.resolve()
+
+  remove_existing_template = ->
+    nodefn.call(exec, "rm -rf #{@path(@name)}")
 
   link_project = ->
     cmd = "git clone #{@template} #{@path(@name)}"
