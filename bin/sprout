@@ -7,7 +7,7 @@ var argv = require('optimist').argv,
     commands = require('../lib/api');
 
 // add sprout.new alias
-commands['new'] = function() { return undefined; };
+commands['new'] = function(){};
 
 // get command
 var name = argv._.splice(0,1)[0];

@@ -184,5 +184,4 @@ We also provide you the power of [String.js](http://stringjs.com/) in all of you
 class <%= S('user_model').capialize().s; %> // given 'user_model' is prompted by your init.coffee
 ```
 
-
 So between this config file and the root folder, you should be able to make anything happen fairly easily. If not, please open up and issue and we'll try to make it happening-er and/or easier for you : )

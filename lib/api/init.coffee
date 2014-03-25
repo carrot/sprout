@@ -1,7 +1,7 @@
 path = require 'path'
 fs = require 'fs'
 W = require 'when'
-nodefn = require 'when/node/function'
+nodefn = require 'when/node'
 nodecb = require 'when/callbacks'
 readdirp = require 'readdirp'
 ncp = require('ncp').ncp
@@ -47,6 +47,7 @@ class Init extends Base
     @target      = opts.path
     @options     = opts.options
     @sprout_path = @path(@name)
+    @answers     = {}
 
     if not fs.existsSync(@sprout_path)
       return W.reject("template '#{@name}' does not exist")
@@ -69,7 +70,6 @@ class Init extends Base
     @questions = _.reject(@config.configure, (v) -> _.contains(keys, v.name) )
 
   prompt_user_for_answers = ->
-    @answers = {}
     if not @questions.length then return W.resolve()
     nodecb.call(inquirer.prompt, @questions)
       .then((o) => @answers = o)

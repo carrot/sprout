@@ -5,6 +5,7 @@ exec = require('child_process').exec
 Base = require '../base'
 fs = require 'fs'
 path = require 'path'
+rimraf = require 'rimraf'
 url = require 'url'
 
 class Add extends Base
@@ -18,7 +19,7 @@ class Add extends Base
       .then(set_branch)
       .then(remove_existing_template)
       .then(link_project)
-      .then(handle_branch_checkout)
+      .then(checkout_branch)
       .yield("template '#{@name}' added")
 
   # @api private
@@ -49,10 +50,10 @@ class Add extends Base
   ensure_local_template_exists = ->
     if not @local then return W.resolve()
     if not which.sync('git')
-      throw W.reject('you need to have git installed')
+      return W.reject('you need to have git installed')
 
     if not fs.existsSync(path.normalize(@template))
-      throw W.reject("there is no sprout template located at '#{@template}'")
+      return W.reject("there is no sprout template located at '#{@template}'")
 
   set_branch = ->
     if @local then return W.resolve()
@@ -64,16 +65,16 @@ class Add extends Base
     W.resolve()
 
   remove_existing_template = ->
-    nodefn.call(exec, "rm -rf #{@path(@name)}")
+    nodefn.call(rimraf, @path(@name))
 
   link_project = ->
     cmd = "git clone #{@template} #{@path(@name)}"
     if @local then cmd = "rm -rf #{@path(@name)} && ln -s #{@template} #{@path(@name)}"
     nodefn.call(exec, cmd)
 
-  handle_branch_checkout = ->
+  checkout_branch = ->
     if not @branch then return W.resolve()
-    nodefn.call(exec, "cd #{@path(@name)}; git checkout #{@branch}")
+    nodefn.call(exec, "git checkout #{@branch}", {cwd: @path(@name)})
 
 module.exports = (opts) ->
   (new Add()).execute(opts)
