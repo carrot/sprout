@@ -143,6 +143,20 @@ describe 'js api', ->
       .then(-> sprout.remove('foobar-4'))
       .done((-> done()), done)
 
+  it '[init] includes String.js in ejs compilation', (done) ->
+    test_template = path.join(_path, 'stringjs')
+
+    sprout.add(name: 'foobar-5', template: test_template)
+      .then(-> sprout.init(name: 'foobar-5', path: test_path, options: {user_model: 'user'}))
+      .tap(->
+        fs.existsSync(path.join(test_path, 'user.rb')).should.be.ok
+        contents = fs.readFileSync(path.join(test_path, 'user.rb'), 'utf8')
+        contents.should.match /class User/
+        rm('-rf', test_path)
+      )
+      .then(-> sprout.remove('foobar-5'))
+      .done((-> done()), done)
+
 describe 'cli', ->
 
   it '[add] errors when no args provided', ->
@@ -206,7 +220,6 @@ describe 'cli', ->
 
   it '[init] creates a project with multiple inquirer inputs'
   it '[init] errors when prompt entry doesn\'t pass validation'
-  it '[init] includes String.js in ejs compilation'
   it '[init] errors when template does not have `root` directory'
   it '[init] errors when template does not have `init.coffee` in root dir'
   it '[init] errors when template has malformed `init.coffee`'

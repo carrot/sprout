@@ -7,9 +7,9 @@ readdirp = require 'readdirp'
 ncp = require('ncp').ncp
 exec = require('child_process').exec
 ejs = require 'ejs'
-prompt = require 'prompt'
 inquirer = require 'inquirer'
 Base = require '../base'
+S = require 'string'
 _ = require 'lodash'
 
 class Init extends Base
@@ -87,8 +87,9 @@ class Init extends Base
   replace_ejs = ->
     nodefn.call(readdirp, { root: @target })
       .tap (res) =>
+        ejs_options = _.extend(@config_values, {S: S})
         res.files.map (f) =>
-          out = ejs.render(fs.readFileSync(f.fullPath, 'utf8'), @config_values)
+          out = ejs.render(fs.readFileSync(f.fullPath, 'utf8'), ejs_options)
           fs.writeFileSync(f.fullPath, out)
 
   run_user_after_function = ->

@@ -131,6 +131,7 @@ license.md
 
 So a folder called `root` where the actual template goes, an `init.coffee` where we'll set up the config and stuff, and then any other files you need like a readme and license, which will *not* be included with the template. If you don't want any config options, you don't even need the `init.coffee`, just the `root` folder with the files in it and that's it. But let's assume you are after some additional configuration and jump into `init.coffee`.
 
+
 ```coffee
 
 # This function is executed before any of the configuration happens.
@@ -176,5 +177,12 @@ exports.after = (sprout, done) ->
   done()
 
 ```
+
+We also provide you the power of [String.js](http://stringjs.com/) in all of your ejs templates. This means you can run powerful string operations on your user input like:
+
+```js
+class <%= S('user_model').capialize().s; %> // given 'user_model' is prompted by your init.coffee
+```
+
 
 So between this config file and the root folder, you should be able to make anything happen fairly easily. If not, please open up and issue and we'll try to make it happening-er and/or easier for you : )

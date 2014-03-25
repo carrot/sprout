@@ -32,13 +32,13 @@
     "rimraf": "2.x",
     "ncp": "0.5.x",
     "ejs": "0.8.x",
-    "prompt": "0.2.x",
     "readdirp": "0.3.x",
     "when": "3.x",
     "mkdirp": "0.3.x",
     "which": "1.0.x",
     "inquirer": "0.4.x",
-    "lodash": "2.4.x"
+    "lodash": "2.4.x",
+    "string": "1.8.x"
   },
   "devDependencies": {
     "mocha": "*",
