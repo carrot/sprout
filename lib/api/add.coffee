@@ -14,7 +14,7 @@ class Add extends Base
   execute: (opts) ->
     configure_options.call(@, opts).with(@)
       .then(determine_if_local)
-      .then(assure_local_template_exists)
+      .then(ensure_local_template_exists)
       .then(set_branch)
       .then(remove_existing_template)
       .then(link_project)
@@ -46,15 +46,13 @@ class Add extends Base
       @local = true
     W.resolve()
 
-  assure_local_template_exists = ->
+  ensure_local_template_exists = ->
     if not @local then return W.resolve()
     if not which.sync('git')
-      return W.reject('you need to have git installed')
+      throw W.reject('you need to have git installed')
 
-    test = fs.existsSync(path.normalize(@template))
-    if not test
-      return W.reject("there is no sprout template located at '#{@template}'")
-    W.resolve()
+    if not fs.existsSync(path.normalize(@template))
+      throw W.reject("there is no sprout template located at '#{@template}'")
 
   set_branch = ->
     if @local then return W.resolve()
@@ -70,7 +68,7 @@ class Add extends Base
 
   link_project = ->
     cmd = "git clone #{@template} #{@path(@name)}"
-    cmd = "rm -rf #{@path(@name)}; ln -s #{@template} #{@path(@name)}" if @local
+    if @local then cmd = "rm -rf #{@path(@name)} && ln -s #{@template} #{@path(@name)}"
     nodefn.call(exec, cmd)
 
   handle_branch_checkout = ->

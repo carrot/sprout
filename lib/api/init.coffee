@@ -24,7 +24,7 @@ class Init extends Base
       .then(remove_overrides_from_prompt)
       .then(prompt_user_for_answers)
       .then(merge_config_values_with_overrides)
-      .then(assure_template_is_updated)
+      .then(ensure_template_is_updated)
       .then(copy_template)
       .then(replace_ejs)
       .then(run_user_after_function)
@@ -75,20 +75,9 @@ class Init extends Base
       .then((o) => @answers = o)
 
   merge_config_values_with_overrides = ->
-    response = {}
-    _.each @answers, (k,i) ->
-      if k.hasOwnProperty('input')
-        response[k.name] = k.input
-      else if k.hasOwnProperty('confirm')
-        response[k.name] = k.confirm
-      else if k.hasOwnProperty('rawlist')
-        response[k.name] = k.rawlist
-      else if k.hasOwnProperty('list')
-        response[k.name] = k.list
+    @config_values = _.assign(@answers, @options)
 
-    @config_values = _.assign(response, @options)
-
-  assure_template_is_updated = ->
+  ensure_template_is_updated = ->
     nodefn.call(exec, "cd #{@sprout_path} && git pull")
       .catch(-> return W.resolve())
 
@@ -104,9 +93,7 @@ class Init extends Base
 
   run_user_after_function = ->
     if not @config.after then return W.resolve()
-    console.log "this has an after hook"
     nodefn.call(@config.after, @)
-      .done(-> W.resolve())
 
 module.exports = (opts) ->
   (new Init()).execute(opts)

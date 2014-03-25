@@ -172,7 +172,7 @@ exports.configure = [
 # extra files etc. You have the full power of node at your fingertips here.
 exports.after = (sprout, done) ->
   console.log sprout.config_values # all the config values you collected
-  if not sprout.config_values.travis == true then sprout.remove('.travis.yml')
+  if not sprout.config_values.travis then sprout.remove('.travis.yml')
   done()
 
 ```
