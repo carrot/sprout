@@ -53,6 +53,13 @@ describe 'js api', ->
       .then(-> sprout.remove('foobar'))
       .done((-> done()), done)
 
+  it '[add] errors when a local template is added but doesn\'t actually exist', (done) ->
+    sprout.add(name: 'foobar', template: path.join(_path, 'not-there'))
+      .catch((err) ->
+        should.exist(err)
+        err.should.match /there is no sprout template located at/
+      ).done((-> done()), done)
+
   it '[list] lists available templates', (done) ->
     start = sprout.list().length
     sprout.add(name: 'foobar', template: test_template_path, options: {foo: 'bar'})
@@ -157,6 +164,15 @@ describe 'js api', ->
       .then(-> sprout.remove('foobar-5'))
       .done((-> done()), done)
 
+  it '[init] errors when template does not have `root` directory', (done) ->
+    test_template = path.join(_path, 'no-root')
+    sprout.add(name: 'foobar-6', template: test_template)
+      .then(-> sprout.init(name: 'foobar-6', path: test_path))
+      .catch((err) ->
+        should.exist(err)
+        err.should.match /template does not contain root directory/
+      ).done((-> done()), done)
+
 describe 'cli', ->
 
   it '[add] errors when no args provided', ->
@@ -218,11 +234,7 @@ describe 'cli', ->
     rm('-rf', test_path)
     rmcmd = @exec("#{@$} remove foobar")
 
+  # these tests require a better way of responding to the command-line
+  # prompts. they will remain stubbed for ref until a new solution is found
   it '[init] creates a project with multiple inquirer inputs'
   it '[init] errors when prompt entry doesn\'t pass validation'
-  it '[init] errors when template does not have `root` directory'
-  it '[init] errors when template does not have `init.coffee` in root dir'
-  it '[init] errors when template has malformed `init.coffee`'
-  it '[init] errors when template does not have and `init.coffee` in root dir'
-  it '[init] does not error when ejs has a key not present in @config_values'
-  it '[add] errors when a local template is added but doesn\'t actually exist'

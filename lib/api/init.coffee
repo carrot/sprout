@@ -82,7 +82,10 @@ class Init extends Base
       .catch(-> return W.resolve())
 
   copy_template = ->
-    nodefn.call(ncp, path.join(@sprout_path, 'root'), @target)
+    root_path = path.join(@sprout_path, 'root')
+    if not fs.existsSync(root_path)
+      return W.reject('template does not contain root directory')
+    nodefn.call(ncp, root_path, @target)
 
   replace_ejs = ->
     nodefn.call(readdirp, { root: @target })
