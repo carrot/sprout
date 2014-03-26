@@ -2,9 +2,12 @@ require 'shelljs/global'
 path = require 'path'
 fs = require 'fs'
 should = require 'should'
+_path  = path.join(__dirname, 'fixtures')
 sprout = require '..'
 
-test_template_url = 'https://github.com/jenius/sprout-test-template.git'
+test_template_url  = 'https://github.com/carrot/sprout-test-template.git'
+test_template_path = path.join(_path, 'basic')
+test_path          = path.join(__dirname, 'testproj')
 
 before ->
   @exec = (cmd) -> exec(cmd, {silent: true})
@@ -20,17 +23,47 @@ describe 'js api', ->
     sprout.add(name: 'foobar')
       .catch((err) -> should.exist(err); done())
 
-  it '[add] saves/removes the template when passed a valid url', (done) ->
-    sprout.add(name: 'foobar', url: test_template_url)
+  it '[add] saves/removes the template when passed a valid http url', (done) ->
+    sprout.add(name: 'foobar', template: test_template_url)
       .tap(-> fs.existsSync(sprout.path('foobar')).should.be.ok)
       .then(-> sprout.remove('foobar'))
       .tap(-> fs.existsSync(sprout.path('foobar')).should.not.be.ok)
       .done((-> done()), done)
 
+  it '[add] saves/removes the template when passed a local path', (done) ->
+    sprout.add(name: 'foobar', template: test_template_path)
+      .tap(-> fs.existsSync(sprout.path('foobar')).should.be.ok)
+      .then(-> sprout.remove('foobar'))
+      .tap(-> fs.existsSync(sprout.path('foobar')).should.not.be.ok)
+      .done((-> done()), done)
+
+  it '[add] replaces existing template on add', (done) ->
+    sprout.add(name: 'foobar', template: test_template_path)
+      .tap(->
+        fs.existsSync(sprout.path('foobar')).should.be.ok
+        contents = fs.readFileSync(path.join(sprout.path('foobar'), 'init.coffee'), 'utf8')
+        contents.should.match /basic foo/
+      )
+      .then(-> sprout.add(name: 'foobar', template: test_template_url))
+      .tap(->
+        fs.existsSync(sprout.path('foobar')).should.be.ok
+        contents = fs.readFileSync(path.join(sprout.path('foobar'), 'init.coffee'), 'utf8')
+        contents.should.match /is foo/
+      )
+      .then(-> sprout.remove('foobar'))
+      .done((-> done()), done)
+
+  it '[add] errors when a local template is added but doesn\'t actually exist', (done) ->
+    sprout.add(name: 'foobar', template: path.join(_path, 'not-there'))
+      .catch((err) ->
+        should.exist(err)
+        err.should.match /there is no sprout template located at/
+      ).done((-> done()), done)
+
   it '[list] lists available templates', (done) ->
-    sprout.list().length.should.eql(0)
-    sprout.add(name: 'foobar', url: 'https://github.com/carrot/sprout')
-      .tap(-> sprout.list().length.should.eql(1))
+    start = sprout.list().length
+    sprout.add(name: 'foobar', template: test_template_path, options: {foo: 'bar'})
+      .tap(-> sprout.list().length.should.eql(start + 1))
       .then(-> sprout.remove('foobar'))
       .done((-> done()), done)
 
@@ -43,31 +76,102 @@ describe 'js api', ->
       .catch((err) -> should.exist(err); done())
 
   it '[init] creates a project template correctly', (done) ->
-    basic_path = path.join(__dirname, 'fixtures/basic')
-    test_path = path.join(__dirname, 'testproj')
+    test_template = path.join(_path, 'basic')
 
-    sprout.add(name: 'foobar', url: test_template_url)
-      .then(-> sprout.init(template: 'foobar', path: test_path, options: { foo: 'bar' }))
+    sprout.add(name: 'foobar', template: test_template)
+      .then(-> sprout.init(name: 'foobar', path: test_path, options: { foo: 'bar'}))
       .tap(->
         fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
         contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
         contents.should.match /bar/
         rm('-rf', test_path)
-      ).then(-> sprout.remove('foobar'))
+      )
+      .then(-> sprout.remove('foobar'))
       .done((-> done()), done)
 
   it '[init] creates a project template from a branch', (done) ->
-    basic_path = path.join(__dirname, 'fixtures/basic')
-    test_path = path.join(__dirname, 'testproj')
-
-    sprout.add(name: 'foobar', url: "#{test_template_url}#alt")
-      .then(-> sprout.init(template: 'foobar', path: test_path, options: { foo: 'bar' }))
+    sprout.add(name: 'foobar-2', template: "#{test_template_url}#alt")
+      .then(-> sprout.init(name: 'foobar-2', path: test_path, options: { foo: 'bar' }))
       .tap(->
         contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
         contents.should.match /alternate/
         rm('-rf', test_path)
+      ).then(-> sprout.remove('foobar-2'))
+      .done((-> done()), done)
+
+  it "[init] creates a project by overriding inquirer's question types", (done) ->
+    test_template = path.join(_path, 'override')
+
+    opts =
+      foo: "bar"
+      snow: true
+      size: "Medium"
+      liquid: '7up'
+
+    sprout.add(name: 'foobar', template: test_template)
+      .then(-> sprout.init(name: 'foobar', path: test_path, options: opts))
+      .tap(->
+        contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+        contents.should.match /foo/
+        contents.should.match /you know nothing jon snow/
+        contents.should.match /Medium/
+        contents.should.match /7up/
+        rm('-rf', test_path)
       ).then(-> sprout.remove('foobar'))
       .done((-> done()), done)
+
+  it '[init] executes before function', (done) ->
+    test_template = path.join(_path, 'before')
+    new_path      = path.join(__dirname, 'newproj')
+
+    sprout.add(name: 'foobar-3', template: test_template)
+      .then(-> sprout.init(name: 'foobar-3', path: test_path, options: {foo: 'bar'}))
+      .tap(->
+        p = path.join(new_path, 'index.html')
+        exists = fs.existsSync(p).should.be.ok
+        contents = fs.readFileSync(path.join(new_path, 'index.html'), 'utf8')
+        contents.should.match /bar/
+        rm('-rf', new_path)
+      )
+      .then(-> sprout.remove('foobar-3'))
+      .done((-> done()), done)
+
+  it '[init] executes after function', (done) ->
+    test_template = path.join(_path, 'after')
+
+    sprout.add(name: 'foobar-4', template: test_template)
+      .then(-> sprout.init(name: 'foobar-4', path: test_path, options: {foo: 'bar'}))
+      .tap(->
+        fs.existsSync(path.join(test_path, 'findex.html')).should.be.ok
+        contents = fs.readFileSync(path.join(test_path, 'findex.html'), 'utf8')
+        contents.should.match /bar/
+        rm('-rf', test_path)
+      )
+      .then(-> sprout.remove('foobar-4'))
+      .done((-> done()), done)
+
+  it '[init] includes String.js in ejs compilation', (done) ->
+    test_template = path.join(_path, 'stringjs')
+
+    sprout.add(name: 'foobar-5', template: test_template)
+      .then(-> sprout.init(name: 'foobar-5', path: test_path, options: {user_model: 'user'}))
+      .tap(->
+        fs.existsSync(path.join(test_path, 'user.rb')).should.be.ok
+        contents = fs.readFileSync(path.join(test_path, 'user.rb'), 'utf8')
+        contents.should.match /class User/
+        rm('-rf', test_path)
+      )
+      .then(-> sprout.remove('foobar-5'))
+      .done((-> done()), done)
+
+  it '[init] errors when template does not have `root` directory', (done) ->
+    test_template = path.join(_path, 'no-root')
+    sprout.add(name: 'foobar-6', template: test_template)
+      .then(-> sprout.init(name: 'foobar-6', path: test_path))
+      .catch((err) ->
+        should.exist(err)
+        err.should.match /template does not contain root directory/
+      ).done((-> done()), done)
 
 describe 'cli', ->
 
@@ -90,8 +194,6 @@ describe 'cli', ->
   it '[list] lists available templates', ->
     cmd = @exec("#{@$} list")
     cmd.code.should.eql(0)
-    cmd.output.should.match /Templates/
-    cmd.output.should.match /no templates present/
     cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
     cmd = @exec("#{@$} list")
@@ -109,14 +211,30 @@ describe 'cli', ->
     cmd.code.should.be.above(0)
 
   it '[init] creates a project template correctly', ->
-    test_path = path.join(__dirname, 'testproj')
-
     cmd = @exec("#{@$} add foobar #{test_template_url}")
     cmd.code.should.eql(0)
     cmd = @exec("#{@$} init foobar #{test_path} --foo bar")
+
     cmd.code.should.eql(0)
     fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
     contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
     contents.should.match /bar/
     rm('-rf', test_path)
     rmcmd = @exec("#{@$} remove foobar")
+
+  it '[new] runs sprout.init when `sprout new` is attempted', ->
+    cmd = @exec("#{@$} add foobar #{test_template_url}")
+    cmd.code.should.eql(0)
+    cmd = @exec("#{@$} new foobar #{test_path} --foo bar")
+
+    cmd.code.should.eql(0)
+    fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+    contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+    contents.should.match /bar/
+    rm('-rf', test_path)
+    rmcmd = @exec("#{@$} remove foobar")
+
+  # these tests require a better way of responding to the command-line
+  # prompts. they will remain stubbed for ref until a new solution is found
+  it '[init] creates a project with multiple inquirer inputs'
+  it '[init] errors when prompt entry doesn\'t pass validation'

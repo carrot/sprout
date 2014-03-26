@@ -26,37 +26,43 @@ Sprout can be used directly through the command line to intitialize projects. On
 
 Command params in `[brackets]` are optional, and in `<angle_brackets>` are required.
 
-##### Add Template
+#### Add Template
+**Command**:  
+`sprout add [name] <clone_url_or_path>`
 
-* * *
+**Description**: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
 
-_Command Syntax_: `sprout add [name] <clone_url> [options]`     
-_Description_: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout, and clone url is a url that `git clone` could be run with and it would be successful. If no name is provided, sprout will use the last piece of the clone url as the name.  
-_Options:_  `--local` allows you to symlink a local project for active development. use a `path` instead of a `clone_url`
+---
 
+#### Remove Template
+**Command**:  
+`sprout remove <name>`  
 
-##### Remove Template
+**Description**: Removes the template with the specified name from sprout.
 
-* * *
+---
 
-_Command Syntax_: `sprout remove <name>`    
-_Description_: Removes the template with the specified name from sprout.
+#### List Templates
+**Command**:  
+`sprout list`
 
-##### List Templates
-
-* * *
-
-_Command Syntax_: `sprout list`    
 _Description_: Lists all templates that you have added to sprout.
 
-##### Initialize Template
+---
 
-* * *
+#### Initialize Template
+**Command**:  
+`sprout init <name> [path] [options]`  
 
-_Command Syntax_: `sprout init <name> [path]`    
-_Description_: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
+**Description**: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
 
-Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.
+Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.  
+
+**Options**: You can pass override arguments like `--foo bar --fun true` as options which will override the prompts set in your templates.
+
+> **Note**: Options overrides set from the command line will only be passed to your ejs templates as either a string or a boolean. This means that when overriding there are many powerful features from inquirer.js (like validation) that you won't be able to take advantage of.
+
+---
 
 ### Javascript API
 
@@ -68,7 +74,7 @@ sprout = require 'sprout'
 
 # Adding a template
 # -----------------
-sprout.add({ name: 'node', url: 'https://github.com/carrot/sprout-node', options: {local: false} })
+sprout.add({ name: 'node', template: 'https://github.com/carrot/sprout-node', options: {local: false} })
   .catch(console.error.bind(console))
   .done(-> console.log('template added!'))
 
@@ -92,7 +98,7 @@ console.log sprout.list(pretty: true)
 # -----------------------
 
 sprout.init({
-  template: 'node',
+  name: 'node',
   path: path.join(process.cwd(), 'new_project'),
   options: { foo: 'bar' } # optional, will prompt if not provided
 }).catch(console.error.bind(console))
@@ -125,6 +131,7 @@ license.md
 
 So a folder called `root` where the actual template goes, an `init.coffee` where we'll set up the config and stuff, and then any other files you need like a readme and license, which will *not* be included with the template. If you don't want any config options, you don't even need the `init.coffee`, just the `root` folder with the files in it and that's it. But let's assume you are after some additional configuration and jump into `init.coffee`.
 
+
 ```coffee
 
 # This function is executed before any of the configuration happens.
@@ -140,15 +147,25 @@ exports.before = (sprout, done) ->
 # allows you to configure a slightly more customizable prompt.
 
 # The 'prompt' option in an object has a couple of preset values you
-# conforms to the configuration used by flatiron/prompt, found here:
-# https://github.com/flatiron/prompt#valid-property-settings
+# conforms to the configuration used by SBoudrias/Inquirer.js, found here:
+# https://github.com/SBoudrias/Inquirer.js#question
 exports.configure = [
-  'name',
-  'github_url',
-  { name: 'travis'
-    message: 'use travis-ci? (y/n)'
-    validator: /y|n/
-    default: 'y' }
+  {
+    type: 'input',
+    name: 'foo',
+    message: 'What is foo?'
+  },
+  {
+    type: 'input',
+    name: 'github_handle',
+    message: 'What is your github handle?'
+  },
+  {
+    type: "confirm",
+    name: "travis",
+    message: "Do you want to utilize Travis CI?",
+    default: false
+  },
 ]
 
 # This function is executed after the configuration info is collected.
@@ -156,9 +173,15 @@ exports.configure = [
 # extra files etc. You have the full power of node at your fingertips here.
 exports.after = (sprout, done) ->
   console.log sprout.config_values # all the config values you collected
-  if not sprout.config_values.travis == 'y' then sprout.remove('.travis.yml')
+  if not sprout.config_values.travis then sprout.remove('.travis.yml')
   done()
 
+```
+
+We also provide you the power of [String.js](http://stringjs.com/) in all of your ejs templates. This means you can run powerful string operations on your user input like:
+
+```js
+class <%= S('user_model').capialize().s; %> // given 'user_model' is prompted by your init.coffee
 ```
 
 So between this config file and the root folder, you should be able to make anything happen fairly easily. If not, please open up and issue and we'll try to make it happening-er and/or easier for you : )
