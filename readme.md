@@ -3,6 +3,7 @@
 [![npm](https://badge.fury.io/js/sprout.png)](http://badge.fury.io/js/sprout)
 [![tests](https://travis-ci.org/carrot/sprout.png?branch=master)](https://travis-ci.org/carrot/sprout)
 [![dependencies](https://david-dm.org/carrot/sprout.png?theme=shields.io)](https://david-dm.org/carrot/sprout)
+[![Coverage Status](https://coveralls.io/repos/carrot/sprout/badge.png?branch=cli-refactor)](https://coveralls.io/r/carrot/sprout?branch=cli-refactor)
 
 Simple new project templating
 
