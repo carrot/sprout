@@ -31,7 +31,7 @@
     "rimraf": "2.x",
     "ncp": "0.5.x",
     "ejs": "1.x",
-    "readdirp": "0.3.x",
+    "readdirp": "1.0.x",
     "when": "3.x",
     "mkdirp": "0.3.x",
     "which": "1.0.x",
