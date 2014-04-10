@@ -1,12 +1,12 @@
-which = require 'which'
-W = require 'when'
+which  = require 'which'
+W      = require 'when'
 nodefn = require 'when/node/function'
-exec = require('child_process').exec
-Base = require '../base'
-fs = require 'fs'
-path = require 'path'
+exec   = require('child_process').exec
+Base   = require '../base'
+fs     = require 'fs'
+path   = require 'path'
 rimraf = require 'rimraf'
-url = require 'url'
+url    = require 'url'
 
 class Add extends Base
 
@@ -29,8 +29,7 @@ class Add extends Base
       return W.reject('your template needs a name!')
 
     @name     = opts.name
-    @template = opts.template
-    @options  = opts.options || {}
+    @template = opts.uri
     @local    = false
 
     if @name and not @template

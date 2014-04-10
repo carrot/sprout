@@ -1,37 +1,38 @@
-path = require 'path'
-fs = require 'fs'
-W = require 'when'
-nodefn = require 'when/node'
-nodecb = require 'when/callbacks'
+path     = require 'path'
+fs       = require 'fs'
+W        = require 'when'
+nodefn   = require 'when/node'
+nodecb   = require 'when/callbacks'
 readdirp = require 'readdirp'
-ncp = require('ncp').ncp
-exec = require('child_process').exec
-ejs = require 'ejs'
+ncp      = require('ncp').ncp
+exec     = require('child_process').exec
+ejs      = require 'ejs'
 inquirer = require 'inquirer'
-Base = require '../base'
-S = require 'string'
-_ = require 'lodash'
+Base     = require '../base'
+S        = require 'string'
+_        = require 'lodash'
 
 class Init extends Base
 
   constructor: -> super
 
   execute: (opts) ->
-
     configure_options.call(@, opts).with(@)
       .then(get_user_init_file)
       .then(run_user_before_function)
       .then(remove_overrides_from_prompt)
+      .then(add_defaults_to_questions)
       .then(prompt_user_for_answers)
       .then(merge_config_values_with_overrides)
       .then(ensure_template_is_updated)
       .then(copy_template)
       .then(replace_ejs)
       .then(run_user_after_function)
-      .yield("project created at '#{@target}'!")
+      .then(-> "project created at '#{@target}'!")
 
   # intended for use in the after function, quick way to remove
   # files/folders that users wanted to nix after the prompts.
+  # TODO: this should be refactored out into a separate utils module
   remove: (f) ->
     fs.unlinkSync(path.resolve(@target, f))
 
@@ -45,9 +46,16 @@ class Init extends Base
 
     @name        = opts.name
     @target      = opts.path
-    @options     = opts.options
-    @sprout_path = @path(@name)
+    @overrides   = opts.overrides || []
+    @defaults    = opts.defaults
     @answers     = {}
+    @sprout_path = @path(@name)
+
+    # transform overrides paired array to object
+    if Array.isArray(@overrides)
+      @overrides = @overrides.reduce (m, v, i) =>
+        (if i % 2 == 0 then m[v] = @overrides[i+1]); m
+      , {}
 
     if not fs.existsSync(@sprout_path)
       return W.reject("template '#{@name}' does not exist")
@@ -66,8 +74,15 @@ class Init extends Base
     nodefn.call(@config.before, @)
 
   remove_overrides_from_prompt = ->
-    keys = _.keys(@options)
+    keys = _.keys(@overrides)
     @questions = _.reject(@config.configure, (v) -> _.contains(keys, v.name) )
+
+  add_defaults_to_questions = ->
+    if not @defaults then return
+
+    for q, i in @questions
+      if val = _.find(@defaults, (v,k) -> k == q.name)
+        @questions[i].default = val
 
   prompt_user_for_answers = ->
     if not @questions.length then return W.resolve()
@@ -75,7 +90,7 @@ class Init extends Base
       .then((o) => @answers = o)
 
   merge_config_values_with_overrides = ->
-    @config_values = _.assign(@answers, @options)
+    @config_values = _.assign(@answers, @overrides)
 
   ensure_template_is_updated = ->
     nodefn.call(exec, "cd #{@sprout_path} && git pull")
