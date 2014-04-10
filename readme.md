@@ -13,7 +13,7 @@ Simple new project templating
 
 A lot of the time you make projects with similar starting templates/boilerplates. There are a number of different standard boilerplates out there (like h5bp), but everyone has their own preferences and tweaks. The goal of sprout is to allow you to write a base template once that is somewhat configurable where it needs to be then initialize the template with the options you choose from the command line or through a javascript API to get a jumpstart on your project.
 
-There is another project called [grunt-init](https://github.com/gruntjs/grunt-init) that does just about the same thing, but after [experimenting with it](https://github.com/carrot/grunt-init-node) a bit, we weren't huge fans of the API or the way that it was set up.
+We are aware that the [yeoman project](https://github.com/yeoman/yo) serves a similar purpose, but built this anyway because we needed a project with a very clean and understandable generator API as well as a public javascript API for integration into other projects, and yeoman does not have either of these.
 
 ### Installation
 

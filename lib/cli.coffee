@@ -61,6 +61,7 @@ class CLI
     s.addArgument ['name'],
       help: 'Name of the template you want to add'
     s.addArgument ['uri'],
+      nargs: '?'
       help: 'A `git clone`-able url or local path to your template'
 
     s.setDefaults(fn: 'add')
