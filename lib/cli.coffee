@@ -88,13 +88,11 @@ class CLI
       help: 'Create a new sprout project from a template'
 
     s.addArgument ['name'],
-      help: 'Name of the project you are creating'
+      help: 'Name of the template you want to use'
     s.addArgument ['path'],
       nargs: '?'
       default: process.cwd()
       help: 'Path where you want to create your project'
-    s.addArgument ['--template', '--tpl', '-t'],
-      help: 'Name of the template you want to use'
     s.addArgument ['--overrides', '-o'],
       nargs: '*'
       help: 'Space-separated override key-value pairs to be passed to the template'

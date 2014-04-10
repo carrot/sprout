@@ -3,7 +3,7 @@ sprout(1) -- simple project templating
 
 ## SYNOPSIS
 
-`sprout add <name> <url>`    
+`sprout add <name> <uri>`    
 `sprout remove <name>`    
 `sprout list`    
 `sprout init`
@@ -14,17 +14,15 @@ Sprout helps with templating for new projects. It allows management of different
 
 Underlined parameters are required, non-underlined optional.
 
-[github repo](https://github.com/carrot/sprout)
-
 ## ADD
 
-  `add` name <url>    
-  add the template at <url> as <name>, if provided. if not, uses the final portion of the  url. as the name.
+  `add` <name> <uri>    
+  add the template at <uri> as <name>. <uri> can be a git-clone-able url or local path.
 
 ## REMOVE
 
   `remove` <name>    
-  remove the template called <name>.
+  remove template <name> from sprout.
 
 ## LIST
 
@@ -33,14 +31,19 @@ Underlined parameters are required, non-underlined optional.
 
 ## INIT
   
-  `init` <name> path    
-  creates a new project with <name> template at <path>, if provided. if not, creates a new folder in the current directory called <name> for the project.
+  `init` <name> path  --overrides    
+  create a new project with <name> template at <path>, if provided. if not, creates a new folder in the current directory called <name> for the project. The optional overrides flag accepts a space-separated key-value paired list of prompt overrides.
 
 ## VERSION
 
-  `version`    
+  `--version`, `-v`     
   print the current version of sprout.
 
-## DOCUMENTATION
+## HELP
 
-Full docs can be found at http://github.com/carrot/sprout
+  `--help`, `-h`     
+  usage docs, can be run for every sub-command as well for command-specific docs.
+
+## SOURCE
+
+Full source and docs can be found at <http://github.com/carrot/sprout>.
