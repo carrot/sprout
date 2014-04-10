@@ -38,8 +38,8 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 **Command**:  
 `sprout remove <name>`
 
-**Description**: Removes the template with the specified name from sprout.    
-**Alises**: `rm`, `delete`
+**Description**: Removes the template with the specified name from sprout.
+**Aliases**: `rm`, `delete`
 
 ---
 
@@ -47,8 +47,8 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 **Command**:  
 `sprout list`
 
-**Description**: Lists all templates that you have added to sprout.    
-**Alises**: `ls`, `all`
+**Description**: Lists all templates that you have added to sprout.
+**Aliases**: `ls`, `all`
 
 ---
 
@@ -62,7 +62,7 @@ Sprout also comes with a [man page](man) and will display a help menu as a refre
 
 **Options**: You can pass override arguments like `-o key value key2 val2` as options which will override the prompts set in your templates.
 
-**Alises**: `new`, `create`
+**Aliases**: `new`, `create`
 
 > **Note**: Options overrides set from the command line will only be passed to your ejs templates as either a string or a boolean. This means that when overriding there are many powerful features from inquirer.js (like validation) that you won't be able to take advantage of.
 
