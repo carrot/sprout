@@ -123,6 +123,8 @@ console.log sprout.path('node')
 
 ### Writing Your Own Templates
 
+For an example, as well as a sprout template that helps you create new sprout templates, be sure to check out [sprout-sprout](https://github.com/carrot/sprout-sprout).
+
 Ok so enough about how this is used, I'm sure you are super excited at this point to get in there and write a template. Probably more excited than a [party gorilla](http://www.ivanwalsh.com/wp-content/uploads/2011/08/the-oatmeal-cartoon.jpg), which is pretty wild. So let's take a look.
 
 First thing you'll want to do is set up your project structure, which will probably look something like this:
