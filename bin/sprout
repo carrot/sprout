@@ -1,52 +1,16 @@
 #!/usr/bin/env node
 
 require('coffee-script/register');
-require('colors');
+var CLI = require('../lib/cli'),
+    cli = new CLI;
 
-var argv = require('optimist').argv,
-    commands = require('../lib/api');
+cli.emitter.on('data', function(data){
+  console.log(data.green);
+});
 
-// add sprout.new alias
-commands['new'] = function(){};
+cli.emitter.on('err', function(err){
+  console.error("ERROR: ".red + err);
+  process.exit(64);
+});
 
-// get command
-var name = argv._.splice(0,1)[0];
-var cmd = commands[name];
-if (!cmd) return commands.help()
-
-// execute command
-if (cmd.sync) {
-  res = cmd({ pretty: true });
-  if (res.error) return console.error("ERROR: ".red + res.error)
-  console.log(res)
-} else {
-  var p;
-  switch (name) {
-    case 'add':
-      // sprout add <name> <template>
-      p = cmd({ name: argv._[0], template: argv._[1] }); break;
-    case 'remove':
-      // sprout remove <name>
-      p = cmd(argv._[0]); break;
-    case 'list':
-      // sprout list <options>
-      p = cmd({ pretty: true, options: opts_only(argv) }); break;
-    case 'new':
-    case 'init':
-      // sprout init <name> <path> <options>
-      p = commands['init']({ name: argv._[0], path: argv._[1], options: opts_only(argv) }); break;
-  }
-
-  p.done(function(r){ console.log(r.green) }, function(err){
-    console.error("ERROR: ".red + err);
-    process.exit(64); // command line usage error
-  });
-}
-
-function opts_only(args){
-  var clone = JSON.parse(JSON.stringify(args))
-  delete clone._
-  delete clone['$0']
-  if (Object.keys(clone).length < 1) { return undefined }
-  return clone
-}
+cli.run(process.argv.slice(2));

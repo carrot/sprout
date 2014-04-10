@@ -3,6 +3,7 @@
 [![npm](https://badge.fury.io/js/sprout.png)](http://badge.fury.io/js/sprout)
 [![tests](https://travis-ci.org/carrot/sprout.png?branch=master)](https://travis-ci.org/carrot/sprout)
 [![dependencies](https://david-dm.org/carrot/sprout.png?theme=shields.io)](https://david-dm.org/carrot/sprout)
+[![Coverage Status](https://coveralls.io/repos/carrot/sprout/badge.png?branch=cli-refactor)](https://coveralls.io/r/carrot/sprout?branch=cli-refactor)
 
 Simple new project templating
 
@@ -36,9 +37,10 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 
 #### Remove Template
 **Command**:  
-`sprout remove <name>`  
+`sprout remove <name>`
 
 **Description**: Removes the template with the specified name from sprout.
+**Aliases**: `rm`, `delete`
 
 ---
 
@@ -46,19 +48,22 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 **Command**:  
 `sprout list`
 
-_Description_: Lists all templates that you have added to sprout.
+**Description**: Lists all templates that you have added to sprout.
+**Aliases**: `ls`, `all`
 
 ---
 
 #### Initialize Template
 **Command**:  
-`sprout init <name> [path] [options]`  
+`sprout init <name> [path] [overrides]`
 
 **Description**: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
 
 Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.  
 
-**Options**: You can pass override arguments like `--foo bar --fun true` as options which will override the prompts set in your templates.
+**Options**: You can pass override arguments like `-o key value key2 val2` as options which will override the prompts set in your templates.
+
+**Aliases**: `new`, `create`
 
 > **Note**: Options overrides set from the command line will only be passed to your ejs templates as either a string or a boolean. This means that when overriding there are many powerful features from inquirer.js (like validation) that you won't be able to take advantage of.
 
@@ -74,7 +79,7 @@ sprout = require 'sprout'
 
 # Adding a template
 # -----------------
-sprout.add({ name: 'node', template: 'https://github.com/carrot/sprout-node', options: {local: false} })
+sprout.add({ name: 'node', uri: 'https://github.com/carrot/sprout-node' })
   .catch(console.error.bind(console))
   .done(-> console.log('template added!'))
 
@@ -100,7 +105,8 @@ console.log sprout.list(pretty: true)
 sprout.init({
   name: 'node',
   path: path.join(process.cwd(), 'new_project'),
-  options: { foo: 'bar' } # optional, will prompt if not provided
+  overrides: { foo: 'bar' } # optional, will prompt if not provided
+  defaults: { name: 'suggested name'} # optional
 }).catch(console.error.bind(console))
   .done(-> console.log('project initialized!'))
 
@@ -116,6 +122,8 @@ console.log sprout.path('node')
 ```
 
 ### Writing Your Own Templates
+
+For an example, as well as a sprout template that helps you create new sprout templates, be sure to check out [sprout-sprout](https://github.com/carrot/sprout-sprout).
 
 Ok so enough about how this is used, I'm sure you are super excited at this point to get in there and write a template. Probably more excited than a [party gorilla](http://www.ivanwalsh.com/wp-content/uploads/2011/08/the-oatmeal-cartoon.jpg), which is pretty wild. So let's take a look.
 

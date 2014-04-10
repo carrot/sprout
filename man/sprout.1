@@ -1,13 +1,13 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "SPROUT" "1" "December 2013" "" ""
+.TH "SPROUT" "1" "April 2014" "" ""
 .
 .SH "NAME"
 \fBsprout\fR \- simple project templating
 .
 .SH "SYNOPSIS"
-\fBsprout add <name> <url>\fR
+\fBsprout add <name> <uri>\fR
 .
 .br
 \fBsprout remove <name>\fR
@@ -24,20 +24,17 @@ Sprout helps with templating for new projects\. It allows management of differen
 .P
 Underlined parameters are required, non\-underlined optional\.
 .
-.P
-github repo \fIhttps://github\.com/carrot/sprout\fR
-.
 .SH "ADD"
-\fBadd\fR name \fIurl\fR
+\fBadd\fR \fIname\fR \fIuri\fR
 .
 .br
-add the template at \fIurl\fR as \fIname\fR, if provided\. if not, uses the final portion of the url\. as the name\.
+add the template at \fIuri\fR as \fIname\fR\. \fIuri\fR can be a git\-clone\-able url or local path\.
 .
 .SH "REMOVE"
 \fBremove\fR \fIname\fR
 .
 .br
-remove the template called \fIname\fR\.
+remove template \fIname\fR from sprout\.
 .
 .SH "LIST"
 \fBlist\fR
@@ -46,16 +43,22 @@ remove the template called \fIname\fR\.
 list all the templates that have been added to sprout\.
 .
 .SH "INIT"
-\fBinit\fR \fIname\fR path
+\fBinit\fR \fIname\fR path \-\-overrides
 .
 .br
-creates a new project with \fIname\fR template at \fIpath\fR, if provided\. if not, creates a new folder in the current directory called \fIname\fR for the project\.
+create a new project with \fIname\fR template at \fIpath\fR, if provided\. if not, creates a new folder in the current directory called \fIname\fR for the project\. The optional overrides flag accepts a space\-separated key\-value paired list of prompt overrides\.
 .
 .SH "VERSION"
-\fBversion\fR
+\fB\-\-version\fR, \fB\-v\fR
 .
 .br
 print the current version of sprout\.
 .
-.SH "DOCUMENTATION"
-Full docs can be found at http://github\.com/carrot/sprout
+.SH "HELP"
+\fB\-\-help\fR, \fB\-h\fR
+.
+.br
+usage docs, can be run for every sub\-command as well for command\-specific docs\.
+.
+.SH "SOURCE"
+Full source and docs can be found at \fIhttp://github\.com/carrot/sprout\fR\.

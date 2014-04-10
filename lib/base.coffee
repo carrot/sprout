@@ -1,8 +1,8 @@
-path = require 'path'
-fs = require 'fs'
+path   = require 'path'
+fs     = require 'fs'
 crypto = require 'crypto'
-os = require 'os'
-osenv = require 'osenv'
+os     = require 'os'
+osenv  = require 'osenv'
 mkdirp = require 'mkdirp'
 
 class Base

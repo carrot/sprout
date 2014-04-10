@@ -61,7 +61,8 @@
     <a href="#LIST">LIST</a>
     <a href="#INIT">INIT</a>
     <a href="#VERSION">VERSION</a>
-    <a href="#DOCUMENTATION">DOCUMENTATION</a>
+    <a href="#HELP">HELP</a>
+    <a href="#SOURCE">SOURCE</a>
   </div>
 
   <ol class='man-decor man-head man head'>
@@ -77,7 +78,7 @@
 
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-<p><code>sprout add &lt;name> &lt;url></code>  <br />
+<p><code>sprout add &lt;name> &lt;uri></code>  <br />
 <code>sprout remove &lt;name></code>  <br />
 <code>sprout list</code>  <br />
 <code>sprout init</code></p>
@@ -88,17 +89,15 @@
 
 <p>Underlined parameters are required, non-underlined optional.</p>
 
-<p><a href="https://github.com/carrot/sprout">github repo</a></p>
-
 <h2 id="ADD">ADD</h2>
 
-<p>  <code>add</code> name <var>url</var>  <br />
-  add the template at <var>url</var> as <var>name</var>, if provided. if not, uses the final portion of the  url. as the name.</p>
+<p>  <code>add</code> <var>name</var> <var>uri</var>  <br />
+  add the template at <var>uri</var> as <var>name</var>. <var>uri</var> can be a git-clone-able url or local path.</p>
 
 <h2 id="REMOVE">REMOVE</h2>
 
 <p>  <code>remove</code> <var>name</var>  <br />
-  remove the template called <var>name</var>.</p>
+  remove template <var>name</var> from sprout.</p>
 
 <h2 id="LIST">LIST</h2>
 
@@ -107,22 +106,27 @@
 
 <h2 id="INIT">INIT</h2>
 
-<p>  <code>init</code> <var>name</var> path  <br />
-  creates a new project with <var>name</var> template at <var>path</var>, if provided. if not, creates a new folder in the current directory called <var>name</var> for the project.</p>
+<p>  <code>init</code> <var>name</var> path  --overrides  <br />
+  create a new project with <var>name</var> template at <var>path</var>, if provided. if not, creates a new folder in the current directory called <var>name</var> for the project. The optional overrides flag accepts a space-separated key-value paired list of prompt overrides.</p>
 
 <h2 id="VERSION">VERSION</h2>
 
-<p>  <code>version</code>  <br />
+<p>  <code>--version</code>, <code>-v</code>   <br />
   print the current version of sprout.</p>
 
-<h2 id="DOCUMENTATION">DOCUMENTATION</h2>
+<h2 id="HELP">HELP</h2>
 
-<p>Full docs can be found at http://github.com/carrot/sprout</p>
+<p>  <code>--help</code>, <code>-h</code>   <br />
+  usage docs, can be run for every sub-command as well for command-specific docs.</p>
+
+<h2 id="SOURCE">SOURCE</h2>
+
+<p>Full source and docs can be found at <a href="http://github.com/carrot/sprout" data-bare-link="true">http://github.com/carrot/sprout</a>.</p>
 
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
-    <li class='tc'>December 2013</li>
+    <li class='tc'>April 2014</li>
     <li class='tr'>sprout(1)</li>
   </ol>
 

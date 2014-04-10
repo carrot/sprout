@@ -6,7 +6,7 @@
     "Jeff Escalante <hello@jenius.me>"
   ],
   "description": "Simple project templating",
-  "main": "index.js",
+  "main": "lib",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,27 +26,33 @@
   "dependencies": {
     "coffee-script": "1.7.x",
     "colors": "0.6.x",
-    "optimist": "0.6.x",
     "indx": "0.1.x",
     "osenv": "0.0.x",
     "rimraf": "2.x",
     "ncp": "0.5.x",
-    "ejs": "0.8.x",
+    "ejs": "1.x",
     "readdirp": "0.3.x",
     "when": "3.x",
     "mkdirp": "0.3.x",
     "which": "1.0.x",
     "inquirer": "0.4.x",
     "lodash": "2.4.x",
-    "string": "1.8.x"
+    "string": "1.8.x",
+    "argparse": "0.1.x"
   },
   "devDependencies": {
     "mocha": "*",
     "should": "*",
-    "shelljs": "0.2.x"
+    "shelljs": "0.2.x",
+    "rimraf": "2.x",
+    "coveralls": "2.x",
+    "mocha-lcov-reporter": "0.0.1",
+    "istanbul": "0.2.x"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "coverage": "make build; istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | rm -rf ./coverage; make unbuild",
+    "coveralls": "make build; istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage; make unbuild"
   },
   "engines": {
     "node": ">=0.10.0"

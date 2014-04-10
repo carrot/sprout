@@ -1,5 +1,4 @@
-Base = require('./base')
-base = new Base
+base = new (require('./base'))
 
 module.exports = require('./api')
 module.exports.path = base.path.bind(base)
