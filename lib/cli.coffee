@@ -92,7 +92,7 @@ class CLI
       help: 'Name of the template you want to use'
     s.addArgument ['path'],
       nargs: '?'
-      default: process.cwd()
+      defaultValue: process.cwd()
       help: 'Path where you want to create your project'
     s.addArgument ['--overrides', '-o'],
       nargs: '*'

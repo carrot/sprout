@@ -44,6 +44,7 @@ class Init extends Base
     if not opts or not opts.name
       return W.reject('your template needs a name!')
 
+    # perhaps name should be template?
     @name        = opts.name
     @target      = opts.path
     @overrides   = opts.overrides || []
@@ -92,6 +93,7 @@ class Init extends Base
   merge_config_values_with_overrides = ->
     @config_values = _.assign(@answers, @overrides)
 
+  # TODO: fix this
   ensure_template_is_updated = ->
     nodefn.call(exec, "cd #{@sprout_path} && git pull")
       .catch(-> return W.resolve())
