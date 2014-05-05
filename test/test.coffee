@@ -96,6 +96,38 @@ describe 'js api', ->
         .then -> sprout.remove('foobar')
         .should.be.fulfilled
 
+  describe 'utils', ->
+
+    it 'writes from a file in template root', (done) ->
+      utils_template = path.join(_path, 'utils-write-from')
+      sprout.add(name: 'utils-write-from', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-write-from', path: test_path, overrides: { name: 'bar' }))
+        .tap(->
+          bin_path = path.join(test_path, 'bar')
+          fs.existsSync(bin_path).should.be.ok
+        ).then(-> sprout.remove('utils-write-from'))
+        .done((-> done()), done)
+
+    it 'removes file', (done) ->
+      utils_template = path.join(_path, 'utils-remove')
+      sprout.add(name: 'utils-remove', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-remove', path: test_path, overrides: { name: 'bar' }))
+        .tap(->
+          remove_path = path.join(test_path, '.travis.yml')
+          fs.existsSync(remove_path).should.be.false
+        ).then(-> sprout.remove('utils-remove'))
+        .done((-> done()), done)
+
+    it 'write file', (done) ->
+      utils_template = path.join(_path, 'utils-write')
+      sprout.add(name: 'utils-write', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-write', path: test_path, overrides: { name: 'bar' }))
+        .tap(->
+          write_path = path.join(test_path, 'foo')
+          fs.readFileSync(write_path, 'utf8').should.match /bar/
+        ).then(-> sprout.remove('utils-write'))
+        .done((-> done()), done)
+
   describe 'init', ->
 
     before -> sprout = require '..'
