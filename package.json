@@ -33,9 +33,9 @@
     "ejs": "1.x",
     "readdirp": "1.0.x",
     "when": "3.x",
-    "mkdirp": "0.3.x",
+    "mkdirp": "0.5.x",
     "which": "1.0.x",
-    "inquirer": "0.4.x",
+    "inquirer": "0.5.x",
     "lodash": "2.4.x",
     "string": "1.8.x",
     "argparse": "0.1.x"
