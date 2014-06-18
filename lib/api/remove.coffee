@@ -8,7 +8,7 @@ class Remove extends Base
 
   constructor: -> super
 
-  execute: (opts) ->
+  execute: (opts = {}) ->
     if not fs.existsSync(@path(opts.name))
       return W.reject("template #{opts.name} does not exist")
 

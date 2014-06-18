@@ -5,8 +5,7 @@ class List extends Base
 
   constructor: (opts) ->
     super
-    if opts
-      if opts.pretty then @pretty = true
+    if opts and opts.pretty then @pretty = true
 
   execute: ->
     list = fs.readdirSync(@path())
