@@ -11,6 +11,7 @@ inquirer = require 'inquirer'
 Base     = require '../base'
 S        = require 'string'
 _        = require 'lodash'
+dns      = require 'dns'
 
 class Init extends Base
 
@@ -24,6 +25,7 @@ class Init extends Base
       .then(add_defaults_to_questions)
       .then(prompt_user_for_answers)
       .then(merge_config_values_with_overrides)
+      .then(check_internet_connection)
       .then(ensure_template_is_updated)
       .then(copy_template)
       .then(replace_ejs)
@@ -36,9 +38,9 @@ class Init extends Base
   remove: (f) ->
     fs.unlinkSync(path.resolve(@target, f))
 
-  #
-  # @api private
-  #
+  ###*
+   * @private
+  ###
 
   configure_options = (opts) ->
     if not opts or not opts.name
@@ -93,9 +95,13 @@ class Init extends Base
   merge_config_values_with_overrides = ->
     @config_values = _.assign(@answers, @overrides)
 
-  # TODO: fix this
-  ensure_template_is_updated = ->
-    nodefn.call(exec, "cd #{@sprout_path} && git pull")
+  check_internet_connection = ->
+    nodefn.call(dns.resolve, 'google.com')
+      .then(-> true).catch(-> false)
+
+  ensure_template_is_updated = (internet) ->
+    if not internet then return W.resolve()
+    nodefn.call(exec, "git pull", { cwd: @sprout_path })
       .catch(-> return W.resolve())
 
   copy_template = ->
