@@ -27,7 +27,7 @@
     "coffee-script": "1.7.x",
     "colors": "0.6.x",
     "indx": "0.1.x",
-    "osenv": "0.0.x",
+    "osenv": "0.1.x",
     "rimraf": "2.x",
     "ncp": "0.5.x",
     "ejs": "1.x",
@@ -48,7 +48,7 @@
     "mocha-lcov-reporter": "0.0.1",
     "mockery": "^1.4.0",
     "rimraf": "2.x",
-    "shelljs": "0.2.x",
+    "shelljs": "0.3.x",
     "should": "*"
   },
   "scripts": {
