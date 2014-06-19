@@ -190,3 +190,17 @@ class <%= S('user_model').capialize().s; %> // given 'user_model' is prompted by
 ```
 
 So between this config file and the root folder, you should be able to make anything happen fairly easily. If not, please open up and issue and we'll try to make it happening-er and/or easier for you : )
+
+### Versioning Templates
+
+Sometimes changes happen and you might want to be able to specify different versions of a single template. Sprout handles this through [git tags](http://git-scm.com/book/en/Git-Basics-Tagging). You can specify a tag as a version when you initialize a template by adding a version number after an `@` sign, as such (examples provided via CLI here):
+
+```
+$ sprout init my-template@0.1.2
+```
+
+If you do not specify any version, sprout will assume you are looking for `@latest`, a special sprout tag alias meaning "the most recent tag in your commit log".
+
+Although you are welcome to use whatever versioning system you are comfortable with, we would **strongly recommended** using [semver](http://semver.org/), the widely accepted standard in package versioning. This will provide you with a clear framework for managing situations when breaking changes have been made to your template.
+
+A couple edge cases to discuss. If you have not pushed any tags to your repo, sprout will simply take the latest commit. If you specify a tag that can't be found, you will get an error. If you specify both a branch and a version, the version will take priority (but don't do this please). And if your tag starts with a `v` followed immeditely by a number, sprout will ignore the `v`, for convenience and in accordance with the convention that starts git tags with `v` just to refer to the version.
