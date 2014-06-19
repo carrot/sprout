@@ -14,6 +14,7 @@ class Add extends Base
   constructor: -> super
 
   execute: (opts) ->
+    foo = 'wow'
     configure_options.call(@, opts).with(@)
       .then(determine_if_local)
       .then(ensure_local_template_exists)
@@ -72,8 +73,13 @@ class Add extends Base
 
   check_internet_connection = ->
     if @local then return W.resolve()
-    nodefn.call(dns.resolve, 'google.com')
-      .catch(-> throw 'make that you are connected to the internet!')
+    
+    try
+      nodefn.call(dns.resolve, 'google.com')
+        .catch(-> throw 'make that you are connected to the internet!')
+    catch e
+      console.log 'caught'
+      console.log(e)
 
   ###*
    * If a branch was passed via hash (github.com/foo/bar#some-branch), extract

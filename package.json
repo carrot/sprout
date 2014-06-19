@@ -41,13 +41,15 @@
     "argparse": "0.1.x"
   },
   "devDependencies": {
-    "mocha": "*",
-    "should": "*",
-    "shelljs": "0.2.x",
-    "rimraf": "2.x",
     "coveralls": "2.x",
+    "errno": "^0.1.1",
+    "istanbul": "0.2.x",
+    "mocha": "*",
     "mocha-lcov-reporter": "0.0.1",
-    "istanbul": "0.2.x"
+    "mockery": "^1.4.0",
+    "rimraf": "2.x",
+    "shelljs": "0.2.x",
+    "should": "*"
   },
   "scripts": {
     "test": "mocha",
