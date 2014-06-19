@@ -1,10 +1,13 @@
-path   = require 'path'
-fs     = require 'fs'
-should = require 'should'
-rimraf = require 'rimraf'
-_path  = path.join(__dirname, 'fixtures')
-sprout = require '..'
-cli    = new (require '../lib/cli')(debug: true)
+path    = require 'path'
+fs      = require 'fs'
+should  = require 'should'
+rimraf  = require 'rimraf'
+_path   = path.join(__dirname, 'fixtures')
+sprout  = require '..'
+cli     = new (require '../lib/cli')(debug: true)
+mockery = require 'mockery'
+errno   = require 'errno'
+_       = require 'lodash'
 
 test_template_url  = 'https://github.com/carrot/sprout-test-template.git'
 test_template_path = path.join(_path, 'basic')
@@ -59,6 +62,35 @@ describe 'js api', ->
           err.should.match /there is no sprout template located at/
         ).done((-> done()), done)
 
+    it 'errors when trying to add a remote template with no internet', (done) ->
+      mockery.enable(useCleanCache: true, warnOnUnregistered: false)
+      mockery.registerMock 'dns',
+        resolve: (name, cb) -> cb(errno.code.ECONNREFUSED)
+
+      sprout = require '..'
+
+      sprout.add(name: 'foobar', uri: test_template_url)
+        .catch (e) ->
+          e.should.eql('make that you are connected to the internet!')
+          done()
+
+      mockery.deregisterMock('dns')
+      mockery.disable()
+
+  describe 'remove', ->
+
+    it 'errors when trying to remove a nonexistant template', (done) ->
+      sprout.remove(name: 'blarg')
+        .catch (err) ->
+          err.should.eql('template blarg does not exist')
+          done()
+
+    it 'errors when not passed any arguments', (done) ->
+      sprout.remove()
+        .catch (err) ->
+          err.should.eql('you must pass the name of a template to remove')
+          done()
+
   describe 'list', ->
 
     it 'lists available templates', (done) ->
@@ -69,6 +101,8 @@ describe 'js api', ->
         .done((-> done()), done)
 
   describe 'init', ->
+
+    before -> sprout = require '..'
 
     it 'errors when no args provided', (done) ->
       sprout.init()
@@ -177,7 +211,46 @@ describe 'js api', ->
         .then(-> sprout.remove('foobar-6'))
         .done((-> done()), done)
 
+    it 'uses defaults correctly', (done) ->
+      test_template = path.join(_path, 'basic')
+
+      sprout.add(name: 'foobar-7', uri: test_template)
+        .then(-> sprout.init(name: 'foobar-7', path: test_path, defaults: { foo: 'bar' }, overrides: { foo: 'bar'}))
+        .tap(->
+          fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+          contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+          contents.should.match /bar/
+          rimraf.sync(test_path)
+        )
+        .then(-> sprout.remove('foobar-7'))
+        .done((-> done()), done)
+
+    it 'works even when not connected to the internet', (done) ->
+      mockery.enable(useCleanCache: true, warnOnUnregistered: false)
+      mockery.registerMock 'dns',
+        resolve: (name, cb) -> cb(errno.code.ECONNREFUSED)
+
+      sprout = require '..'
+      test_template = path.join(_path, 'basic')
+
+      sprout.add(name: 'foobar-8', uri: test_template)
+        .then(-> sprout.init(name: 'foobar-8', path: test_path, overrides: { foo: 'bar'}))
+        .tap(->
+          fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+          contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+          contents.should.match /bar/
+          rimraf.sync(test_path)
+        )
+        .then(-> sprout.remove('foobar-8'))
+        .done((-> done()), done)
+
+      mockery.deregisterMock('dns')
+      mockery.disable()
+
 describe 'cli', ->
+
+  it 'should initialize api without options', ->
+    (-> new (require '../lib/cli')() ).should.not.throw()
 
   describe 'add', ->
     
