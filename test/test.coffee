@@ -77,6 +77,20 @@ describe 'js api', ->
       mockery.deregisterMock('dns')
       mockery.disable()
 
+  describe 'remove', ->
+
+    it 'errors when trying to remove a nonexistant template', (done) ->
+      sprout.remove(name: 'blarg')
+        .catch (err) ->
+          err.should.eql('template blarg does not exist')
+          done()
+
+    it 'errors when not passed any arguments', (done) ->
+      sprout.remove()
+        .catch (err) ->
+          err.should.eql('you must pass the name of a template to remove')
+          done()
+
   describe 'list', ->
 
     it 'lists available templates', (done) ->
@@ -197,6 +211,20 @@ describe 'js api', ->
         .then(-> sprout.remove('foobar-6'))
         .done((-> done()), done)
 
+    it 'uses defaults correctly', (done) ->
+      test_template = path.join(_path, 'basic')
+
+      sprout.add(name: 'foobar-7', uri: test_template)
+        .then(-> sprout.init(name: 'foobar-7', path: test_path, defaults: { foo: 'bar' }, overrides: { foo: 'bar'}))
+        .tap(->
+          fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+          contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+          contents.should.match /bar/
+          rimraf.sync(test_path)
+        )
+        .then(-> sprout.remove('foobar-7'))
+        .done((-> done()), done)
+
     it 'works even when not connected to the internet', (done) ->
       mockery.enable(useCleanCache: true, warnOnUnregistered: false)
       mockery.registerMock 'dns',
@@ -205,21 +233,24 @@ describe 'js api', ->
       sprout = require '..'
       test_template = path.join(_path, 'basic')
 
-      sprout.add(name: 'foobar', uri: test_template)
-        .then(-> sprout.init(name: 'foobar', path: test_path, overrides: { foo: 'bar'}))
+      sprout.add(name: 'foobar-8', uri: test_template)
+        .then(-> sprout.init(name: 'foobar-8', path: test_path, overrides: { foo: 'bar'}))
         .tap(->
           fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
           contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
           contents.should.match /bar/
           rimraf.sync(test_path)
         )
-        .then(-> sprout.remove('foobar'))
+        .then(-> sprout.remove('foobar-8'))
         .done((-> done()), done)
 
       mockery.deregisterMock('dns')
       mockery.disable()
 
 describe 'cli', ->
+
+  it 'should initialize api without options', ->
+    (-> new (require '../lib/cli')() ).should.not.throw()
 
   describe 'add', ->
     
