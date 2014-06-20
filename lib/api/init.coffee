@@ -27,6 +27,7 @@ class Init extends Base
       .then(merge_config_values_with_overrides)
       .then(check_internet_connection)
       .then(ensure_template_is_updated)
+      .then(checkout_version)
       .then(copy_template)
       .then(replace_ejs)
       .then(run_user_after_function)
@@ -52,6 +53,11 @@ class Init extends Base
     @overrides   = opts.overrides || []
     @defaults    = opts.defaults
     @answers     = {}
+    @version     = parse_version(@name) or ''
+
+    # if we have a version, remove it and the @ from the name
+    if @version.length then @name = @name.replace(@version, '').slice(0,-1)
+    
     @sprout_path = @path(@name)
 
     # transform overrides paired array to object
@@ -66,6 +72,10 @@ class Init extends Base
     if not @target then @target = path.join(process.cwd(), @name)
 
     W.resolve()
+
+  parse_version = (name) ->
+    match = name.match(/@+([^@]*)$/)
+    if match then match[1] else false
 
   get_user_init_file = ->
     init_file = path.join(@sprout_path, 'init.coffee')
@@ -101,8 +111,32 @@ class Init extends Base
 
   ensure_template_is_updated = (internet) ->
     if not internet then return W.resolve()
-    nodefn.call(exec, "git pull", { cwd: @sprout_path })
+    nodefn.call(exec, "git pull", cwd: @sprout_path)
       .catch(-> return W.resolve())
+
+  checkout_version = ->
+    nodefn.call(exec, "git tag -l", cwd: @sprout_path)
+    .then (res) =>
+      versions = _.compact(res[0].split('\n'))
+
+      # if no tags, dont check out anything, just use most recent commit
+      if not versions.length then return W.resolve()
+
+      # if no version, use the most recent tag
+      if not @version.length
+        cmd = "git checkout tags/#{versions[versions.length-1]}"
+        nodefn.call(exec, cmd, cwd: @sprout_path)
+      # if version provided, check that out
+      else if @version in versions
+        cmd = "git checkout tags/#{@version}"
+        nodefn.call(exec, cmd, cwd: @sprout_path)
+      # if the leading 'v' was omitted, its ok
+      else if "v#{@version}" in versions
+        cmd = "git checkout tags/v#{@version}"
+        nodefn.call(exec, cmd, cwd: @sprout_path)
+      # otherwise, invalid version
+      else
+        W.reject(new Error('version does not exist'))
 
   copy_template = ->
     root_path = path.join(@sprout_path, 'root')

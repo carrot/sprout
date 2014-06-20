@@ -199,8 +199,8 @@ Sometimes changes happen and you might want to be able to specify different vers
 $ sprout init my-template@0.1.2
 ```
 
-If you do not specify any version, sprout will assume you are looking for `@latest`, a special sprout tag alias meaning "the most recent tag in your commit log".
+If you do not specify any version, sprout will look for the most recent tag in the repo and use that, and if there are no tags simply use the latest commit.
 
 Although you are welcome to use whatever versioning system you are comfortable with, we would **strongly recommended** using [semver](http://semver.org/), the widely accepted standard in package versioning. This will provide you with a clear framework for managing situations when breaking changes have been made to your template.
 
-A couple edge cases to discuss. If you have not pushed any tags to your repo, sprout will simply take the latest commit. If you specify a tag that can't be found, you will get an error. If you added a template on a specific branch, the tag specified needs to be present on that branch. And if your tag starts with a `v` followed immeditely by a number, sprout will ignore the `v`, for convenience and in accordance with the convention that starts git tags with `v` just to refer to the version.
+A couple edge cases to discuss. If you specify a tag that can't be found, you will get an error. If you added a template on a specific branch, the tag specified needs to be present on that branch. And if your tag starts with a `v` followed immeditely by a number, sprout will ignore the `v`, for convenience and in accordance with the convention that starts git tags with `v` just to refer to the version.
