@@ -57,7 +57,7 @@ class Init extends Base
 
     # if we have a version, remove it and the @ from the name
     if @version.length then @name = @name.replace(@version, '').slice(0,-1)
-    
+
     @sprout_path = @path(@name)
 
     # transform overrides paired array to object
@@ -125,18 +125,20 @@ class Init extends Base
       # if no version, use the most recent tag
       if not @version.length
         cmd = "git checkout tags/#{versions[versions.length-1]}"
-        nodefn.call(exec, cmd, cwd: @sprout_path)
+        return nodefn.call(exec, cmd, cwd: @sprout_path)
+
       # if version provided, check that out
-      else if @version in versions
+      if @version in versions
         cmd = "git checkout tags/#{@version}"
-        nodefn.call(exec, cmd, cwd: @sprout_path)
+        return nodefn.call(exec, cmd, cwd: @sprout_path)
+
       # if the leading 'v' was omitted, its ok
-      else if "v#{@version}" in versions
+      if "v#{@version}" in versions
         cmd = "git checkout tags/v#{@version}"
-        nodefn.call(exec, cmd, cwd: @sprout_path)
+        return nodefn.call(exec, cmd, cwd: @sprout_path)
+
       # otherwise, invalid version
-      else
-        W.reject(new Error('version does not exist'))
+      W.reject(new Error('version does not exist'))
 
   copy_template = ->
     root_path = path.join(@sprout_path, 'root')
@@ -148,7 +150,7 @@ class Init extends Base
     nodefn.call(readdirp, { root: @target })
       .tap (res) =>
         ejs_options = _.extend(@config_values, {S: S})
-        res.files.map (f) =>
+        res.files.map (f) ->
           out = ejs.render(fs.readFileSync(f.fullPath, 'utf8'), ejs_options)
           fs.writeFileSync(f.fullPath, out)
 

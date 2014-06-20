@@ -80,7 +80,7 @@ describe 'js api', ->
 
       sprout.add(name: 'foobar', uri: test_template_url)
         .catch (e) ->
-          e.should.eql('make that you are connected to the internet!')
+          e.toString().should.eql('Error: make that you are connected to the internet!')
           done()
 
       mockery.deregisterMock('dns')
@@ -258,7 +258,7 @@ describe 'js api', ->
 
 describe 'tags', ->
   tag_template_url = 'https://github.com/carrot/sprout-test-template2.git'
-  
+
   before -> sprout = require '..'
 
   it 'creates a project at a specific version is @VERSION is on the uri', (done) ->
@@ -308,7 +308,7 @@ describe 'cli', ->
     (-> new (require '../lib/cli')() ).should.not.throw()
 
   describe 'add', ->
-    
+
     it 'errors when no args provided', ->
       (-> cli.run([])).should.throw(/too few arguments/)
 
