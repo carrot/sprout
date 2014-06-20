@@ -247,6 +247,18 @@ describe 'js api', ->
       mockery.deregisterMock('dns')
       mockery.disable()
 
+describe 'tags', ->
+
+  it 'creates a project at a specific version is @VERSION is on the uri'
+
+  it 'creates a project at a specific version, ignoring "v" in the tag'
+
+  it 'uses the latest tag if a version is not provided'
+
+  it 'uses the latest commit is a version is not provided and there are no tags'
+
+  it 'errors if an invalid tag is used'
+
 describe 'cli', ->
 
   it 'should initialize api without options', ->
