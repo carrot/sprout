@@ -41,6 +41,8 @@
     "argparse": "0.1.x"
   },
   "devDependencies": {
+    "chai": "1.x",
+    "chai-fs": "0.0.3",
     "coffeelint": "1.x",
     "coveralls": "2.x",
     "errno": "0.1.x",
@@ -49,8 +51,7 @@
     "mocha-lcov-reporter": "0.0.1",
     "mockery": "1.4.x",
     "rimraf": "2.x",
-    "shelljs": "0.3.x",
-    "should": "*"
+    "shelljs": "0.3.x"
   },
   "scripts": {
     "test": "npm run lint && mocha",

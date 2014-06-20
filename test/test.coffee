@@ -1,16 +1,13 @@
 path    = require 'path'
 fs      = require 'fs'
-should  = require 'should'
+exec    = require('child_process').exec
 rimraf  = require 'rimraf'
-_path   = path.join(__dirname, 'fixtures')
-sprout  = require '..'
-cli     = new (require '../lib/cli')(debug: true)
 mockery = require 'mockery'
 errno   = require 'errno'
 _       = require 'lodash'
 W       = require 'when'
 nodefn  = require 'when/node'
-exec    = require('child_process').exec
+cli     = new (require '../lib/cli')(debug: true)
 
 test_template_url  = 'https://github.com/carrot/sprout-test-template.git'
 test_template_path = path.join(_path, 'basic')
@@ -80,7 +77,7 @@ describe 'js api', ->
 
       sprout.add(name: 'foobar', uri: test_template_url)
         .catch (e) ->
-          e.toString().should.eql('Error: make that you are connected to the internet!')
+          e.toString().should.equal('Error: make that you are connected to the internet!')
           done()
 
       mockery.deregisterMock('dns')
@@ -91,13 +88,13 @@ describe 'js api', ->
     it 'errors when trying to remove a nonexistant template', (done) ->
       sprout.remove(name: 'blarg')
         .catch (err) ->
-          err.should.eql('template blarg does not exist')
+          err.should.equal('template blarg does not exist')
           done()
 
     it 'errors when not passed any arguments', (done) ->
       sprout.remove()
         .catch (err) ->
-          err.should.eql('you must pass the name of a template to remove')
+          err.should.equal('you must pass the name of a template to remove')
           done()
 
   describe 'list', ->
@@ -105,7 +102,7 @@ describe 'js api', ->
     it 'lists available templates', (done) ->
       start = sprout.list().length
       sprout.add(name: 'foobar', uri: test_template_path, options: {foo: 'bar'})
-        .tap(-> sprout.list().length.should.eql(start + 1))
+        .tap(-> sprout.list().length.should.equal(start + 1))
         .then(-> sprout.remove('foobar'))
         .done((-> done()), done)
 
@@ -298,7 +295,7 @@ describe 'tags', ->
     sprout.add(name: 'tags-4', uri: tag_template_url)
       .then -> sprout.init(name: 'tags-4@manatoge', path: test_path)
       .catch (err) ->
-        err.toString().should.eql('Error: version does not exist')
+        err.toString().should.equal('Error: version does not exist')
         sprout.remove('tags-4')
         done()
 
