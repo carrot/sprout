@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "chai": "1.x",
+    "chai-as-promised": "4.x",
     "chai-fs": "0.0.3",
     "coffeelint": "1.x",
     "coveralls": "2.x",
