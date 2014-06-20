@@ -8,10 +8,19 @@ cli     = new (require '../lib/cli')(debug: true)
 mockery = require 'mockery'
 errno   = require 'errno'
 _       = require 'lodash'
+W       = require 'when'
+nodefn  = require 'when/node'
+exec    = require('child_process').exec
 
 test_template_url  = 'https://github.com/carrot/sprout-test-template.git'
 test_template_path = path.join(_path, 'basic')
 test_path          = path.join(__dirname, 'testproj')
+
+before (done) ->
+  fixtures = path.join(__dirname, 'fixtures')
+  W.map fs.readdirSync(fixtures), (dir) ->
+    nodefn.call(exec, "git init", cwd: path.join(fixtures, dir))
+  .done((-> done()), done)
 
 describe 'js api', ->
 
@@ -71,7 +80,7 @@ describe 'js api', ->
 
       sprout.add(name: 'foobar', uri: test_template_url)
         .catch (e) ->
-          e.should.eql('make that you are connected to the internet!')
+          e.toString().should.eql('Error: make that you are connected to the internet!')
           done()
 
       mockery.deregisterMock('dns')
@@ -247,13 +256,59 @@ describe 'js api', ->
       mockery.deregisterMock('dns')
       mockery.disable()
 
+describe 'tags', ->
+  tag_template_url = 'https://github.com/carrot/sprout-test-template2.git'
+
+  before -> sprout = require '..'
+
+  it 'creates a project at a specific version is @VERSION is on the uri', (done) ->
+    sprout.add(name: 'tags-1', uri: tag_template_url)
+      .then -> sprout.init(name: 'tags-1@0.0.1', path: test_path)
+      .then ->
+        fs.existsSync(path.join(test_path, 'index.txt')).should.be.ok
+        contents = fs.readFileSync(path.join(test_path, 'index.txt'), 'utf8')
+        contents.should.match /tag test 1/
+      .then -> rimraf.sync(test_path)
+      .then -> sprout.remove('tags-1')
+      .done((-> done()), done)
+
+  it 'creates a project at a specific version, ignoring "v" in the tag', (done) ->
+    sprout.add(name: 'tags-2', uri: tag_template_url)
+      .then -> sprout.init(name: 'tags-2@0.0.2', path: test_path)
+      .then ->
+        fs.existsSync(path.join(test_path, 'index.txt')).should.be.ok
+        contents = fs.readFileSync(path.join(test_path, 'index.txt'), 'utf8')
+        contents.should.match /tag test 2/
+      .then -> rimraf.sync(test_path)
+      .then -> sprout.remove('tags-2')
+      .done((-> done()), done)
+
+  it 'uses the latest tag if a version is not present', (done) ->
+    sprout.add(name: 'tags-3', uri: tag_template_url)
+      .then -> sprout.init(name: 'tags-3', path: test_path)
+      .then ->
+        fs.existsSync(path.join(test_path, 'index.txt')).should.be.ok
+        contents = fs.readFileSync(path.join(test_path, 'index.txt'), 'utf8')
+        contents.should.match /tag test 3/
+      .then -> rimraf.sync(test_path)
+      .then -> sprout.remove('tags-3')
+      .done((-> done()), done)
+
+  it 'errors if an invalid tag is used', (done) ->
+    sprout.add(name: 'tags-4', uri: tag_template_url)
+      .then -> sprout.init(name: 'tags-4@manatoge', path: test_path)
+      .catch (err) ->
+        err.toString().should.eql('Error: version does not exist')
+        sprout.remove('tags-4')
+        done()
+
 describe 'cli', ->
 
   it 'should initialize api without options', ->
     (-> new (require '../lib/cli')() ).should.not.throw()
 
   describe 'add', ->
-    
+
     it 'errors when no args provided', ->
       (-> cli.run([])).should.throw(/too few arguments/)
 

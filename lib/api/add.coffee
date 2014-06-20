@@ -73,10 +73,10 @@ class Add extends Base
 
   check_internet_connection = ->
     if @local then return W.resolve()
-    
+
     try
       nodefn.call(dns.resolve, 'google.com')
-        .catch(-> throw 'make that you are connected to the internet!')
+      .catch(-> throw new Error('make that you are connected to the internet!'))
     catch e
       console.log 'caught'
       console.log(e)
@@ -110,7 +110,8 @@ class Add extends Base
 
   link_project = ->
     cmd = "git clone #{@template} #{@path(@name)}"
-    if @local then cmd = "rm -rf #{@path(@name)} && ln -s #{@template} #{@path(@name)}"
+    if @local
+      cmd = "rm -rf #{@path(@name)} && ln -s #{@template} #{@path(@name)}"
     if not @no_internet then nodefn.call(exec, cmd)
 
   ###*

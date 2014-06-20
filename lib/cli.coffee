@@ -27,7 +27,7 @@ class CLI
       description: pkg.description
       debug: opts.debug || false
     sub = @parser.addSubparsers()
-    
+
     $add(sub)
     $remove(sub)
     $list(sub)
@@ -35,7 +35,7 @@ class CLI
 
   ###*
    * Parses the arguments, runs the command
-   * 
+   *
    * @param {String|Array} args - a string or array of command line arguments
    * @return {Promise} a promise for the command's results
   ###
@@ -47,7 +47,8 @@ class CLI
     e = @emitter
 
     W.resolve(fn(args))
-      .then(((data) -> e.emit('data', data); data), ((err) -> e.emit('err', err); throw err))
+      .then (data) -> e.emit('data', data); data
+      .catch (err) -> e.emit('err', err); throw err
 
   ###*
    * @private
@@ -96,10 +97,12 @@ class CLI
       help: 'Path where you want to create your project'
     s.addArgument ['--overrides', '-o'],
       nargs: '*'
-      help: 'Space-separated override key-value pairs to be passed to the template'
+      help: 'Space-separated override key-value pairs to be passed to the
+      template'
     s.addArgument ['--defaults', '-d'],
       nargs: '*'
-      help: 'Space-separated default key-value pairs to be passed to the template'
+      help: 'Space-separated default key-value pairs to be passed to the
+      template'
 
     s.setDefaults(fn: 'init')
 
