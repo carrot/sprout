@@ -30,12 +30,15 @@ class Init extends Base
       .then(check_internet_connection)
       .then(ensure_template_is_updated)
       .then(checkout_version)
-      .then(copy_template)
-      .then(run_user_before_render_function)
-      .then(replace_ejs)
+      .then(@compile)
       .then(run_user_after_function)
       .then(-> "project created at '#{@target}'!")
 
+  compile: ->
+    copy_template.call(@)
+      .with(@)
+      .then(run_user_before_render_function)
+      .then(replace_ejs)
   #
   # @api private
   #
