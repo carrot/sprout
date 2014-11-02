@@ -45,7 +45,7 @@ class Init extends Base
 
   configure_options = (opts) ->
     if not opts or not opts.name
-      return W.reject('your template needs a name!')
+      return W.reject(new Error('your template needs a name'))
 
     # perhaps name should be template?
     @name        = opts.name
@@ -67,7 +67,7 @@ class Init extends Base
       , {}
 
     if not fs.existsSync(@sprout_path)
-      return W.reject("template '#{@name}' does not exist")
+      return W.reject(new Error("template '#{@name}' does not exist"))
 
     if not @target then @target = path.join(process.cwd(), @name)
 
@@ -143,7 +143,7 @@ class Init extends Base
   copy_template = ->
     root_path = path.join(@sprout_path, 'root')
     if not fs.existsSync(root_path)
-      return W.reject('template does not contain root directory')
+      return W.reject(new Error('template does not contain root directory'))
     nodefn.call(ncp, root_path, @target)
 
   replace_ejs = ->
