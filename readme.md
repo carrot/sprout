@@ -173,9 +173,16 @@ exports.configure = [
   },
 ]
 
-# This function is executed after the configuration info is collected.
-# It's a good place to do any other custom config you need, like building
-# extra files etc. You have the full power of node at your fingertips here.
+# This function is executed after the configuration info is collected, but
+# before the templates are rendered. It's a good place use user provided config
+# to generate additional config values needed in the template.
+exports.before_render = (sprout, done) ->
+  console.log sprout.config_values
+  console.log 'executed before templates are rendered'
+
+# This function is executed after the templates are rendered.  It's a good place
+# to do any other custom config you need, like building extra files etc. You
+# have the full power of node at your fingertips here.
 exports.after = (sprout, done) ->
   console.log sprout.config_values # all the config values you collected
   if not sprout.config_values.travis then sprout.remove('.travis.yml')
