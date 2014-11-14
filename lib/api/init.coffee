@@ -29,6 +29,7 @@ class Init extends Base
       .then(ensure_template_is_updated)
       .then(checkout_version)
       .then(copy_template)
+      .then(run_user_before_render_function)
       .then(replace_ejs)
       .then(run_user_after_function)
       .then(-> "project created at '#{@target}'!")
@@ -145,6 +146,10 @@ class Init extends Base
     if not fs.existsSync(root_path)
       return W.reject('template does not contain root directory')
     nodefn.call(ncp, root_path, @target)
+
+  run_user_before_render_function = ->
+    if not @config.before_render then return W.resolve()
+    nodefn.call(@config.before_render, @)
 
   replace_ejs = ->
     nodefn.call(readdirp, { root: @target })

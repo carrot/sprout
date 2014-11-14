@@ -165,6 +165,20 @@ describe 'js api', ->
         .then -> sprout.remove('foobar-3')
         .should.be.fulfilled
 
+    it 'executes before render function', ->
+      test_template = path.join(_path, 'before_render')
+
+      sprout.add(name: 'foobar-9', uri: test_template)
+        .then -> sprout.init(name: 'foobar-9', path: test_path, overrides: {foo: 'bar'})
+        .tap ->
+          contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+          contents.should.not.match /bar/
+          contents.should.match /doge/
+        .then -> rimraf.sync(test_path)
+        .then -> sprout.remove('foobar-9')
+        .should.be.fulfilled
+
+
     it 'executes after function', ->
       test_template = path.join(_path, 'after')
 
