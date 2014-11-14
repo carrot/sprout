@@ -98,9 +98,12 @@ class Init extends Base
         @questions[i].default = val
 
   prompt_user_for_answers = ->
-    if not @questions.length then return W.resolve()
-    nodecb.call(inquirer.prompt, @questions)
-      .then((o) => @answers = o)
+    d = W.defer()
+    if not @questions.length then d.resolve()
+    inquirer.prompt @questions, (o) =>
+      @answers = o
+      d.resolve()
+    return d.promise
 
   merge_config_values_with_overrides = ->
     @config_values = _.assign(@answers, @overrides)
