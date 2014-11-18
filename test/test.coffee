@@ -346,6 +346,20 @@ describe 'cli', ->
         .then(cli.run.bind(cli, 'rm foobar'))
         .should.be.fulfilled
 
+    it 'should default the path to the name of the template in cwd if no path is provided', ->
+      name = 'manatoge'
+      test_path = path.join(process.cwd(), name)
+
+      cli.run("add #{name} #{test_template_url}")
+        .then(cli.run.bind(cli, "init #{name} -o foo bar"))
+        .then ->
+          fs.existsSync(path.join(test_path, 'index.html')).should.be.ok
+          contents = fs.readFileSync(path.join(test_path, 'index.html'), 'utf8')
+          contents.should.match /bar/
+          rimraf.sync(test_path)
+        .then(cli.run.bind(cli, "rm #{name}"))
+        .should.be.fulfilled
+
     # these tests require a better way of responding to the command-line
     # prompts. they will remain stubbed for ref until a new solution is found
     it 'creates a project with multiple inquirer inputs'
