@@ -19,6 +19,7 @@ class Init extends Base
 
   execute: (opts) ->
     configure_options.call(@, opts).with(@)
+      .then(install_template_dependencies)
       .then(get_user_init_file)
       .then(run_user_before_function)
       .then(remove_overrides_from_prompt)
@@ -77,6 +78,10 @@ class Init extends Base
   parse_version = (name) ->
     match = name.match(/@+([^@]*)$/)
     if match then match[1] else false
+
+  install_template_dependencies = ->
+    pkg = path.join(@sprout_path, 'package.json')
+    if fs.existsSync(pkg) then nodefn.call(exec, "npm install", cwd: @sprout_path)
 
   get_user_init_file = ->
     init_file = path.join(@sprout_path, 'init.coffee')
