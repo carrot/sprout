@@ -80,8 +80,8 @@ class Init extends Base
     if match then match[1] else false
 
   install_template_dependencies = ->
-    pkg = path.join(@sprout_path, 'package.json')
-    if fs.existsSync(pkg) then nodefn.call(exec, "npm install", cwd: @sprout_path)
+    p = path.join(@sprout_path, 'package.json')
+    if fs.existsSync(p) then nodefn.call(exec, "npm install", cwd: @sprout_path)
 
   get_user_init_file = ->
     init_file = path.join(@sprout_path, 'init.coffee')

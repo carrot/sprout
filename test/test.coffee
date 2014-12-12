@@ -150,6 +150,18 @@ describe 'js api', ->
         .then -> sprout.remove('foobar')
         .should.be.fulfilled
 
+    it 'installs template dependencies', (done) ->
+      name = 'install_deps'
+      test_template = path.join(_path, name)
+
+      sprout.add(name: name, uri: test_template, path: test_path)
+        .then -> sprout.init(name: name, path: test_path, overrides: {foo: 'bar'})
+        .then ->
+          p = path.join(test_template, 'node_modules')
+          fs.existsSync(p).should.be.ok
+        .catch (e) -> done(e)
+        .done -> done()
+
     it 'executes before function', ->
       test_template = path.join(_path, 'before')
       new_path      = path.join(__dirname, 'newproj')
