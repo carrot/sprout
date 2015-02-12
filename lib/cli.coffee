@@ -21,11 +21,12 @@ class CLI
   ###
 
   constructor: (opts = {}) ->
-    @emitter = new EventEmitter
-    @parser = new ArgParse
+    @emitter = new EventEmitter()
+    @parser = new ArgParse(
       version: pkg.version
       description: pkg.description
       debug: opts.debug || false
+    )
     sub = @parser.addSubparsers()
 
     $add(sub)
@@ -46,9 +47,9 @@ class CLI
     fn = require('./' + path.join('api/', args.fn))
     e = @emitter
 
-    W.resolve(fn(args))
-      .then (data) -> e.emit('data', data); data
-      .catch (err) -> e.emit('err', err); throw err
+    W.resolve(fn(args)).then (data) ->
+      e.emit('data', data)
+      data
 
   ###*
    * @private

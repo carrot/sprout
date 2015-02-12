@@ -10,10 +10,12 @@ class Remove extends Base
 
   execute: (opts) ->
     if not opts
-      return W.reject("you must pass the name of a template to remove")
+      return W.reject(
+        new Error('you must pass the name of a template to remove')
+      )
 
     if not fs.existsSync(@path(opts.name))
-      return W.reject("template #{opts.name} does not exist")
+      return W.reject(new Error("template #{opts.name} does not exist"))
 
     nodefn.call(rimraf, @path(opts.name))
       .yield("template '#{opts.name}' removed")

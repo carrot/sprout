@@ -31,7 +31,7 @@ class Add extends Base
 
   configure_options = (opts) ->
     if not opts or not opts.name
-      return W.reject('your template needs a name!')
+      return W.reject(new Error('your template needs a name'))
 
     @name     = opts.name
     @template = opts.uri
@@ -61,10 +61,12 @@ class Add extends Base
   ensure_local_template_exists = ->
     if not @local then return W.resolve()
     if not which.sync('git')
-      return W.reject('you need to have git installed')
+      return W.reject(new Error('you need to have git installed'))
 
     if not fs.existsSync(path.normalize(@template))
-      return W.reject("there is no sprout template located at '#{@template}'")
+      return W.reject(
+        new Error("there is no sprout template located at '#{@template}'")
+      )
 
   ###*
    * The most legitimate way to find out if someone is connected to the
