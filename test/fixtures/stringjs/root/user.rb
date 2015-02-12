@@ -1,3 +1,3 @@
-class <%= S(user_model).capitalize().s %>
+class <%= S.capitalize(user_model) %>
   attr_accessor :name
 end

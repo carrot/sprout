@@ -9,7 +9,7 @@ exec     = require('child_process').exec
 ejs      = require 'ejs'
 inquirer = require 'inquirer'
 Base     = require '../base'
-S        = require 'string'
+S        = require 'underscore.string'
 _        = require 'lodash'
 dns      = require 'dns'
 
