@@ -204,7 +204,7 @@ describe 'js api', ->
         .then -> sprout.remove('foobar-4')
         .should.be.fulfilled
 
-    it 'includes String.js in ejs compilation', ->
+    it 'includes underscore.string in ejs compilation', ->
       test_template = path.join(_path, 'stringjs')
 
       sprout.add(name: 'foobar-5', uri: test_template)

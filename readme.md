@@ -25,7 +25,7 @@ Sprout can be used directly through the command line to intitialize projects. On
 Command params in `[brackets]` are optional, and in `<angle_brackets>` are required.
 
 #### Add Template
-**Command**:  
+**Command**:
 `sprout add [name] <clone_url_or_path>`
 
 **Description**: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
@@ -33,7 +33,7 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 ---
 
 #### Remove Template
-**Command**:  
+**Command**:
 `sprout remove <name>`
 
 **Description**: Removes the template with the specified name from sprout.
@@ -42,7 +42,7 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 ---
 
 #### List Templates
-**Command**:  
+**Command**:
 `sprout list`
 
 **Description**: Lists all templates that you have added to sprout.
@@ -51,12 +51,12 @@ Command params in `[brackets]` are optional, and in `<angle_brackets>` are requi
 ---
 
 #### Initialize Template
-**Command**:  
+**Command**:
 `sprout init <name> [path] [overrides]`
 
 **Description**: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
 
-Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.  
+Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.
 
 **Options**: You can pass override arguments like `-o key value key2 val2` as options which will override the prompts set in your templates.
 
@@ -190,10 +190,10 @@ exports.after = (sprout, done) ->
 
 ```
 
-We also provide you the power of [String.js](http://stringjs.com/) in all of your ejs templates. This means you can run powerful string operations on your user input like:
+We also provide you the power of [underscore.string](http://epeli.github.io/underscore.string/#api) in all of your ejs templates. This means you can run powerful string operations on your user input like:
 
 ```js
-class <%= S('user_model').capialize().s; %> // given 'user_model' is prompted by your init.coffee
+class <%= S.classify('user_model') %> // given 'user_model' is prompted by your init.coffee
 ```
 
 So between this config file and the root folder, you should be able to make anything happen fairly easily. If not, please open up and issue and we'll try to make it happening-er and/or easier for you : )
