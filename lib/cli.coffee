@@ -1,8 +1,8 @@
 require('colors')
-W        = require 'when'
-path     = require 'path'
-pkg      = require '../package.json'
-ArgParse = require('argparse').ArgumentParser
+W            = require 'when'
+path         = require 'path'
+pkg          = require '../package.json'
+ArgParse     = require('argparse').ArgumentParser
 EventEmitter = require('events').EventEmitter
 
 ###*
@@ -46,9 +46,9 @@ class CLI
     fn = require('./' + path.join('api/', args.fn))
     e = @emitter
 
-    W.resolve(fn(args))
-      .then (data) -> e.emit('data', data); data
-      .catch (err) -> e.emit('err', err); throw err
+    W.resolve(fn(args)).then (data) ->
+      e.emit('data', data)
+      data
 
   ###*
    * @private
