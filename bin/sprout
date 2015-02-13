@@ -8,9 +8,4 @@ cli.emitter.on('data', function(data){
   console.log(data.green);
 });
 
-cli.emitter.on('err', function(err){
-  console.error("ERROR: ".red + err);
-  process.exit(64);
-});
-
-cli.run(process.argv.slice(2));
+cli.run(process.argv.slice(2)).done();
