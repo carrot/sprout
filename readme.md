@@ -2,7 +2,9 @@
 
 [![npm](http://img.shields.io/npm/v/sprout.svg?style=flat)](https://badge.fury.io/js/sprout) [![tests](http://img.shields.io/travis/carrot/sprout/master.svg?style=flat)](https://travis-ci.org/carrot/sprout) [![coverage](http://img.shields.io/coveralls/carrot/sprout.svg?style=flat)](https://coveralls.io/r/carrot/sprout) [![dependencies](http://img.shields.io/gemnasium/carrot/sprout.svg?style=flat)](https://gemnasium.com/carrot/sprout)
 
-Simple new project templating
+Simple project templating & skeletons
+
+**More documentation on sprout can be [found here](http://sprout.netlify.com)**
 
 > **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
 
