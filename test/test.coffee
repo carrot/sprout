@@ -114,7 +114,7 @@ describe 'js api', ->
         .then(-> sprout.init(name: 'utils-write', path: test_path, overrides: { name: 'bar' }))
         .tap(->
           write_path = path.join(test_path, 'foo')
-          fs.readFileSync(write_path, 'utf8').should.match /bar/
+          fs.readFileSync(write_path, 'utf8').should.match /bar buzz/
         ).then(-> sprout.remove('utils-write'))
         .done((-> done()), done)
 
@@ -147,7 +147,7 @@ describe 'js api', ->
           fs.readFileSync(configure_path, 'utf8').should.match /foo/
         ).then(-> sprout.remove('utils-configure'))
         .done((-> done()), done)
-        
+
   describe 'init', ->
 
     before -> sprout = require '..'
