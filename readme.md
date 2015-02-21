@@ -200,6 +200,22 @@ class <%= S.classify('user_model') %> // given 'user_model' is prompted by your 
 
 So between this config file and the root folder, you should be able to make anything happen fairly easily. If not, please open up and issue and we'll try to make it happening-er and/or easier for you : )
 
+### Hooks
+Sprout comes with the following events for you to write custom logic for. To utilize these events, export a function for the hook of your choosing in your `init.coffee`:
+
+- `before` - run before prompting for user input
+- `before_render` - run after use input but before your templates are rendered
+- `after` - run after rendering has completed
+
+#### Template Utilities
+We've created a handful of useful utilities that you can utilize within your `init.coffee` file to make creating custom templates that much easier.
+
+- `read(base_path, encoding = 'utf8')` - synchronously read a file
+- `write(path, content, opts)` - write an EJS template. pass target path, template content, and EJS options. The options you pass here will be merged with the sprout options from your before functions and user inputs
+- `rename(target, destination)` - rename a file
+- `remove(file_or_array_of_files)` - remove files(s)
+- `configure` - extend or override `@sprout.config_values`
+
 ### Versioning Templates
 
 Sometimes changes happen and you might want to be able to specify different versions of a single template. Sprout handles this through [git tags](http://git-scm.com/book/en/Git-Basics-Tagging). You can specify a tag as a version when you initialize a template by adding a version number after an `@` sign, as such (examples provided via CLI here):
