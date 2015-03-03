@@ -96,6 +96,58 @@ describe 'js api', ->
         .then -> sprout.remove('foobar')
         .should.be.fulfilled
 
+  describe 'utils', ->
+
+    it 'read file', (done) ->
+      utils_template = path.join(_path, 'utils-read')
+      sprout.add(name: 'utils-read', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-read', path: test_path, overrides: { name: 'bar' }))
+        .tap(->
+          write_path = path.join(test_path, 'foo')
+          fs.readFileSync(write_path, 'utf8').should.match /bar/
+        ).then(-> sprout.remove('utils-read'))
+        .done((-> done()), done)
+
+    it 'write file', (done) ->
+      utils_template = path.join(_path, 'utils-write')
+      sprout.add(name: 'utils-write', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-write', path: test_path, overrides: { name: 'bar' }))
+        .tap(->
+          write_path = path.join(test_path, 'foo')
+          fs.readFileSync(write_path, 'utf8').should.match /bar buzz/
+        ).then(-> sprout.remove('utils-write'))
+        .done((-> done()), done)
+
+    it 'rename file', (done) ->
+      utils_template = path.join(_path, 'utils-rename')
+      sprout.add(name: 'utils-rename', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-rename', path: test_path) )
+        .tap(->
+          rename_path = path.join(test_path, '.travis.yml')
+          fs.existsSync(rename_path).should.be.true
+        ).then(-> sprout.remove('utils-rename'))
+        .done((-> done()), done)
+
+    it 'remove file', (done) ->
+      utils_template = path.join(_path, 'utils-remove')
+      sprout.add(name: 'utils-remove', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-remove', path: test_path, overrides: { name: 'bar' }))
+        .tap(->
+          remove_path = path.join(test_path, '.travis.yml')
+          fs.existsSync(remove_path).should.be.false
+        ).then(-> sprout.remove('utils-remove'))
+        .done((-> done()), done)
+
+    it 'modifies configuration', (done) ->
+      utils_template = path.join(_path, 'utils-configure')
+      sprout.add(name: 'utils-configure', uri: utils_template)
+        .then(-> sprout.init(name: 'utils-configure', path: test_path, overrides: { name: 'bar' }) )
+        .tap(->
+          configure_path = path.join(test_path, 'foo')
+          fs.readFileSync(configure_path, 'utf8').should.match /foo/
+        ).then(-> sprout.remove('utils-configure'))
+        .done((-> done()), done)
+
   describe 'init', ->
 
     before -> sprout = require '..'

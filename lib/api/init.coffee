@@ -10,6 +10,7 @@ ejs      = require 'ejs'
 inquirer = require 'inquirer'
 Base     = require '../base'
 S        = require 'underscore.string'
+Utils    = require './utils'
 _        = require 'lodash'
 dns      = require 'dns'
 
@@ -19,31 +20,28 @@ class Init extends Base
 
   execute: (opts) ->
     configure_options.call(@, opts).with(@)
+      .then(merge_config_values_with_overrides)
       .then(install_template_dependencies)
       .then(get_user_init_file)
       .then(run_user_before_function)
       .then(remove_overrides_from_prompt)
       .then(add_defaults_to_questions)
       .then(prompt_user_for_answers)
-      .then(merge_config_values_with_overrides)
       .then(check_internet_connection)
       .then(ensure_template_is_updated)
       .then(checkout_version)
-      .then(copy_template)
-      .then(run_user_before_render_function)
-      .then(replace_ejs)
+      .then(@compile)
       .then(run_user_after_function)
       .then(-> "project created at '#{@target}'!")
 
-  # intended for use in the after function, quick way to remove
-  # files/folders that users wanted to nix after the prompts.
-  # TODO: this should be refactored out into a separate utils module
-  remove: (f) ->
-    fs.unlinkSync(path.resolve(@target, f))
-
-  ###*
-   * @private
-  ###
+  compile: ->
+    copy_template.call(@)
+      .with(@)
+      .then(run_user_before_render_function)
+      .then(replace_ejs)
+  #
+  # @api private
+  #
 
   configure_options = (opts) ->
     if not opts or not opts.name
@@ -61,6 +59,7 @@ class Init extends Base
     if @version.length then @name = @name.replace(@version, '').slice(0,-1)
 
     @sprout_path = @path(@name)
+    @utils       = new Utils(@)
 
     # transform overrides paired array to object
     if Array.isArray(@overrides)
@@ -110,6 +109,7 @@ class Init extends Base
 
   merge_config_values_with_overrides = ->
     @config_values = _.assign(@answers, @overrides)
+    @ejs_options = _.extend(@config_values, {S: S})
 
   check_internet_connection = ->
     nodefn.call(dns.resolve, 'google.com')
@@ -159,9 +159,8 @@ class Init extends Base
   replace_ejs = ->
     nodefn.call(readdirp, { root: @target })
       .tap (res) =>
-        ejs_options = _.extend(@config_values, {S: S})
-        res.files.map (f) ->
-          out = ejs.render(fs.readFileSync(f.fullPath, 'utf8'), ejs_options)
+        res.files.map (f) =>
+          out = ejs.render(fs.readFileSync(f.fullPath, 'utf8'), @ejs_options)
           fs.writeFileSync(f.fullPath, out)
 
   run_user_after_function = ->
