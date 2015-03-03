@@ -20,13 +20,13 @@ class Init extends Base
 
   execute: (opts) ->
     configure_options.call(@, opts).with(@)
+      .then(merge_config_values_with_overrides)
       .then(install_template_dependencies)
       .then(get_user_init_file)
       .then(run_user_before_function)
       .then(remove_overrides_from_prompt)
       .then(add_defaults_to_questions)
       .then(prompt_user_for_answers)
-      .then(merge_config_values_with_overrides)
       .then(check_internet_connection)
       .then(ensure_template_is_updated)
       .then(checkout_version)
