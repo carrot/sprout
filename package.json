@@ -41,15 +41,15 @@
     "which": "1.0.x"
   },
   "devDependencies": {
-    "chai": "1.x",
+    "chai": "2.1.x",
     "chai-as-promised": "4.x",
-    "chai-fs": "0.0.3",
+    "chai-fs": "0.1.x",
     "coffeelint": "1.x",
     "coveralls": "2.x",
     "errno": "0.1.x",
     "istanbul": "0.3.x",
     "mocha": "*",
-    "mocha-lcov-reporter": "0.0.1",
+    "mocha-lcov-reporter": "0.0.2",
     "mockery": "1.4.x",
     "shelljs": "0.3.x"
   },
