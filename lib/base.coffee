@@ -10,7 +10,7 @@ class Base
   constructor: ->
     user = (osenv.user() || @generate_fake_user()).replace(/\\/g, '-')
     tmp_dir = path.join((if os.tmpdir then os.tmpdir() else os.tmpDir()), user)
-    @config_dir = process.env.XDG_CONFIG_HOME ||
+    @config_dir = process.env.SPROUT_CONFIG_PATH ||
                   path.join((osenv.home() || tmp_dir), '.config/sprout')
     if not fs.existsSync(@config_dir) then mkdirp.sync(@config_dir)
 

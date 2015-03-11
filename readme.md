@@ -26,6 +26,12 @@ Sprout can be used directly through the command line to intitialize projects. On
 
 Command params in `[brackets]` are optional, and in `<angle_brackets>` are required.
 
+By default, sprout templates are saved to `$HOME/.config/sprout`. To override this, set the `SPROUT_CONFIG_PATH` environment variable.
+
+```sh
+SPROUT_CONFIG_PATH='~/.sprout' sprout add templateName newProject
+```
+
 #### Add Template
 **Command**:
 `sprout add [name] <clone_url_or_path>`
@@ -73,6 +79,12 @@ Sprout also comes with a [man page](man) and will display a help menu as a refre
 Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [when.js](https://github.com/cujojs/when)) Example code given in coffeescript:
 
 ```coffee
+# By default, sprout templates are saved to $HOME/.config/sprout.
+# To override this, set the SPROUT_CONFIG_PATH environment line.
+#
+# process.env.SPROUT_CONFIG_PATH = '~/.sprout'
+#
+
 path = require 'path'
 sprout = require 'sprout'
 

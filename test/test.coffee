@@ -9,6 +9,7 @@ W       = require 'when'
 nodefn  = require 'when/node'
 cli     = new (require '../lib/cli')(debug: true)
 
+
 test_template_url  = 'https://github.com/carrot/sprout-test-template.git'
 test_template_path = path.join(_path, 'basic')
 test_path          = path.join(__dirname, 'testproj')
