@@ -157,7 +157,8 @@ class Init extends Base
     nodefn.call(@config.before_render, @)
 
   replace_ejs = ->
-    nodefn.call(readdirp, { root: @target })
+    ignore_dirs = ['!.git', '!node_modules']
+    nodefn.call(readdirp, { root: @target, directoryFilter: ignore_dirs})
       .tap (res) =>
         res.files.map (f) =>
           out = ejs.render(fs.readFileSync(f.fullPath, 'utf8'), @ejs_options)
