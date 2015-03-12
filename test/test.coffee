@@ -78,6 +78,27 @@ describe 'js api', ->
       mockery.deregisterMock('dns')
       mockery.disable()
 
+    it 'detects remote if git@github.com:user/repo url provided', ->
+      sprout.add(name: 'sproutsprout', uri: 'git@github.com:carrot/sprout-sprout')
+        .tap -> fs.existsSync(sprout.path('sproutsprout')).should.be.ok
+        .then -> sprout.remove('sproutsprout')
+        .tap -> fs.existsSync(sprout.path('sproutsprout')).should.not.be.ok
+        .should.be.fulfilled
+
+    it 'detects remote if https://github.com/user/repo.git url provided', ->
+      sprout.add(name: 'sproutsprout', uri: 'https://github.com/carrot/sprout-sprout.git')
+        .tap -> fs.existsSync(sprout.path('sproutsprout')).should.be.ok
+        .then -> sprout.remove('sproutsprout')
+        .tap -> fs.existsSync(sprout.path('sproutsprout')).should.not.be.ok
+        .should.be.fulfilled
+
+    it 'detects remote if https://github.com/user/repo url provided', ->
+      sprout.add(name: 'sproutsprout', uri: 'https://github.com/carrot/sprout-sprout')
+        .tap -> fs.existsSync(sprout.path('sproutsprout')).should.be.ok
+        .then -> sprout.remove('sproutsprout')
+        .tap -> fs.existsSync(sprout.path('sproutsprout')).should.not.be.ok
+        .should.be.fulfilled
+
   describe 'remove', ->
 
     it 'errors when trying to remove a nonexistant template', ->
