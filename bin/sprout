@@ -1,11 +1,68 @@
 #!/usr/bin/env node
 
-require('coffee-script/register');
-var CLI = require('../lib/cli'),
-    cli = new CLI;
+var CLI = require('./../lib/cli')
+  , pkg = require('./../package.json')
+  , ArgParse = require('argparse').ArgumentParser;
 
-cli.emitter.on('data', function(data){
-  console.log(data.green);
+/*
+ * Create argument parser.
+ */
+
+var parser = new ArgParse({
+  version: pkg.version,
+  description: pkg.description,
+  addHelp: true
 });
 
-cli.run(process.argv.slice(2)).done();
+/*
+ * Create argument subparser.
+ */
+
+var subParser = parser.addSubparsers({
+  title: 'children',
+  dest: 'action'
+});
+
+/*
+ * $ sprout add
+ */
+
+var add = subParser.addParser('add', { addHelp: true });
+add.addArgument(['name'], { help: 'name of template' });
+add.addArgument(['src'], { help: 'source path or remote git' });
+
+/*
+ * $ sprout remove
+ */
+
+var remove = subParser.addParser('remove', { addHelp: true });
+remove.addArgument(['name'], { help: 'name of template' });
+
+/*
+ * $ sprout update
+ */
+
+var update = subParser.addParser('update', { addHelp: true });
+update.addArgument(['name'], { help: 'name of template' });
+
+/*
+ * $ sprout list
+ */
+
+var list = subParser.addParser('list', { addHelp: false });
+
+/*
+ * $ sprout init
+ */
+
+var init = subParser.addParser('init', { addHelp: true });
+init.addArgument(['name'], { help: 'name of template' });
+init.addArgument(['target'], { help: 'destination path' });
+init.addArgument(['-o', '--overrides'], { help: 'override locals' });
+
+/*
+ * Run CLI with arguments.
+ */
+
+var cli = new CLI();
+cli.run(parser.parseArgs());
