@@ -86,7 +86,7 @@ class CLI
 
   $init = (sub) ->
     s = sub.addParser 'init',
-      aliases: ['new']
+      aliases: ['new', 'create']
       help: 'Create a new sprout project from a template'
 
     s.addArgument ['name'],

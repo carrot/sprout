@@ -38,6 +38,8 @@ SPROUT_CONFIG_PATH='~/.sprout' sprout add templateName newProject
 
 **Description**: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
 
+**Aliases**: `install`
+
 ---
 
 #### Remove Template
@@ -45,6 +47,7 @@ SPROUT_CONFIG_PATH='~/.sprout' sprout add templateName newProject
 `sprout remove <name>`
 
 **Description**: Removes the template with the specified name from sprout.
+
 **Aliases**: `rm`, `delete`
 
 ---
@@ -54,6 +57,7 @@ SPROUT_CONFIG_PATH='~/.sprout' sprout add templateName newProject
 `sprout list`
 
 **Description**: Lists all templates that you have added to sprout.
+
 **Aliases**: `ls`, `all`
 
 ---
