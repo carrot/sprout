@@ -27,10 +27,10 @@
     "argparse": "1.0.x",
     "coffee-script": "1.9.x",
     "colors": "1.0.x",
-    "ejs": "2.2.x",
+    "ejs": "2.3.x",
     "indx": "0.2.x",
     "inquirer": "0.8.x",
-    "lodash": "3.3.x",
+    "lodash": "3.5.x",
     "mkdirp": "0.5.x",
     "ncp": "2.0.x",
     "osenv": "0.1.x",
@@ -55,7 +55,7 @@
   },
   "scripts": {
     "test": "npm run lint && mocha",
-    "lint": "find lib/ -name '*.coffee' | xargs coffeelint",
+    "lint": "find lib -name '*.coffee' | xargs coffeelint",
     "coverage": "make build; istanbul cover _mocha --report html -- -R spec && open coverage/index.html && make unbuild",
     "coveralls": "make build; istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage; make unbuild"
   },
