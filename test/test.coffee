@@ -20,6 +20,9 @@ before ->
     nodefn.call(exec, "git init", cwd: path.join(fixtures, dir))
   .should.be.fulfilled
 
+after ->
+  rimraf.sync(sprout.path())
+
 describe 'js api', ->
 
   describe 'add', ->
@@ -43,6 +46,15 @@ describe 'js api', ->
         .then -> sprout.remove('foobar')
         .tap -> fs.existsSync(sprout.path('foobar')).should.not.be.ok
         .should.be.fulfilled
+
+    it 'errors when template does not have `root` directory', ->
+      test_template = path.join(_path, 'no-root')
+      sprout.add(name: 'foobar-6', uri: test_template)
+      .catch (err) ->
+        should.exist(err)
+        err.should.match /template does not contain root directory/
+      .then -> sprout.remove('foobar-6')
+      .should.be.fulfilled
 
     it 'replaces existing template on add', ->
       sprout.add(name: 'foobar', uri: test_template_path)
@@ -270,10 +282,11 @@ describe 'js api', ->
         .then -> sprout.remove('foobar-5')
         .should.be.fulfilled
 
-    it 'errors when template does not have `root` directory', ->
-      test_template = path.join(_path, 'no-root')
+    it 'errors when template has `root` directory removed', ->
+      test_template = path.join(_path, 'root-remove')
       sprout.add(name: 'foobar-6', uri: test_template)
-        .then -> sprout.init(name: 'foobar-6', path: test_path)
+        .then -> rimraf.sync(path.join(sprout.path(), 'foobar-6', 'root'))
+        .then -> sprout.init(name: 'foobar-6', path: test_path, overrides: {foo: 'bar'})
         .catch (err) ->
           should.exist(err)
           err.should.match /template does not contain root directory/

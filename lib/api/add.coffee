@@ -50,8 +50,7 @@ class Add extends Base
   determine_if_local = ->
     url  = url.parse(@template)
     remote = url.pathname.split('.')[url.pathname.split('.').length-1] == 'git'
-    if not remote
-      @local = true
+    if not remote then @local = true
     W.resolve()
 
   ###*
@@ -63,10 +62,13 @@ class Add extends Base
     if not which.sync('git')
       return W.reject(new Error('you need to have git installed'))
 
-    if not fs.existsSync(path.normalize(@template))
+    tgt = path.normalize(@template)
+    if not fs.existsSync(tgt)
       return W.reject(
         new Error("there is no sprout template located at '#{@template}'")
       )
+    else if not fs.existsSync(path.join(tgt, 'root'))
+      return W.reject('template does not contain root directory')
 
   ###*
    * The most legitimate way to find out if someone is connected to the
@@ -76,12 +78,8 @@ class Add extends Base
   check_internet_connection = ->
     if @local then return W.resolve()
 
-    try
-      nodefn.call(dns.resolve, 'google.com')
-      .catch(-> throw new Error('make that you are connected to the internet!'))
-    catch e
-      console.log 'caught'
-      console.log(e)
+    nodefn.call(dns.resolve, 'google.com').catch ->
+      throw new Error('make that you are connected to the internet!')
 
   ###*
    * If a branch was passed via hash (github.com/foo/bar#some-branch), extract
@@ -103,7 +101,7 @@ class Add extends Base
   ###
 
   remove_existing_template = ->
-    if not @no_internet then nodefn.call(rimraf, @path(@name))
+    nodefn.call(rimraf, @path(@name))
 
   ###*
    * Link up the template to the right spot, whether this is locally or through
@@ -114,7 +112,7 @@ class Add extends Base
     cmd = "git clone #{@template} #{@path(@name)}"
     if @local
       cmd = "rm -rf #{@path(@name)} && ln -s #{@template} #{@path(@name)}"
-    if not @no_internet then nodefn.call(exec, cmd)
+    nodefn.call(exec, cmd)
 
   ###*
    * If there was a branch provided, check it out.
