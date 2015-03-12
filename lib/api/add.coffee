@@ -48,8 +48,7 @@ class Add extends Base
   ###
 
   determine_if_local = ->
-    url  = url.parse(@template)
-    remote = url.pathname.split('.')[url.pathname.split('.').length-1] == 'git'
+    remote = /([A-Za-z0-9]+@|http(|s):\/\/)([A-Za-z0-9.]+)(:|\/)([A-Za-z0-9\/]+)(.git)?/.test @template
     if not remote
       @local = true
     W.resolve()
