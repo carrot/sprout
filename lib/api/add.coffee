@@ -62,10 +62,13 @@ class Add extends Base
     if not which.sync('git')
       return W.reject(new Error('you need to have git installed'))
 
-    if not fs.existsSync(path.normalize(@template))
+    tgt = path.normalize(@template)
+    if not fs.existsSync(tgt)
       return W.reject(
         new Error("there is no sprout template located at '#{@template}'")
       )
+    else if not fs.existsSync(path.join(tgt, 'root'))
+      return W.reject('template does not contain root directory')
 
   ###*
    * The most legitimate way to find out if someone is connected to the
