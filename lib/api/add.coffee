@@ -48,7 +48,9 @@ class Add extends Base
   ###
 
   determine_if_local = ->
-    remote = /([A-Za-z0-9]+@|http(|s):\/\/)([A-Za-z0-9.]+)(:|\/)([A-Za-z0-9\/]+)(.git)?/.test @template
+    regexp = new RegExp('([A-Za-z0-9]+@|http(|s)\:\/\/)' +
+      '([A-Za-z0-9.]+)(:|/)([A-Za-z0-9\/]+)(\.git)?')
+    remote = regexp.test @template
     if not remote
       @local = true
     W.resolve()
