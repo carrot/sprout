@@ -184,6 +184,19 @@ describe 'js api', ->
         .then -> sprout.remove('foobar')
         .should.be.fulfilled
 
+    it 'creates a roots-base template correctly', ->
+      test_template = path.join(_path, 'roots-base')
+      sprout.add(name: 'foobar-1', uri: test_template)
+        .then -> sprout.init(name: 'foobar-1', path: test_path, overrides: { name: 'bar', description: 'foobar'})
+        .tap ->
+          fs.existsSync(path.join(test_path, 'readme.md')).should.be.ok
+          contents = fs.readFileSync(path.join(test_path, 'readme.md'), 'utf8')
+          contents.should.match /# bar/
+        .then -> rimraf.sync(test_path)
+        .catch (e) -> console.log(e)
+        .then -> sprout.remove('foobar-1')
+        .should.be.fulfilled
+
     it 'creates a project template from a branch', ->
       sprout.add(name: 'foobar-2', uri: "#{test_template_url}#alt")
         .then -> sprout.init(name: 'foobar-2', path: test_path, overrides: { foo: 'bar' })
