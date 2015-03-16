@@ -156,7 +156,7 @@ describe('sprout',
               }
             ).then(
               function (sprout) {
-                done();
+                rimraf(sprout.templates[name].path, done);
               }
             )
           }
