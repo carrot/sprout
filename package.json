@@ -47,7 +47,9 @@
     "mocha": "^2.2.1",
     "chai": "^2.1.2"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "mocha test/test.js"
+  },
   "engines": {
     "node": ">=0.10.0"
   }
