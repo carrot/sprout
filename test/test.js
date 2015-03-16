@@ -3,15 +3,18 @@ var Sprout = require('./../lib')
   , chai = require('chai')
   , path = require('path')
   , fs = require('fs')
-  , rimraf = require('rimraf');
+  , rimraf = require('rimraf')
+  , mockery = require('mockery')
+  , errno = require('errno');
 
-var fixturesPath = path.join(__dirname, 'fixtures')
-  , fixtures;
+var fixturesPath = path.join(__dirname, 'fixtures');
 
 chai.should()
 
 describe('sprout',
   function () {
+
+    var fixtures;
 
     before(
       function () {
@@ -22,7 +25,7 @@ describe('sprout',
     it('should construct with a valid path',
       function (done) {
         var p = path.join(fixtures, 'validPath');
-        (function () { return new Sprout(p) })
+        (function () { return new Sprout(p) })().should.be.ok
         done();
       }
     )
@@ -191,7 +194,7 @@ describe('sprout',
                 template.src.should.eq(src);
                 fs.existsSync(template.path).should.be.true;
                 return sprout.init(name, target, {
-                  defaults: {
+                  locals: {
                     name: 'bar',
                     description: 'foo',
                     github_username: 'carrot'
@@ -233,7 +236,7 @@ describe('sprout',
                 template.src.should.eq(src);
                 fs.existsSync(template.path).should.be.true;
                 return sprout.init(name, null, {
-                  defaults: {
+                  locals: {
                     name: 'bar',
                     description: 'foo',
                     github_username: 'carrot'
@@ -248,6 +251,234 @@ describe('sprout',
           }
         )
 
+      }
+    )
+
+  }
+)
+
+describe('template',
+  function () {
+
+    var fixtures, sprout;
+
+    before(
+      function () {
+        fixtures = path.join(fixturesPath, 'template');
+        sprout = new Sprout(fixtures);
+      }
+    )
+
+    it('should construct with a valid name and path',
+      function (done) {
+        var src = path.join(fixtures, 'validNameAndPath')
+          , name = 'foo';
+        (function () { return new Template(sprout, name, src) })().should.be.ok
+        done();
+      }
+    )
+
+    it('should throw without a valid name',
+      function (done) {
+        var src = path.join(fixtures, 'invalidName');
+        (function () { new Template(sprout, null, src) }).should.throw
+        done();
+      }
+    )
+
+    it('should determine that src is remote',
+      function (done) {
+        var src = 'git@github.com:carrot/sprout-sprout'
+          , name = 'foo'
+          , template = new Template(sprout, 'foo', src);
+        template.isRemote.should.be.true;
+        done();
+      }
+    )
+
+    it('should determine that src is local',
+      function (done) {
+        var src = path.join(fixtures, 'isLocal')
+          , name = 'foo'
+          , template = new Template(sprout, name, src);
+        template.isRemote.should.be.false;
+        done();
+      }
+    )
+
+    describe('save',
+      function () {
+
+        it('should save a template',
+          function (done) {
+            var src = 'git@github.com:carrot/sprout-sprout'
+              , name = 'foo'
+              , template = new Template(sprout, 'foo', src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                rimraf(template.path, done);
+              }
+            )
+          }
+        )
+
+        it('should throw if template has no src',
+          function (done) {
+            var name = 'foo'
+              , template = new Template(sprout, 'foo', null);
+            return template.save().catch(
+              function (error) {
+                error.toString().should.eq('Error: no source provided');
+                done();
+              }
+            )
+          }
+        )
+
+        it('should throw if src is remote and there is no internet',
+          function (done) {
+            mockery.enable({useCleanCache: true, warnOnUnregistered: false});
+            mockery.registerMock('dns', {resolve:
+              function (name, callback) {
+                return callback(errno.code.ECONNREFUSED);
+              }
+            })
+            var src = 'git@github.com:carrot/sprout-sprout'
+              , name = 'foo'
+              , template = new (require('./../lib/template'))(sprout, 'foo', src);
+            return template.save().catch(
+              function (error) {
+                error.toString().should.eq('Error: make sure that you are connected to the internet!');
+                mockery.deregisterMock('dns');
+                mockery.disable();
+                done();
+              }
+            )
+          }
+        )
+
+        it('should throw if src is remote and doesn\'t exist',
+          function (done) {
+            var src = path.join(fixtures, 'missing')
+              , name = 'foo'
+              , template = new Template(sprout, 'foo', src);
+            return template.save().catch(
+              function (error) {
+                error.toString().should.eq('Error: there is no sprout template located at ' + src);
+                done();
+              }
+            )
+          }
+        )
+
+      }
+    )
+
+    describe('init',
+      function () {
+
+        it('should init template',
+          function (done) {
+            var src = 'git@github.com:carrot/sprout-sprout'
+              , target = path.join(fixtures, 'foo')
+              , name = 'bar'
+              , template = new Template(sprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target, {
+                  locals: {
+                    name: 'bar',
+                    description: 'foo',
+                    github_username: 'carrot'
+                  }
+                });
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(target).should.be.true;
+                return template.remove().then(
+                  function () {
+                    rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('should throw when no target provided',
+          function (done) {
+            var src = 'git@github.com:carrot/sprout-sprout'
+              , name = 'foo'
+              , template = new Template(sprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(null);
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: target path required');
+                return template.remove().then(
+                  function () {
+                    done();
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('should throw when no init.js or init.coffee provided',
+          function (done) {
+            var src = path.join(fixtures, 'noInit')
+              , target = path.join(fixtures, 'foo')
+              , name = 'bar'
+              , template = new Template(sprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: neither init.coffee nor init.js exist.');
+                return template.remove().then(
+                  function () {
+                    rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('should use init.js',
+          function (done) {
+            var src = path.join(fixtures, 'initJs')
+              , target = path.join(fixtures, 'foo')
+              , name = 'bar'
+              , template = new Template(sprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar\n');
+                return template.remove().then(
+                  function () {
+                    rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+        
       }
     )
 
