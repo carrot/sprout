@@ -58,7 +58,7 @@ var list = subParser.addParser('list', { addHelp: false });
 var init = subParser.addParser('init', { addHelp: true });
 init.addArgument(['name'], { help: 'name of template' });
 init.addArgument(['target'], { help: 'destination path' });
-init.addArgument(['-o', '--overrides'], { help: 'override locals' });
+init.addArgument(['-l', '--locals'], { help: 'locals' });
 
 /*
  * Run CLI with arguments.
