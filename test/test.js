@@ -701,3 +701,103 @@ describe('template',
 
   }
 )
+
+describe('CLI',
+  function () {
+
+    var describeFixturesPath
+      , describeCLI;
+
+    before(
+      function () {
+        describeFixturesPath = path.join(fixturesPath, 'cli');
+        describeCLI = new CLI(describeFixturesPath);
+      }
+    )
+
+    it('should have sprout instance',
+      function (done) {
+        describeCLI.sprout.should.be.ok;
+        done();
+      }
+    )
+
+    it('should run add method',
+      function (done) {
+        var action = 'add';
+        describeCLI.run({
+          action: action,
+          name: action,
+          src: 'https://github.com/carrot/sprout-sprout'
+        }).then(
+          function () {
+            return describeCLI.run({action: 'remove', name: action});
+          }
+        ).then(
+          function () {
+            done();
+          }
+        )
+      }
+    )
+
+    it('should run remove method',
+      function (done) {
+        var action = 'remove';
+        describeCLI.run({
+          action: 'add',
+          name: action,
+          src: 'https://github.com/carrot/sprout-sprout'
+        }).then(
+          function () {
+            return describeCLI.run({
+              action: action,
+              name: action
+            });
+          }
+        ).then(
+          function () {
+            done();
+          }
+        )
+      }
+    )
+
+    it('should run list method',
+      function (done) {
+        var action = 'list';
+        describeCLI.run({action: action}).then(
+          function () {
+            done();
+          }
+        )
+      }
+    )
+
+    it('should run init method',
+      function (done) {
+        var action = 'init'
+          , src = path.join(describeFixturesPath, 'initSrc')
+          , target = path.join(describeFixturesPath, 'initTarget');
+        describeCLI.run({
+          action: 'add',
+          name: action,
+          src: src
+        }).then(
+          function () {
+            return describeCLI.run({
+              action: action,
+              name: action,
+              target: target
+            });
+          }
+        ).then(
+          function () {
+            rimraf(target, done);
+          }
+        )
+      }
+    )
+
+  }
+)
