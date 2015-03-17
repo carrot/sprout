@@ -673,5 +673,30 @@ describe('template',
       }
     )
 
+    describe('remove',
+      function () {
+
+        it('should remove',
+          function (done) {
+            var name = 'remove'
+              , src = 'https://github.com/carrot/sprout-sprout'
+              , target = path.join(describeTargetPath, name)
+              , template = new Template(describeSprout, name, src);
+            return template.save().then(
+              function () {
+                return template.remove();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.false;
+                done();
+              }
+            )
+          }
+        )
+
+      }
+    )
+
   }
 )
