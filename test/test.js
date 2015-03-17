@@ -294,12 +294,33 @@ describe('template',
         it('should save a local template',
           function (done) {
             var name = 'saveIsLocal'
-              , src = path.join(describeFixturesPath, 'saveIsLocal')
+              , src = path.join(describeFixturesPath, name)
               , template = new Template(describeSprout, name, src);
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 rimraf(template.path, done);
+              }
+            )
+          }
+        )
+
+        it('should replace template',
+          function (done) {
+            var name = 'saveReplace'
+              , src = path.join(describeFixturesPath, name)
+              , template = new Template(describeSprout, name, 'https://github.com/carrot/sprout-sprout');
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return (new Template(describeSprout, name, src)).save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                template.name.should.eq(name);
+                fs.readFileSync(path.join(template.path, 'init.js'), 'utf8').should.eq('module.exports = {};\n');
+                done();
               }
             )
           }
