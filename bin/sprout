@@ -39,13 +39,6 @@ var remove = subParser.addParser('remove', { addHelp: true });
 remove.addArgument(['name'], { help: 'name of template' });
 
 /*
- * $ sprout update
- */
-
-var update = subParser.addParser('update', { addHelp: true });
-update.addArgument(['name'], { help: 'name of template' });
-
-/*
  * $ sprout list
  */
 

@@ -140,43 +140,6 @@ describe('sprout',
       }
     )
 
-    describe('update',
-      function () {
-
-        it('should update template',
-          function (done) {
-            var p = path.join(fixtures, 'update')
-              , sprout = new Sprout(p)
-              , name = 'foo'
-              , src = 'git@github.com:carrot/sprout-sprout';
-            sprout.add(name, src).then(
-              function (sprout) {
-                template = sprout.templates[name];
-                template.should.be.instanceof(Template);
-                template.src.should.eq(src);
-                fs.existsSync(template.path).should.be.true;
-                return sprout.update(name);
-              }
-            ).then(
-              function (sprout) {
-                rimraf(sprout.templates[name].path, done);
-              }
-            )
-          }
-        )
-
-        it('should throw if no name',
-          function (done) {
-            var p = path.join(fixtures, 'update')
-              , sprout = new Sprout(p);
-            (function () { sprout.update(null) }).should.throw;
-            done();
-          }
-        )
-
-      }
-    )
-
     describe('init',
       function () {
 
