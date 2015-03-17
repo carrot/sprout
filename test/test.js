@@ -329,6 +329,7 @@ describe('template',
                 fs.existsSync(template.path).should.be.true;
                 template.name.should.eq(name);
                 fs.readFileSync(path.join(template.path, 'init.js'), 'utf8').should.eq('module.exports = {};\n');
+                fs.unlinkSync(template.path);
                 done();
               }
             )
