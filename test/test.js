@@ -7,6 +7,7 @@ var Sprout = require('./../lib')
   , rimraf = require('rimraf')
   , mockery = require('mockery')
   , errno = require('errno')
+  , exec = require('child_process').exec
   , Promise = require('bluebird');
 
 var fixturesPath = path.join(__dirname, 'fixtures');
@@ -296,7 +297,11 @@ describe('template',
             var name = 'saveIsLocal'
               , src = path.join(describeFixturesPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 rimraf(template.path, done);
@@ -310,7 +315,11 @@ describe('template',
             var name = 'saveReplace'
               , src = path.join(describeFixturesPath, name)
               , template = new Template(describeSprout, name, 'https://github.com/carrot/sprout-sprout');
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return (new Template(describeSprout, name, src)).save();
@@ -394,7 +403,11 @@ describe('template',
             var name = 'saveNoInit'
               , src = path.join(describeFixturesPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().catch(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).catch(
               function (error) {
                 fs.existsSync(template.path).should.be.false;
                 error.toString().should.eq('Error: neither init.coffee nor init.js exist in this template');
@@ -409,7 +422,11 @@ describe('template',
             var name = 'saveNoRoot'
               , src = path.join(describeFixturesPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().catch(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).catch(
               function (error) {
                 fs.existsSync(template.path).should.be.false;
                 error.toString().should.eq('Error: root path doesn\'t exist in template');
@@ -461,7 +478,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return Promise.promisify(rimraf)(template.root);
@@ -516,7 +537,11 @@ describe('template',
               , template = new Template(describeSprout, name, src)
               , gitPath
               , fooPath;
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function () {
                 gitPath = path.join(template.path, '.git');
                 fooPath = path.join(template.path, 'foo');
@@ -527,7 +552,6 @@ describe('template',
             ).catch(
               function (error) {
                 error.toString().should.eq('Error: initIsNotGit is not a git repository');
-                fs.renameSync(fooPath, gitPath);
                 return template.remove().then(
                   function () {
                     done();
@@ -544,7 +568,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 fs.unlinkSync(path.join(template.path, 'init.js'));
@@ -570,7 +598,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return template.init(target);
@@ -594,7 +626,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return template.init(target);
@@ -618,7 +654,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return template.init(target);
@@ -642,7 +682,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return template.init(target);
@@ -666,7 +710,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return template.init(target);
@@ -690,7 +738,11 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
                 return template.init(target);
@@ -745,7 +797,11 @@ describe('template',
               , template = new Template(describeSprout, name, src)
               , gitPath
               , fooPath;
-            return template.save().then(
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
               function () {
                 gitPath = path.join(template.path, '.git');
                 fooPath = path.join(template.path, 'foo');
@@ -756,7 +812,6 @@ describe('template',
             ).catch(
               function (error) {
                 error.toString().should.eq('Error: updateIsNotGit is not a git repository');
-                fs.renameSync(fooPath, gitPath);
                 return template.remove().then(
                   function () {
                     done();
@@ -875,11 +930,15 @@ describe('CLI',
         var action = 'init'
           , src = path.join(describeFixturesPath, 'initSrc')
           , target = path.join(describeFixturesPath, 'initTarget');
-        describeCLI.run({
-          action: 'add',
-          name: action,
-          src: src
-        }).then(
+        return initGitRepository(src).then(
+          function () {
+            return describeCLI.run({
+              action: 'add',
+              name: action,
+              src: src
+            });
+          }
+        ).then(
           function () {
             return describeCLI.run({
               action: action,
@@ -897,3 +956,13 @@ describe('CLI',
 
   }
 )
+
+/*
+ * Helper function for creating a git repository
+ * in the specified directory.
+ * @param {String} dir - directory to create repo in.
+ */
+
+ var initGitRepository = function (dir) {
+   return Promise.promisify(exec)('git init ' + dir);
+ }
