@@ -647,6 +647,34 @@ describe('template',
           }
         )
 
+        it('should include underscore.string as ejs local',
+          function (done) {
+            var name = 'initUnderscore'
+              , src = path.join(describeFixturesPath, name)
+              , target = path.join(describeTargetPath, name)
+              , template = new Template(describeSprout, name, src);
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target, { locals: { foo: 'bar' }});
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('Bar\n');
+                return template.remove().then(
+                  function () {
+                    rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
         it('should run before hook',
           function (done) {
             var name = 'before'
