@@ -788,6 +788,43 @@ describe('template',
           }
         )
 
+        it('should work if internet is missing',
+          function (done) {
+            mockery.enable({useCleanCache: true, warnOnUnregistered: false});
+            mockery.registerMock('dns', {resolve:
+              function (name, callback) {
+                return callback(errno.code.ECONNREFUSED);
+              }
+            })
+            var name = 'initNoInternet'
+              , src = path.join(describeFixturesPath, name)
+              , target = path.join(describeTargetPath, name)
+              , template = new (require('./../lib/template'))(describeSprout, name, src);
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).catch(
+              function (error) {
+                fs.existsSync(target).should.be.false;
+                template.remove().then(
+                  function () {
+                    mockery.deregisterMock('dns');
+                    mockery.disable();
+                    done();
+                  }
+                )
+              }
+            )
+          }
+        )
+
+
       }
     )
 
