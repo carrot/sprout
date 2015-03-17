@@ -614,5 +614,64 @@ describe('template',
       }
     )
 
+    describe('update',
+      function () {
+
+        it('should update',
+          function (done) {
+            var name = 'update'
+              , src = 'https://github.com/carrot/sprout-sprout'
+              , target = path.join(describeTargetPath, name)
+              , template = new Template(describeSprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.update();
+              }
+            ).then(
+              function () {
+                template.remove().then(
+                  function () {
+                    done();
+                  }
+                )
+              }
+            )
+          }
+        )
+
+        it('should throw error if not a git repo',
+          function (done) {
+            var name = 'updateIsNotGit'
+              , src = path.join(describeFixturesPath, name)
+              , target = path.join(describeTargetPath, name)
+              , template = new Template(describeSprout, name, src)
+              , gitPath
+              , fooPath;
+            return template.save().then(
+              function () {
+                gitPath = path.join(template.path, '.git');
+                fooPath = path.join(template.path, 'foo');
+                fs.existsSync(template.path).should.be.true;
+                fs.renameSync(gitPath, fooPath);
+                return template.update();
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: updateIsNotGit is not a git repository');
+                fs.renameSync(fooPath, gitPath);
+                return template.remove().then(
+                  function () {
+                    done();
+                  }
+                );
+              }
+            )
+          }
+        )
+
+      }
+    )
+
   }
 )
