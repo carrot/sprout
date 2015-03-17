@@ -277,10 +277,24 @@ describe('template',
     describe('save',
       function () {
 
-        it('should save a template',
+        it('should save a remote template',
           function (done) {
-            var src = 'https://github.com/carrot/sprout-sprout'
-              , name = 'isRemote'
+            var name = 'saveIsRemote'
+              , src = 'https://github.com/carrot/sprout-sprout'
+              , template = new Template(describeSprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                rimraf(template.path, done);
+              }
+            )
+          }
+        )
+
+        it('should save a local template',
+          function (done) {
+            var name = 'saveIsLocal'
+              , src = path.join(describeFixturesPath, 'saveIsLocal')
               , template = new Template(describeSprout, name, src);
             return template.save().then(
               function (template) {
