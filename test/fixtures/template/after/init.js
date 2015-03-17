@@ -3,8 +3,8 @@ var fs = require('fs')
 
 module.exports = {
 
-  after: function (config, resolve, reject) {
-    fs.writeFileSync(path.join(__dirname, 'bar'), 'foo');
+  after: function (target, config, resolve, reject) {
+    fs.writeFileSync(path.join(target, 'bar'), 'foo\n');
     resolve();
   }
 

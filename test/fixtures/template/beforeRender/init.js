@@ -3,8 +3,8 @@ var fs = require('fs')
 
 module.exports = {
 
-  beforeRender: function (config, resolve, reject) {
-    config.foo = 'bar';
+  beforeRender: function (target, config, resolve, reject) {
+    config.bar = 'foo';
     resolve();
   }
 
