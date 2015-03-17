@@ -420,11 +420,40 @@ describe('template',
           }
         )
 
+        it('should throw when no root path',
+          function (done) {
+            var name = 'initNoRoot'
+              , src = path.join(describeFixturesPath, name)
+              , target = path.join(describeTargetPath, name)
+              , template = new Template(describeSprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return Promise.promisify(rimraf)(template.root);
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: root path doesn\'t exist in ' + name);
+                fs.mkdirSync(template.root);
+                fs.writeFileSync(path.join(template.root, '.keep'), '', 'utf8');
+                return template.remove().then(
+                  function () {
+                    done();
+                  }
+                );
+              }
+            )
+          }
+        )
+
         it('should throw when no target provided',
           function (done) {
             var name = 'noTarget'
               , src = 'https://github.com/carrot/sprout-sprout'
-              , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
             return template.save().then(
               function (template) {
