@@ -56,6 +56,8 @@ var init = subParser.addParser('init', { addHelp: true });
 init.addArgument(['name'], { help: 'name of template' });
 init.addArgument(['target'], { help: 'destination path' });
 init.addArgument(['-l', '--locals'], { help: 'locals' });
+init.addArgument(['-t', '--tag'], { help: 'git tag' });
+init.addArgument(['-b', '--branch'], { help: 'git branch' });
 
 /* A helper function for determining a Sprout path.
  * @returns {String} - a path for Sprout.
