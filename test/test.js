@@ -704,6 +704,39 @@ describe('template',
           }
         )
 
+        it('should install npm dependencies',
+          function (done) {
+            var name = 'initNpm'
+              , src = path.join(describeFixturesPath, name)
+              , target = path.join(describeTargetPath, name)
+              , template = new Template(describeSprout, name, src)
+              , npmDeps = path.join(src, 'node_modules');
+            return initGitRepository(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(npmDeps).should.be.true;
+                return template.remove().then(
+                  function () {
+                    rimraf(target,
+                      function () {
+                        rimraf(npmDeps, done);
+                      }
+                    );
+                  }
+                );
+              }
+            )
+          }
+        )
+
         it('should run before hook',
           function (done) {
             var name = 'before'
