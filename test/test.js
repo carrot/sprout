@@ -534,19 +534,18 @@ describe('template',
             var name = 'initIsNotGit'
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
-              , template = new Template(describeSprout, name, src)
-              , gitPath
-              , fooPath;
+              , template = new Template(describeSprout, name, src);
             return initGitRepository(src).then(
               function () {
                 return template.save();
               }
             ).then(
               function () {
-                gitPath = path.join(template.path, '.git');
-                fooPath = path.join(template.path, 'foo');
                 fs.existsSync(template.path).should.be.true;
-                fs.renameSync(gitPath, fooPath);
+                return Promise.promisify(rimraf)(path.join(template.path, '.git'));
+              }
+            ).then(
+              function () {
                 return template.init(target);
               }
             ).catch(
@@ -795,18 +794,17 @@ describe('template',
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src)
-              , gitPath
-              , fooPath;
             return initGitRepository(src).then(
               function () {
                 return template.save();
               }
             ).then(
               function () {
-                gitPath = path.join(template.path, '.git');
-                fooPath = path.join(template.path, 'foo');
                 fs.existsSync(template.path).should.be.true;
-                fs.renameSync(gitPath, fooPath);
+                return Promise.promisify(rimraf)(path.join(template.path, '.git'));
+              }
+            ).then(
+              function () {
                 return template.update();
               }
             ).catch(
