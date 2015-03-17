@@ -1,5 +1,6 @@
 var Sprout = require('./../lib')
-  , Template = require('../lib/template')
+  , Template = require('./../lib/template')
+  , CLI = require('./../lib/cli')
   , chai = require('chai')
   , path = require('path')
   , fs = require('fs')
