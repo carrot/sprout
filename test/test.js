@@ -5,7 +5,8 @@ var Sprout = require('./../lib')
   , fs = require('fs')
   , rimraf = require('rimraf')
   , mockery = require('mockery')
-  , errno = require('errno');
+  , errno = require('errno')
+  , Promise = require('bluebird');
 
 var fixturesPath = path.join(__dirname, 'fixtures');
 
@@ -338,6 +339,20 @@ describe('template',
           }
         )
 
+        it('should throw if src is local and isn\'t a git repo',
+          function (done) {
+            var src = path.join(describeFixturesPath, 'localNotGit')
+              , name = 'localNotGit'
+              , template = new Template(describeSprout, name, src);
+            return template.save().catch(
+              function (error) {
+                error.toString().should.eq('Error: ' + src + ' is not a git repository');
+                done();
+              }
+            )
+          }
+        )
+
       }
     )
 
@@ -403,15 +418,21 @@ describe('template',
             var name = 'initIsNotGit'
               , src = path.join(describeFixturesPath, name)
               , target = path.join(describeTargetPath, name)
-              , template = new Template(describeSprout, name, src);
+              , template = new Template(describeSprout, name, src)
+              , gitPath
+              , fooPath;
             return template.save().then(
-              function (template) {
+              function () {
+                gitPath = path.join(template.path, '.git');
+                fooPath = path.join(template.path, 'foo');
                 fs.existsSync(template.path).should.be.true;
-                return template.init(null);
+                fs.renameSync(gitPath, fooPath);
+                return template.init(target);
               }
             ).catch(
               function (error) {
                 error.toString().should.eq('Error: initIsNotGit is not a git repository');
+                fs.renameSync(fooPath, gitPath);
                 return template.remove().then(
                   function () {
                     done();
