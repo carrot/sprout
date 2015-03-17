@@ -354,6 +354,21 @@ describe('template',
           }
         )
 
+        it('should throw and remove template when init.coffee and init.js don\'t exist in template',
+          function (done) {
+            var name = 'saveNoInit'
+              , src = path.join(describeFixturesPath, name)
+              , template = new Template(describeSprout, name, src);
+            return template.save().catch(
+              function (error) {
+                fs.existsSync(template.path).should.be.false;
+                error.toString().should.eq('Error: neither init.coffee nor init.js exist in this template');
+                done();
+              }
+            )
+          }
+        )
+
       }
     )
 
@@ -453,6 +468,7 @@ describe('template',
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
+                fs.unlinkSync(path.join(template.path, 'init.js'));
                 return template.init(target);
               }
             ).catch(
@@ -460,6 +476,7 @@ describe('template',
                 error.toString().should.eq('Error: neither init.coffee nor init.js exist.');
                 return template.remove().then(
                   function () {
+                    fs.writeFileSync(path.join(src, 'init.js'), 'module.exports = {};', 'utf8');
                     rimraf(target, done);
                   }
                 );
