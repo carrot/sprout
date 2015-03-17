@@ -398,6 +398,30 @@ describe('template',
           }
         )
 
+        it('should throw when target is not git repository',
+          function (done) {
+            var name = 'initIsNotGit'
+              , src = path.join(describeFixturesPath, name)
+              , target = path.join(describeTargetPath, name)
+              , template = new Template(describeSprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(null);
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: initIsNotGit is not a git repository');
+                return template.remove().then(
+                  function () {
+                    done();
+                  }
+                );
+              }
+            )
+          }
+        )
+
         it('should throw when no init.js or init.coffee provided',
           function (done) {
             var name = 'noInit'
@@ -556,7 +580,11 @@ describe('template',
             ).catch(
               function (error) {
                 fs.existsSync(target).should.be.false;
-                done();
+                template.remove().then(
+                  function () {
+                    done();
+                  }
+                )
               }
             )
           }
