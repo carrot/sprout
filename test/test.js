@@ -64,7 +64,7 @@ describe('sprout',
             var p = path.join(fixtures, 'add')
               , sprout = new Sprout(p)
               , name = 'foo'
-              , src = 'git@github.com:carrot/sprout-sprout';
+              , src = 'https://github.com/carrot/sprout-sprout';
             sprout.add(name, src).then(
               function (sprout) {
                 sprout.templates[name].should.be.instanceof(Template);
@@ -80,7 +80,7 @@ describe('sprout',
           function (done) {
             var p = path.join(fixtures, 'add')
               , sprout = new Sprout(p);
-            (function () { sprout.add(null, 'git@github.com:carrot/sprout-sprout') }).should.throw;
+            (function () { sprout.add(null, 'https://github.com/carrot/sprout-sprout') }).should.throw;
             done();
           }
         )
@@ -108,7 +108,7 @@ describe('sprout',
             var p = path.join(fixtures, 'remove')
               , sprout = new Sprout(p)
               , name = 'foo'
-              , src = 'git@github.com:carrot/sprout-sprout'
+              , src = 'https://github.com/carrot/sprout-sprout'
               , template;
             sprout.add(name, src).then(
               function (sprout) {
@@ -148,7 +148,7 @@ describe('sprout',
             var p = path.join(fixtures, 'init')
               , sprout = new Sprout(p)
               , name = 'foo'
-              , src = 'git@github.com:carrot/sprout-sprout'
+              , src = 'https://github.com/carrot/sprout-sprout'
               , target = path.join(p, 'bar');
             sprout.add(name, src).then(
               function (sprout) {
@@ -191,7 +191,7 @@ describe('sprout',
             var p = path.join(fixtures, 'init')
               , sprout = new Sprout(p)
               , name = 'foo'
-              , src = 'git@github.com:carrot/sprout-sprout';
+              , src = 'https://github.com/carrot/sprout-sprout';
             sprout.add(name, src).then(
               function (sprout) {
                 template = sprout.templates[name];
@@ -254,7 +254,7 @@ describe('template',
 
     it('should determine that src is remote',
       function (done) {
-        var src = 'git@github.com:carrot/sprout-sprout'
+        var src = 'https://github.com/carrot/sprout-sprout'
           , name = 'srcRemote'
           , template = new Template(describeSprout, 'foo', src);
         template.isRemote.should.be.true;
@@ -277,7 +277,7 @@ describe('template',
 
         it('should save a template',
           function (done) {
-            var src = 'git@github.com:carrot/sprout-sprout'
+            var src = 'https://github.com/carrot/sprout-sprout'
               , name = 'isRemote'
               , template = new Template(describeSprout, name, src);
             return template.save().then(
@@ -310,7 +310,7 @@ describe('template',
                 return callback(errno.code.ECONNREFUSED);
               }
             })
-            var src = 'git@github.com:carrot/sprout-sprout'
+            var src = 'https://github.com/carrot/sprout-sprout'
               , name = 'noInternet'
               , template = new (require('./../lib/template'))(describeSprout, name, src);
             return template.save().catch(
@@ -347,7 +347,7 @@ describe('template',
         it('should init template',
           function (done) {
             var name = 'init'
-              , src = 'git@github.com:carrot/sprout-sprout'
+              , src = 'https://github.com/carrot/sprout-sprout'
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
             return template.save().then(
@@ -377,7 +377,7 @@ describe('template',
         it('should throw when no target provided',
           function (done) {
             var name = 'noTarget'
-              , src = 'git@github.com:carrot/sprout-sprout'
+              , src = 'https://github.com/carrot/sprout-sprout'
               , target = path.join(describeTargetPath, name)
               , template = new Template(describeSprout, name, src);
             return template.save().then(
