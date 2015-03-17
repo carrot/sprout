@@ -369,6 +369,21 @@ describe('template',
           }
         )
 
+        it('should throw and remove template when root path doesn\'t exist in template',
+          function (done) {
+            var name = 'saveNoRoot'
+              , src = path.join(describeFixturesPath, name)
+              , template = new Template(describeSprout, name, src);
+            return template.save().catch(
+              function (error) {
+                fs.existsSync(template.path).should.be.false;
+                error.toString().should.eq('Error: root path doesn\'t exist in template');
+                done();
+              }
+            )
+          }
+        )
+
       }
     )
 
@@ -473,7 +488,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: neither init.coffee nor init.js exist.');
+                error.toString().should.eq('Error: neither init.coffee nor init.js exist');
                 return template.remove().then(
                   function () {
                     fs.writeFileSync(path.join(src, 'init.js'), 'module.exports = {};', 'utf8');
