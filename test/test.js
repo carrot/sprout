@@ -981,33 +981,42 @@ describe('template',
 describe('CLI',
   function () {
 
-    var describeFixturesPath
-      , describeCLI;
+    var cliFixturesPath
+      , cli
+      , emitter;
 
     before(
       function () {
-        describeFixturesPath = path.join(fixturesPath, 'cli');
-        describeCLI = new CLI(describeFixturesPath);
+        cliFixturesPath = path.join(fixturesPath, 'cli');
+        cli = new CLI(fixturesPath);
+        emitter = cli.emitter;
       }
     )
 
     it('should have sprout instance',
       function (done) {
-        describeCLI.sprout.should.be.ok;
+        cli.sprout.should.be.ok;
         done();
       }
     )
 
     it('should run add method',
       function (done) {
-        var action = 'add';
-        describeCLI.run({
-          action: action,
-          name: action,
-          src: 'https://github.com/carrot/sprout-sprout'
-        }).then(
+        var action = 'add'
+          , src = 'https://github.com/carrot/sprout-sprout';
+        var onSuccess = function (message) {
+          message.should.eq('template `' + action + '` from ' + src + ' added!');
+        }
+        var onError = function (error) {
+          throw error;
+        }
+        emitter.on('success', onSuccess);
+        emitter.on('error', onError);
+        cli.run({action: action, name: action, src: src}).then(
           function () {
-            return describeCLI.run({action: 'remove', name: action});
+            emitter.removeListener('success', onSuccess);
+            emitter.removeListener('error', onError);
+            return cli.run({action: 'remove', name: action});
           }
         ).then(
           function () {
@@ -1019,20 +1028,24 @@ describe('CLI',
 
     it('should run remove method',
       function (done) {
-        var action = 'remove';
-        describeCLI.run({
-          action: 'add',
-          name: action,
-          src: 'https://github.com/carrot/sprout-sprout'
-        }).then(
+        var action = 'remove'
+          , src = 'https://github.com/carrot/sprout-sprout';
+        var onSuccess = function (message) {
+          message.should.eq('template `' + action + '` removed!');
+        }
+        var onError = function (error) {
+          throw error;
+        }
+        cli.run({action: 'add', name: action, src: src}).then(
           function () {
-            return describeCLI.run({
-              action: action,
-              name: action
-            });
+            emitter.on('success', onSuccess);
+            emitter.on('error', onError);
+            return cli.run({action: action, name: action});
           }
         ).then(
           function () {
+            emitter.removeListener('success', onSuccess);
+            emitter.removeListener('error', onError);
             done();
           }
         )
@@ -1041,8 +1054,27 @@ describe('CLI',
 
     it('should run list method',
       function (done) {
-        var action = 'list';
-        describeCLI.run({action: action}).then(
+        var action = 'list'
+          , src = 'https://github.com/carrot/sprout-sprout';
+        var onList = function (arr) {
+          arr.should.include(action);
+        }
+        var onError = function (error) {
+          throw error;
+        }
+        cli.run({action: 'add', name: action, src: src}).then(
+          function () {
+            emitter.on('list', onList);
+            emitter.on('error', onError);
+            return cli.run({action: action, name: action});
+          }
+        ).then(
+          function () {
+            emitter.removeListener('list', onList);
+            emitter.removeListener('error', onError);
+            return cli.run({action: 'remove', name: action});
+          }
+        ).then(
           function () {
             done();
           }
@@ -1053,27 +1085,34 @@ describe('CLI',
     it('should run init method',
       function (done) {
         var action = 'init'
-          , src = path.join(describeFixturesPath, 'initSrc')
-          , target = path.join(describeFixturesPath, 'initTarget');
-        return initGitRepository(src).then(
+          , initFixturesPath = path.join(cliFixturesPath, 'init')
+          , src = path.join(initFixturesPath, 'src')
+          , target = path.join(initFixturesPath, 'target');
+        var onSuccess = function (message) {
+          message.should.eq('template `' + action + '` initialized at ' + target + '!');
+        }
+        var onError = function (error) {
+          throw error;
+        }
+        initGitRepository(src).then(
           function () {
-            return describeCLI.run({
-              action: 'add',
-              name: action,
-              src: src
-            });
+            return cli.run({action: 'add', name: action, src: src});
           }
         ).then(
           function () {
-            return describeCLI.run({
-              action: action,
-              name: action,
-              target: target
-            });
+            emitter.on('success', onSuccess);
+            emitter.on('error', onError);
+            return cli.run({action: action, name: action, target: target});
           }
         ).then(
           function () {
-            rimraf(target, done);
+            emitter.removeListener('success', onSuccess);
+            emitter.removeListener('error', onError);
+            return cli.run({action: 'remove', name: action});
+          }
+        ).then(
+          function () {
+            return rimraf(target, done);
           }
         )
       }

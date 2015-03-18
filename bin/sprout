@@ -6,7 +6,8 @@ var CLI = require('./../lib/cli')
   , os = require('os')
   , osenv = require('osenv')
   , crypto = require('crypto')
-  , path = require('path');
+  , path = require('path')
+  , chalk = require('chalk');
 
 /*
  * Create argument parser.
@@ -85,8 +86,41 @@ var generateFakeUser = function () {
 }
 
 /*
+ * Initialize CLI interface and
+ * event handlers.
+ */
+
+var cli = new CLI(process.env.SPROUT_PATH ? process.env.SPROUT_PATH : userSproutPath())
+  , emitter = cli.emitter;
+
+emitter.on('success',
+  function (message) {
+    console.log(chalk.green('✓ ' + message.toString()));
+  }
+)
+
+emitter.on('error',
+  function (error) {
+    console.error(chalk.red('✘ ' + error.toString()));
+  }
+)
+
+emitter.on('list',
+  function (list) {
+    var item;
+    for (var i=0; i<list.length; i++) {
+      item = list[i];
+      console.log(chalk.grey('- ' + item.toString()));
+    }
+  }
+)
+
+/*
  * Run CLI with arguments.
  */
 
-var cli = new CLI(process.env.SPROUT_PATH ? process.env.SPROUT_PATH : userSproutPath());
-cli.run(parser.parseArgs());
+cli.run(parser.parseArgs()).catch(
+  function () {
+    process.exit(1);
+  }
+);
