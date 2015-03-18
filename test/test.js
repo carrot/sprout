@@ -1181,9 +1181,9 @@ describe('CLI',
     it('should run init method',
       function (done) {
         var action = 'init'
-          , initFixturesPath = path.join(cliFixturesPath, 'init')
-          , src = path.join(initFixturesPath, 'src')
-          , target = path.join(initFixturesPath, 'target');
+          , fixture = path.join(cliFixturesPath, action)
+          , src = path.join(fixture, 'src')
+          , target = path.join(fixture, 'target');
         var onSuccess = function (message) {
           message.should.eq('template `' + action + '` initialized at ' + target + '!');
         }
@@ -1209,6 +1209,29 @@ describe('CLI',
         ).then(
           function () {
             return rimraf(target, done);
+          }
+        )
+      }
+    )
+
+    it('should parse locals passed to init',
+      function (done) {
+        var action = 'locals'
+          , fixture = path.join(cliFixturesPath, action)
+          , src = path.join(fixture, 'src')
+          , target = path.join(fixture, 'target');
+        return initGitRepository(src).then(
+          function () {
+            return cli.run({action: 'add', name: action, src: src});
+          }
+        ).then(
+          function () {
+            return cli.run({action: 'init', name: action, target: target, locals: ['foo=bar', 'bar=foo']});
+          }
+        ).then(
+          function () {
+            fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('barfoo\n');
+            done();
           }
         )
       }
