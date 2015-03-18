@@ -47,7 +47,7 @@
     "errno": "^0.1.1"
   },
   "scripts": {
-    "test": "mocha test/test.js"
+    "test": "./node_modules/.bin/mocha test/test.js"
   },
   "engines": {
     "node": ">=0.10.0"
