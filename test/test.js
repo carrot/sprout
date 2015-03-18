@@ -1,5 +1,6 @@
 var Sprout = require('./../lib')
   , Template = require('./../lib/template')
+  , Utils = require('./../lib/utils')
   , CLI = require('./../lib/cli')
   , chai = require('chai')
   , path = require('path')
@@ -966,6 +967,107 @@ describe('template',
           }
         )
 
+      }
+    )
+
+  }
+)
+
+describe('utils',
+  function () {
+
+    var utilsFixturesPath;
+
+    before(
+      function () {
+        utilsFixturesPath = path.join(fixturesPath, 'utils');
+      }
+    )
+
+    it('should read a file relative to src path',
+      function (done) {
+        var fn = 'read'
+          , fixture = path.join(utilsFixturesPath, fn)
+          , utils = new Utils(fixture);
+        return utils.read(fn).then(
+          function (output) {
+            output.should.eq('bar\n');
+            done();
+          }
+        )
+      }
+    )
+
+    it('should write relative to target path',
+      function (done) {
+        var fn = 'write'
+          , fixture = path.join(utilsFixturesPath, fn)
+          , utils = new Utils(null, fixture);
+        return utils.write(fn, 'bar').then(
+          function () {
+            fs.readFileSync(path.join(fixture, fn), 'utf8').should.eq('bar');
+            return utils.remove(fn);
+          }
+        ).then(
+          function () {
+            done();
+          }
+        )
+      }
+    )
+
+    it('should write relative to target path and should parse locals passed to third argument',
+      function (done) {
+        var fn = 'writeEjs'
+          , fixture = path.join(utilsFixturesPath, fn)
+          , utils = new Utils(null, fixture);
+        return utils.write(fn, '<%= foo %>', {foo: fn}).then(
+          function () {
+            fs.readFileSync(path.join(fixture, fn), 'utf8').should.eq(fn);
+            return utils.remove(fn);
+          }
+        ).then(
+          function () {
+            done();
+          }
+        )
+      }
+    )
+
+    it('should rename path in target path to path relative to target path',
+      function (done) {
+        var fixture = path.join(utilsFixturesPath, 'rename')
+          , src = fixture
+          , target = fixture
+          , utils = new Utils(src, target);
+        return utils.rename('foo', 'bar').then(
+          function () {
+            fs.existsSync(path.join(target, 'bar')).should.be.true;
+            return utils.rename('bar', 'foo');
+          }
+        ).then(
+          function () {
+            done();
+          }
+        )
+      }
+    )
+
+    it('should remove a path relative to the target path',
+      function (done) {
+        var fn = 'remove'
+          , fixture = path.join(utilsFixturesPath, fn)
+          , utils = new Utils(null, fixture);
+        return utils.remove(fn).then(
+          function () {
+            fs.existsSync(path.join(fixture, fn)).should.be.false;
+            return utils.write(fn, '');
+          }
+        ).then(
+          function () {
+            done();
+          }
+        )
       }
     )
 
