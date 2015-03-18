@@ -23,7 +23,7 @@ var parser = new ArgParse({
  */
 
 var subParser = parser.addSubparsers({
-  title: 'children',
+  title: 'Actions',
   dest: 'action'
 });
 
@@ -31,7 +31,7 @@ var subParser = parser.addSubparsers({
  * $ sprout add
  */
 
-var add = subParser.addParser('add', { addHelp: true });
+var add = subParser.addParser('add', { aliases: ['install'], addHelp: true });
 add.addArgument(['name'], { help: 'name of template' });
 add.addArgument(['src'], { help: 'source path or remote git' });
 
@@ -39,20 +39,20 @@ add.addArgument(['src'], { help: 'source path or remote git' });
  * $ sprout remove
  */
 
-var remove = subParser.addParser('remove', { addHelp: true });
+var remove = subParser.addParser('remove', { aliases: ['delete'], addHelp: true });
 remove.addArgument(['name'], { help: 'name of template' });
 
 /*
  * $ sprout list
  */
 
-var list = subParser.addParser('list', { addHelp: false });
+var list = subParser.addParser('list', { aliases: ['ls', 'all'], addHelp: false });
 
 /*
  * $ sprout init
  */
 
-var init = subParser.addParser('init', { addHelp: true });
+var init = subParser.addParser('init', { aliases: ['new', 'create'], addHelp: true });
 init.addArgument(['name'], { help: 'name of template' });
 init.addArgument(['target'], { help: 'destination path' });
 init.addArgument(['-l', '--locals'], { help: 'locals' });
