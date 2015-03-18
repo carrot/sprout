@@ -90,13 +90,6 @@ describe('sprout',
           }
         )
 
-        it('should throw if no src',
-          function (done) {
-            (function () { sprout.add('foo', null) }).should.throw;
-            done();
-          }
-        )
-
       }
     )
 
@@ -174,14 +167,6 @@ describe('sprout',
         it('should throw if no name',
           function (done) {
             (function () { sprout.init(null) }).should.throw;
-            done();
-          }
-        )
-
-        it('should throw if no target',
-          function (done) {
-            // TODO: bad test
-            (function () { sprout.init('foo', null) }).should.throw;
             done();
           }
         )
