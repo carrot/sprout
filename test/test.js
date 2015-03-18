@@ -9,6 +9,7 @@ var Sprout = require('./../lib')
   , mockery = require('mockery')
   , errno = require('errno')
   , exec = require('child_process').exec
+  , os = require('os')
   , Promise = require('bluebird');
 
 var fixturesPath = path.join(__dirname, 'fixtures');
@@ -263,7 +264,7 @@ describe('template',
             var name = 'local'
               , src = path.join(saveTemplateFixturesPath, name)
               , template = new Template(sprout, name, src);
-            initGitRepository(src).then(
+            gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -288,7 +289,7 @@ describe('template',
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true;
-                return initGitRepository(src);
+                return gitInit(src);
               }
             ).then(
               function () {
@@ -378,7 +379,7 @@ describe('template',
             var name = 'noInit'
               , src = path.join(saveTemplateFixturesPath, name)
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -397,7 +398,7 @@ describe('template',
             var name = 'noRoot'
               , src = path.join(saveTemplateFixturesPath, name)
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -463,7 +464,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -577,7 +578,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -606,7 +607,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -628,6 +629,153 @@ describe('template',
           }
         )
 
+        it('should use a different git branch if specified',
+          function (done) {
+            var name = 'branch'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , sproutPath = path.join((os.tmpdir ? os.tmpdir() : os.tmpDir()), '__sprout__')
+              , src = path.join((os.tmpdir ? os.tmpdir() : os.tmpDir()), name)
+              , srcRoot = path.join(src, 'root')
+              , srcInit = path.join(src, 'init.js')
+              , target = path.join(fixture, 'target')
+              , template;
+            return Promise.promisify(rimraf)(sproutPath).then(
+              function () {
+                fs.mkdirSync(sproutPath);
+                return Promise.promisify(rimraf)(src);
+              }
+            ).then(
+              function () {
+                fs.mkdirSync(src);
+                fs.writeFileSync(srcInit, 'module.exports={};');
+                fs.mkdirSync(srcRoot);
+                fs.writeFileSync(path.join(srcRoot, '.keep'), '');
+                template = new Template(new Sprout(sproutPath), name, src);
+              }
+            ).then(
+              function () {
+                return gitInit(src);
+              }
+            ).then(
+              function () {
+                return gitCommitAdd(src);
+              }
+            ).then(
+              function () {
+                return template.save();
+              }
+            )
+            .then(
+              function () {
+                return gitCreateBranch(template.path, name);
+              }
+            ).then(
+              function () {
+                fs.writeFileSync(path.join(template.root, 'foo'), '', 'utf8');
+                return gitCommitAdd(template.path);
+              }
+            ).then(
+              function () {
+                return gitCheckout(template.path, 'master');
+              }
+            ).then(
+              function () {
+                return template.init(target, {branch: name});
+              }
+            ).then(
+              function () {
+                fs.existsSync(path.join(target, 'foo')).should.be.true;
+                return gitCurrentBranch(template.path);
+              }
+            ).then(
+              function (branch) {
+                branch.should.eq('master\n');
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            );
+          }
+        )
+
+        it('should use a different git tag if specified',
+          function (done) {
+            var name = 'tag'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , sproutPath = path.join((os.tmpdir ? os.tmpdir() : os.tmpDir()), '__sprout__')
+              , src = path.join((os.tmpdir ? os.tmpdir() : os.tmpDir()), name)
+              , srcRoot = path.join(src, 'root')
+              , srcInit = path.join(src, 'init.js')
+              , target = path.join(fixture, 'target')
+              , template;
+            return Promise.promisify(rimraf)(sproutPath).then(
+              function () {
+                fs.mkdirSync(sproutPath);
+                return Promise.promisify(rimraf)(src);
+              }
+            ).then(
+              function () {
+                fs.mkdirSync(src);
+                fs.writeFileSync(srcInit, 'module.exports={};');
+                fs.mkdirSync(srcRoot);
+                fs.writeFileSync(path.join(srcRoot, '.keep'), '');
+                template = new Template(new Sprout(sproutPath), name, src);
+              }
+            ).then(
+              function () {
+                return gitInit(src);
+              }
+            ).then(
+              function () {
+                return gitCommitAdd(src);
+              }
+            ).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                fs.writeFileSync(path.join(template.root, 'foo'), '', 'utf8');
+                return gitCommitAdd(template.path);
+              }
+            )
+            .then(
+              function () {
+                return gitTag(template.path, name);
+              }
+            ).then(
+              function () {
+                fs.writeFileSync(path.join(template.root, 'foo2'), '', 'utf8');
+                return gitCommitAdd(template.path);
+              }
+            ).then(
+              function () {
+                return gitCheckout(template.path, 'master');
+              }
+            ).then(
+              function () {
+                return template.init(target, {tag: name});
+              }
+            ).then(
+              function () {
+                fs.existsSync(path.join(target, 'foo2')).should.be.false;
+                return gitCurrentBranch(template.path);
+              }
+            ).then(
+              function (branch) {
+                branch.should.eq('master\n');
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            );
+          }
+        )
+
         it('should include underscore.string as EJS "local"',
           function (done) {
             var name = 'underscoreString'
@@ -635,7 +783,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -664,7 +812,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -693,7 +841,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -722,7 +870,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -751,7 +899,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -780,7 +928,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -809,7 +957,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -844,7 +992,7 @@ describe('template',
               , src = path.join(fixture, 'src')
               , target = path.join(fixture, 'target')
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -909,7 +1057,7 @@ describe('template',
             var name = 'noGit'
               , src = path.join(updateTemplateFixturesPath, name)
               , template = new Template(sprout, name, src);
-            return initGitRepository(src).then(
+            return gitInit(src).then(
               function () {
                 return template.save();
               }
@@ -1190,7 +1338,7 @@ describe('CLI',
         var onError = function (error) {
           throw error;
         }
-        initGitRepository(src).then(
+        gitInit(src).then(
           function () {
             return cli.run({action: 'add', name: action, src: src});
           }
@@ -1220,7 +1368,7 @@ describe('CLI',
           , fixture = path.join(cliFixturesPath, action)
           , src = path.join(fixture, 'src')
           , target = path.join(fixture, 'target');
-        return initGitRepository(src).then(
+        return gitInit(src).then(
           function () {
             return cli.run({action: 'add', name: action, src: src});
           }
@@ -1231,7 +1379,7 @@ describe('CLI',
         ).then(
           function () {
             fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('barfoo\n');
-            done();
+            rimraf(target, done);
           }
         )
       }
@@ -1241,11 +1389,68 @@ describe('CLI',
 )
 
 /*
- * Helper function for creating a git repository
+ * Helper function for initializing a git repository
  * in the specified directory.
  * @param {String} dir - directory to create repo in.
  */
 
- var initGitRepository = function (dir) {
-   return Promise.promisify(exec)('git init ' + dir);
+ var gitInit = function (dir) {
+   return Promise.promisify(exec)('git init .', { cwd: dir });
  }
+
+/*
+ * Helper function for `git tag` command
+ * in the specified directory.
+ * @param {String} dir - git repo.
+ * @param {String} tag - tag to create.
+ */
+
+var gitTag = function (dir, tag) {
+  return Promise.promisify(exec)('git tag ' + tag, { cwd: dir });
+}
+
+/*
+ * Helper function for creating a new branch
+ * in the specified git repository.
+ * @param {String} dir - git repo.
+ * @param {String} branch - branch to checkout.
+ */
+
+var gitCreateBranch = function (dir, branch) {
+  return Promise.promisify(exec)('git checkout -b ' + branch, { cwd: dir });
+}
+
+/*
+ * Helper function for `git checkout` command
+ * in the specified git repository.
+ * @param {String} dir - git repo.
+ * @param {String} branch - branch to checkout.
+ */
+
+var gitCheckout = function (dir, branch) {
+  return Promise.promisify(exec)('git checkout ' + branch, { cwd: dir });
+}
+
+/*
+ * Helper function for committing all added,
+ * files in a git repository.
+ * @param {String} dir - git repo.
+ */
+
+var gitCommitAdd = function (dir) {
+  return Promise.promisify(exec)('git add . && git commit -m \"sprout test\" .', { cwd: dir });
+}
+
+/*
+ * Helper function for determining the
+ * current git branch for a repository.
+ * @param {String} dir - git repo.
+ */
+
+var gitCurrentBranch = function (dir) {
+  return Promise.promisify(exec)('git rev-parse --abbrev-ref HEAD', { cwd: dir }).spread(
+    function (stdout) {
+      return stdout;
+    }
+  )
+}
