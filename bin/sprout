@@ -56,7 +56,7 @@ var list = subParser.addParser('list', { aliases: ['ls', 'all'], addHelp: false 
 var init = subParser.addParser('init', { aliases: ['new', 'create'], addHelp: true });
 init.addArgument(['name'], { help: 'name of template' });
 init.addArgument(['target'], { help: 'destination path' });
-init.addArgument(['-l', '--locals'], { help: 'locals' });
+init.addArgument(['-l', '--locals'], { nargs: '*', help: 'locals' });
 init.addArgument(['-t', '--tag'], { help: 'git tag' });
 init.addArgument(['-b', '--branch'], { help: 'git branch' });
 
