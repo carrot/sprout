@@ -35,6 +35,7 @@ var subParser = parser.addSubparsers({
 var add = subParser.addParser('add', { aliases: ['install'], addHelp: true });
 add.addArgument(['name'], { help: 'name of template' });
 add.addArgument(['src'], { help: 'source path or remote git' });
+add.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
 
 /*
  * $ sprout remove
@@ -42,6 +43,7 @@ add.addArgument(['src'], { help: 'source path or remote git' });
 
 var remove = subParser.addParser('remove', { aliases: ['delete'], addHelp: true });
 remove.addArgument(['name'], { help: 'name of template' });
+remove.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
 
 /*
  * $ sprout list
@@ -59,6 +61,8 @@ init.addArgument(['target'], { help: 'destination path' });
 init.addArgument(['-l', '--locals'], { nargs: '*', help: 'locals' });
 init.addArgument(['-t', '--tag'], { help: 'git tag' });
 init.addArgument(['-b', '--branch'], { help: 'git branch' });
+init.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
+
 
 /* A helper function for determining a Sprout path.
  * @returns {String} - a path for Sprout.
@@ -84,6 +88,12 @@ var generateFakeUser = function () {
     .update(uid)
     .digest('hex');
 }
+
+/*
+ * Parse arguments.
+ */
+
+var args = parser.parseArgs()
 
 /*
  * Initialize CLI interface and
@@ -115,11 +125,33 @@ emitter.on('list',
   }
 )
 
+if (args.verbose) {
+
+  /*
+   * If `verbose` flag is passed,
+   * message the user about everything.
+   * Everything. Everything. Everything.
+   */
+
+  emitter.on('msg',
+    function (message) {
+      console.log(chalk.grey('▸ ' + message.toString()));
+    }
+  )
+
+  emitter.on('cmd',
+    function (cmd, cwd) {
+      console.log(chalk.grey('$ ' + cmd.toString() + (cwd ? ' (from ' + cwd + ')' : '')));
+    }
+  )
+
+}
+
 /*
  * Run CLI with arguments.
  */
 
-cli.run(parser.parseArgs()).catch(
+cli.run(args).catch(
   function () {
     process.exit(1);
   }
