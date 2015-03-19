@@ -1379,6 +1379,10 @@ describe('CLI',
         ).then(
           function () {
             fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('barfoo\n');
+            return cli.run({action: 'remove', name: action});
+          }
+        ).then(
+          function () {
             rimraf(target, done);
           }
         )
