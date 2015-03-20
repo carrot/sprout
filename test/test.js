@@ -834,6 +834,35 @@ describe('template',
           }
         )
 
+        it('it should ignore files specified in init',
+          function (done) {
+            var name = 'ignore'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('<%= foo %>\n');
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
         it('should throw error if configuration file is invalid',
           function (done) {
             var name = 'invalidConfig'
