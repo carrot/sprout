@@ -1477,6 +1477,33 @@ describe('CLI',
       }
     )
 
+    it('should send config file to init',
+      function (done) {
+        var action = 'config'
+          , fixture = path.join(cliFixturesPath, action)
+          , src = path.join(fixture, 'src')
+          , target = path.join(fixture, 'target');
+        return gitInit(src).then(
+          function () {
+            return cli.run({action: 'add', name: action, src: src});
+          }
+        ).then(
+          function () {
+            return cli.run({action: 'init', name: action, target: target, config: path.join(fixture, 'config.json')});
+          }
+        ).then(
+          function () {
+            fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar\n');
+            return cli.run({action: 'remove', name: action});
+          }
+        ).then(
+          function () {
+            rimraf(target, done);
+          }
+        )
+      }
+    )
+
   }
 )
 
