@@ -61,6 +61,7 @@ init.addArgument(['target'], { help: 'destination path' });
 init.addArgument(['-l', '--locals'], { nargs: '*', help: 'locals' });
 init.addArgument(['-t', '--tag'], { help: 'git tag' });
 init.addArgument(['-b', '--branch'], { help: 'git branch' });
+init.addArgument(['-c', '--config'], { help: 'a config file with pre-defined values (either json or yml/yaml)' });
 init.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
 
 
