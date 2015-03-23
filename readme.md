@@ -281,7 +281,7 @@ The utilities object passed to each hook contains the following functions (each 
 - `read(from)` - read a file at `from` (relative to the template's base directory).
 - `write(to, what, locals)` - write `what` to path `to` (relative to the template's _target_ directory), optionally with ejs locals at `locals`.
 - `rename(from, to)` - rename file at `from` to path at `to` (relative to the template's _target_ directory).
-- `remove(what)` - remove files at `what` (relative to the template's _target_ directory)
+- `remove(what)` - remove files; pass a path or an array of paths (relative to the template's _target_ directory).
 
 ### Versioning Templates
 

@@ -1336,6 +1336,25 @@ describe('utils',
       }
     )
 
+    it('should remove an array of paths relative to the target path',
+      function (done) {
+        var fn = 'removeArray'
+          , fixture = path.join(utilsFixturesPath, fn)
+          , utils = new Utils(null, fixture);
+        return utils.remove([fn, 'foo']).then(
+          function () {
+            fs.existsSync(path.join(fixture, fn)).should.be.false;
+            fs.existsSync(path.join(fixture, 'foo')).should.be.false;
+            return utils.write(fn, '');
+          }
+        ).then(
+          function () {
+            done();
+          }
+        )
+      }
+    )
+
   }
 )
 
