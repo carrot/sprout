@@ -5,6 +5,7 @@ var Sprout = require('./../lib')
   , Template = require('./../lib/template')
   , Utils = require('./../lib/utils')
   , CLI = require('./../lib/cli')
+  , helpers = require('./../lib/helpers')
   , chai = require('chai')
   , path = require('path')
   , fs = require('fs')
@@ -1578,6 +1579,26 @@ describe('CLI',
           }
         ).then(
           function () {
+            done();
+          }
+        )
+      }
+    )
+
+    it('should emit error if no templates exist',
+      function (done) {
+        var onList = function (arr) {
+          throw new Error();
+        }
+        var onError = function (error) {
+          error.toString().should.eq('Error: no templates exist!');
+        }
+        emitter.on('list', onList);
+        emitter.on('error', onError);
+        cli.run({action: 'list'}).then(
+          function () {
+            emitter.removeListener('list', onList);
+            emitter.removeListener('error', onError);
             done();
           }
         )
