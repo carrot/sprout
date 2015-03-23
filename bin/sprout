@@ -36,6 +36,7 @@ var add = subParser.addParser('add', { aliases: ['install'], addHelp: true });
 add.addArgument(['name'], { help: 'name of template' });
 add.addArgument(['src'], { help: 'source path or remote git' });
 add.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
+add.setDefaults({ action: 'add' });
 
 /*
  * $ sprout remove
@@ -44,12 +45,14 @@ add.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode'
 var remove = subParser.addParser('remove', { aliases: ['delete'], addHelp: true });
 remove.addArgument(['name'], { help: 'name of template' });
 remove.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
+remove.setDefaults({ action: 'remove' });
 
 /*
  * $ sprout list
  */
 
 var list = subParser.addParser('list', { aliases: ['ls', 'all'], addHelp: false });
+list.setDefaults({ action: 'list' });
 
 /*
  * $ sprout init
@@ -63,6 +66,7 @@ init.addArgument(['-t', '--tag'], { help: 'git tag' });
 init.addArgument(['-b', '--branch'], { help: 'git branch' });
 init.addArgument(['-c', '--config'], { help: 'a config file with pre-defined values (either json or yml/yaml)' });
 init.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
+init.setDefaults({ action: 'new' });
 
 
 /* A helper function for determining a Sprout path.
