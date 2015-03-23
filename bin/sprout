@@ -66,7 +66,7 @@ init.addArgument(['-t', '--tag'], { help: 'git tag' });
 init.addArgument(['-b', '--branch'], { help: 'git branch' });
 init.addArgument(['-c', '--config'], { help: 'a config file with pre-defined values (either json or yml/yaml)' });
 init.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
-init.setDefaults({ action: 'new' });
+init.setDefaults({ action: 'init' });
 
 
 /* A helper function for determining a Sprout path.
