@@ -46,10 +46,12 @@
     "mocha": "^2.2.1",
     "chai": "^2.1.2",
     "mockery": "^1.4.0",
-    "errno": "^0.1.1"
+    "errno": "^0.1.1",
+    "istanbul": "0.3.x"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/test.js"
+    "test": "./node_modules/.bin/mocha test/test.js",
+    "coverage": "./node_modules/istanbul/lib/cli.js cover _mocha --report html -- -R spec && open coverage/index.html"
   },
   "engines": {
     "node": ">=0.10.0"
