@@ -17,9 +17,7 @@ We are aware that the [yeoman project](https://github.com/yeoman/yo) serves a si
 
 ## CLI
 
-Sprout can be used directly through the command line to initialize projects. Once installed, it exposes the `sprout` binary, which you can use to add, remove, and/or use your templates. The commands are more or less what you would expect, and are listed below. For reference, words in bold are necessary to type out as-is, words in italic represent placeholders for user input, and words in brackets represent optional arguments.
-
-Command params in `[brackets]` are optional, and in `<angle_brackets>` are required.
+Sprout can be used directly through the command line to initialize projects. Once installed, it exposes the `sprout` binary, which you can use to add, remove, and/or use your templates. The command line interface stores templates in a user folder, typically `~/.config/sprout`. The commands are more or less what you would expect, and are listed below.
 
 ### Installation
 
@@ -32,72 +30,79 @@ $ npm install sprout --global
 #### sprout add
 
 ```
-usage: sprout add [-h] [-v] name src
-
-Positional arguments:
-  name           name of template
-  src            local (by path) or remote (by URL) git repository
-
-Optional arguments:
-  -v, --verbose  verbose mode
+$ sprout add name src
 ```
 
-**Description**: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
+**Description**: Adds a template to your repertoire from `src` as `name`. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
 
+**Options**:
+
+- ```-v, --verbose```
+  Verbose mode.
 
 #### sprout remove
 
 ```
-usage: sprout remove [-h] [-v] name
-
-Positional arguments:
-  name           name of template
-
-Optional arguments:
-  -v, --verbose  verbose mode
+$ sprout remove name
 ```
 
-**Description**: Removes the template with the specified name from sprout.
+**Description**: Removes the template with the specified `name` from sprout.
+
+**Options**:
+
+- `-v, --verbose`
+  Verbose mode.
 
 **Aliases**: `rm`, `delete`
 
 #### sprout list
 
 ```
-usage: sprout list
+$ sprout list
 ```
-
 **Description**: Lists all templates that you have added to sprout.
 
 **Aliases**: `ls`, `all`
 
 #### sprout init
 
-```
-usage: sprout init [-h] [-l [LOCALS [LOCALS ...]]] [-t TAG] [-b BRANCH] [-v] name target
-
-Positional arguments:
-  name                  name of template
-  target                destination path
-
-Optional arguments:
-  -l [LOCALS [LOCALS ...]], --locals [LOCALS [LOCALS ...]]  locals
-  -t TAG, --tag TAG                                         git tag to use
-  -b BRANCH, --branch BRANCH                                git branch to use
-  -v, --verbose                                             verbose mode
+```sh
+$ sprout init name target
 ```
 
-**Description**: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
+**Description**: Initializes the template with the given `name` at the given `target`. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
 
 Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.
 
-**Options**: You can pass locals like `-l key=value key2='value2'` as options which will override the prompts set in your templates.
+**Options**:
+
+- `-l [LOCALS [LOCALS ...]], --locals [LOCALS [LOCALS ...]]`
+  Pass locals as options which will override the prompts set in your templates.  Locals are passed to the CLI like so: `-l key1=value1 key2='value2'`
+
+- `-t TAG, --tag TAG`
+  Pass a git tag to generate the template from.
+
+- `-b BRANCH, --branch BRANCH`
+  Pass a git branch to generate the template from.
+
+- `-c CONFIG, --config CONFIG`
+  Pass a JSON or yaml file to pre-define a large set of values.
+
+- `-v, --verbose`
+  Verbose mode.
+
+```json
+{
+  "key1": "value1",
+  "key2": "value2"
+}
+```
 
 **Aliases**: `new`, `create`
 
 ## Javascript API
 
-Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [bluebird](https://github.com/cujojs/when)) Example code given in coffeescript:
+Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [bluebird](https://github.com/petkaantonov/bluebird)) Example code given in coffeescript:
 
 ### Installation
 
@@ -180,17 +185,19 @@ Ok so enough about how this is used, I'm sure you are super excited at this poin
 First thing you'll want to do is set up your project structure, which will probably look something like this:
 
 ```
-├── root          The template directory.
+├── root          Where the actual template goes.
 │   ├── file1
 │   └── file2
 │   └── file3
-└── init.js       The Sprout configuration file.
-                  Also compatible with CoffeeScript
-                  (`init.coffee`).
+└── init.js       The Sprout configuration file. Also
+                  compatible with CoffeeScript (init.coffee).
+└── package.json  Optionally, include a package.json file; all
+                  dependencies will be installed on init.
 ```
 
-So a folder called `root` where the actual template goes, an `init.js` (or `init.coffee`) where we'll set up the config and stuff, and then any other files you need like a readme and license, which will *not* be included with the template.
+### init.js
 
+`init.js` (or `init.coffee`) sets the hooks and configuration for your sprout template.
 
 ```javascript
 
