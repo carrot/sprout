@@ -1702,6 +1702,80 @@ describe('CLI',
   }
 )
 
+describe('helpers',
+  function () {
+
+    describe('isGitURL',
+      function () {
+
+        it('should determine is git url',
+          function (done) {
+            helpers.isGitURL('git@github.com:foo/bar').should.be.true;
+            done();
+          }
+        )
+
+        it('should determine is not git url',
+          function (done) {
+            helpers.isGitURL('asdfadsfasdf').should.be.false;
+            done();
+          }
+        )
+
+      }
+    )
+
+    describe('parseKeyValuesArray',
+      function () {
+
+        it('should return object',
+          function (done) {
+            var obj = helpers.parseKeyValuesArray(['foo=bar', 'foo2=bar2']);
+            obj['foo'].should.eq('bar');
+            obj['foo2'].should.eq('bar2');
+            done();
+          }
+        )
+
+        it('should skip if there is a missing key or value',
+          function (done) {
+            var obj = helpers.parseKeyValuesArray(['foo', 'foo2=bar2']);
+            (obj['foo'] === undefined).should.be.true;
+            obj['foo2'].should.eq('bar2');
+            done();
+          }
+        )
+
+        it('should return true bool if \'true\' is passed',
+          function (done) {
+            var obj = helpers.parseKeyValuesArray(['foo=true']);
+            obj['foo'].should.be.true;
+            done();
+          }
+        )
+
+        it('should return false bool if \'false\' is passed',
+          function (done) {
+            var obj = helpers.parseKeyValuesArray(['foo=false']);
+            obj['foo'].should.be.false;
+            done();
+          }
+        )
+
+        it('should return number if number as string is passed is passed',
+          function (done) {
+            var obj = helpers.parseKeyValuesArray(['foo=2']);
+            obj['foo'].should.eq(2);
+            done();
+          }
+        )
+
+      }
+    )
+
+  }
+)
+
 /*
  * Helper function for initializing a git repository
  * in the specified directory.
