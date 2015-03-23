@@ -201,7 +201,7 @@ describe('api',
 
         it('should add template',
           function (done) {
-            return apiAdd(sprout, 'foo', 'git@github.com:carrot/sprout-sprout').then(
+            return apiAdd(sprout, 'foo', 'https://github.com/carrot/sprout-sprout').then(
               function () {
                 sprout.templates['foo'].should.be.ok;
                 fs.existsSync(path.join(sprout.path, 'foo')).should.be.true;
@@ -223,7 +223,7 @@ describe('api',
 
         it('should remove template',
           function (done) {
-            return apiAdd(sprout, 'foo', 'git@github.com:carrot/sprout-sprout').then(
+            return apiAdd(sprout, 'foo', 'https://github.com/carrot/sprout-sprout').then(
               function () {
                 sprout.templates['foo'].should.be.ok;
                 fs.existsSync(path.join(sprout.path, 'foo')).should.be.true;
