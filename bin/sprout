@@ -42,7 +42,7 @@ add.setDefaults({ action: 'add' });
  * $ sprout remove
  */
 
-var remove = subParser.addParser('remove', { aliases: ['delete'], addHelp: true });
+var remove = subParser.addParser('remove', { aliases: ['delete', 'rm'], addHelp: true });
 remove.addArgument(['name'], { help: 'name of template' });
 remove.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
 remove.setDefaults({ action: 'remove' });
