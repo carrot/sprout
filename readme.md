@@ -8,131 +8,170 @@ Simple project templating & skeletons
 
 > **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
 
-### Why should you care?
+## Why should you care?
 
 A lot of the time you make projects with similar starting templates/boilerplates. There are a number of different standard boilerplates out there (like h5bp), but everyone has their own preferences and tweaks. The goal of sprout is to allow you to write a base template once that is somewhat configurable where it needs to be then initialize the template with the options you choose from the command line or through a javascript API to get a jumpstart on your project.
 
 We are aware that the [yeoman project](https://github.com/yeoman/yo) serves a similar purpose, but built this anyway because we needed a project with a very clean and understandable generator API as well as a public javascript API for integration into other projects, and yeoman does not have either of these.
 
-### Installation
 
-```
-npm install sprout -g
-```
+## CLI
 
-### CLI Usage
-
-Sprout can be used directly through the command line to intitialize projects. Once installed, it exposes the `sprout` binary, which you can use to add, remove, and/or use your templates. The commands are more or less what you would expect, and are listed below. For reference, words in bold are necessary to type out as-is, words in italic represent placeholders for user input, and words in brackets represent optional arguments.
+Sprout can be used directly through the command line to initialize projects. Once installed, it exposes the `sprout` binary, which you can use to add, remove, and/or use your templates. The commands are more or less what you would expect, and are listed below. For reference, words in bold are necessary to type out as-is, words in italic represent placeholders for user input, and words in brackets represent optional arguments.
 
 Command params in `[brackets]` are optional, and in `<angle_brackets>` are required.
 
-By default, sprout templates are saved to `$HOME/.config/sprout`. To override this, set the `SPROUT_CONFIG_PATH` environment variable.
+### Installation
 
-```sh
-SPROUT_CONFIG_PATH='~/.sprout' sprout add templateName newProject
+```
+$ npm install sprout --global
 ```
 
-#### Add Template
-**Command**:
-`sprout add [name] <clone_url_or_path>`
+### Commands
+
+#### sprout add
+
+```
+usage: sprout add [-h] [-v] name src
+
+Positional arguments:
+  name           name of template
+  src            local (by path) or remote (by URL) git repository
+
+Optional arguments:
+  -v, --verbose  verbose mode
+```
 
 **Description**: Adds a template to your repertoire. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
 
----
 
-#### Remove Template
-**Command**:
-`sprout remove <name>`
+#### sprout remove
+
+```
+usage: sprout remove [-h] [-v] name
+
+Positional arguments:
+  name           name of template
+
+Optional arguments:
+  -v, --verbose  verbose mode
+```
 
 **Description**: Removes the template with the specified name from sprout.
+
 **Aliases**: `rm`, `delete`
 
----
+#### sprout list
 
-#### List Templates
-**Command**:
-`sprout list`
+```
+usage: sprout list
+```
 
 **Description**: Lists all templates that you have added to sprout.
+
 **Aliases**: `ls`, `all`
 
----
+#### sprout init
 
-#### Initialize Template
-**Command**:
-`sprout init <name> [path] [overrides]`
+```
+usage: sprout init [-h] [-l [LOCALS [LOCALS ...]]] [-t TAG] [-b BRANCH] [-v] name target
+
+Positional arguments:
+  name                  name of template
+  target                destination path
+
+Optional arguments:
+  -l [LOCALS [LOCALS ...]], --locals [LOCALS [LOCALS ...]]  locals
+  -t TAG, --tag TAG                                         git tag to use
+  -b BRANCH, --branch BRANCH                                git branch to use
+  -v, --verbose                                             verbose mode
+```
 
 **Description**: Initializes the template with the given name at the given path. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
 
 Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.
 
-**Options**: You can pass override arguments like `-o key value key2 val2` as options which will override the prompts set in your templates.
+**Options**: You can pass locals like `-l key=value key2=value2` as options which will override the prompts set in your templates.
 
 **Aliases**: `new`, `create`
 
-> **Note**: Options overrides set from the command line will only be passed to your ejs templates as either a string or a boolean. This means that when overriding there are many powerful features from inquirer.js (like validation) that you won't be able to take advantage of.
+## Javascript API
 
----
+Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [bluebird](https://github.com/cujojs/when)) Example code given in coffeescript:
 
-### Javascript API
+### Installation
 
-Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [when.js](https://github.com/cujojs/when)) Example code given in coffeescript:
-
-```coffee
-# By default, sprout templates are saved to $HOME/.config/sprout.
-# To override this, set the SPROUT_CONFIG_PATH environment line.
-#
-# process.env.SPROUT_CONFIG_PATH = '~/.sprout'
-#
-
-path = require 'path'
-sprout = require 'sprout'
-
-# Adding a template
-# -----------------
-sprout.add({ name: 'node', uri: 'https://github.com/carrot/sprout-node' })
-  .catch(console.error.bind(console))
-  .done(-> console.log('template added!'))
-
-# removing a template
-# -------------------
-sprout.remove('node')
-  .catch(console.error.bind(console))
-  .done(-> console.log('template removed!'))
-
-# listing templates
-# -----------------
-
-# this comes back as a js object
-templates = sprout.list()
-
-# this comes back as a formatted and colored string inteded to
-# to be printed to the command line
-console.log sprout.list(pretty: true)
-
-# initializing a template
-# -----------------------
-
-sprout.init({
-  name: 'node',
-  path: path.join(process.cwd(), 'new_project'),
-  overrides: { foo: 'bar' } # optional, will prompt if not provided
-  defaults: { name: 'suggested name'} # optional
-}).catch(console.error.bind(console))
-  .done(-> console.log('project initialized!'))
-
-# other things
-# ------------
-
-# returns the path that templates are stored in
-console.log sprout.path()
-
-# returns the path of the template name passed in
-console.log sprout.path('node')
-
+```sh
+$ npm install sprout --save
 ```
 
-### Writing Your Own Templates
+### Usage
+
+To construct a `Sprout` instance:
+
+```javascript
+
+var Sprout = require('sprout')
+  , sprout = new Sprout('/path/where/templates/live');
+```
+
+A `Sprout` instance has the following public values:
+
+- `path`: (string) the path where the templates leive.
+- `templates`: (object) a dictionary of `Template` objects.
+- `emitter`: (object) an `EventEmitter`.
+
+### Methods
+
+Each method returns an A+ promise.  The promise, on success, returns the same sprout instance.
+
+#### sprout.add(name, src)
+
+Create a new template called `name` from `src`.
+
+```javascript
+var name = 'sprout-sprout';
+var src = 'git@github.com:carrot/sprout-sprout';
+sprout.add(name, src).then(
+  function (sprout) {
+    console.log('template added!');
+  }
+);
+```
+
+#### sprout.remove(name)
+
+Remove an existing template called `name`.
+
+```javascript
+var name = 'sprout-sprout';
+sprout.remove(name).then(
+  function (sprout) {
+    console.log('template removed!');
+  }
+);
+```
+
+#### sprout.init(name, target, options)
+
+Use a template called `name` and save instance to `target`.
+
+```javascript
+var name = 'sprout-sprout';
+var target = '~/Projects/sprout-sprout-instance';
+var options = {
+  locals: {
+    foo: 'bar'
+  }
+};
+sprout.init(name, target, options).then(
+  function (sprout) {
+    console.log('template removed!');
+  }
+);
+```
+
+## Writing Your Own Templates
 
 For an example, as well as a sprout template that helps you create new sprout templates, be sure to check out [sprout-sprout](https://github.com/carrot/sprout-sprout).
 
@@ -141,33 +180,41 @@ Ok so enough about how this is used, I'm sure you are super excited at this poin
 First thing you'll want to do is set up your project structure, which will probably look something like this:
 
 ```
-root
-`- files...
-init.coffee
-readme.md
-license.md
+├── root          The template directory.
+│   ├── file1
+│   └── file2
+│   └── file3
+└── init.js       The Sprout configuration file.
+                  Also compatible with CoffeeScript
+                  (`init.coffee`).
 ```
 
-So a folder called `root` where the actual template goes, an `init.coffee` where we'll set up the config and stuff, and then any other files you need like a readme and license, which will *not* be included with the template. If you don't want any config options, you don't even need the `init.coffee`, just the `root` folder with the files in it and that's it. But let's assume you are after some additional configuration and jump into `init.coffee`.
+So a folder called `root` where the actual template goes, an `init.js` (or `init.coffee`) where we'll set up the config and stuff, and then any other files you need like a readme and license, which will *not* be included with the template.
 
 
-```coffee
+```javascript
 
-# This function is executed before any of the configuration happens.
-# It's a good place to put any introductory messages you want to display.
-# It is of course optional, and can be asynchronous.
-exports.before = (sprout, done) ->
-  console.log 'welcome! this is my before message'
-  done()
+/*
+ * This function is executed before any of the configuration happens.
+ * It's a good place to put any introductory messages you want to display.
+ * It is of course optional, and can be asynchronous.
+ */
 
-# Configure is exposed as an array, which accepts any number of
-# arguments. Each argument can be a string or an object. A string
-# will prompt the user directly for that value, and using an object
-# allows you to configure a slightly more customizable prompt.
+exports.before = function (utils) {
+  console.log('Getting started...');
+}
 
-# The 'prompt' option in an object has a couple of preset values you
-# conforms to the configuration used by SBoudrias/Inquirer.js, found here:
-# https://github.com/SBoudrias/Inquirer.js#question
+/*
+ * Configure is exposed as an array, which accepts any number of
+ * arguments. Each argument can be a string or an object. A string
+ * will prompt the user directly for that value, and using an object
+ * allows you to configure a slightly more customizable prompt.
+
+ * The 'prompt' option in an object has a couple of preset values you
+ * conforms to the configuration used by SBoudrias/Inquirer.js, found here:
+ * https://github.com/SBoudrias/Inquirer.js#question
+ */
+
 exports.configure = [
   {
     type: 'input',
@@ -184,60 +231,78 @@ exports.configure = [
     name: "travis",
     message: "Do you want to utilize Travis CI?",
     default: false
-  },
+  }
 ]
 
-# This function is executed after the configuration info is collected, but
-# before the templates are rendered. It's a good place use user provided config
-# to generate additional config values needed in the template.
-exports.before_render = (sprout, done) ->
-  console.log sprout.config_values
-  console.log 'executed before templates are rendered'
+/*
+ * This function is executed after the configuration info is collected, but
+ * before the templates are rendered. It's a good place use user provided config
+ * to generate additional config values needed in the template.
+ */
 
-# This function is executed after the templates are rendered.  It's a good place
-# to do any other custom config you need, like building extra files etc. You
-# have the full power of node at your fingertips here.
-exports.after = (sprout, done) ->
-  console.log sprout.config_values # all the config values you collected
-  if not sprout.config_values.travis then sprout.remove('.travis.yml')
-  done()
+exports.beforeRender = function (utils, config) {
+  config.foo = 'bar';
+  return utils.write('foo.jade', 'h1 Hello World!', config);
+}
+
+
+/*
+ * This function is executed after the templates are rendered.  It's a good place
+ * to do any other custom config you need, like building extra files etc. You
+ * have the full power of node at your fingertips here.
+ */
+
+exports.after = function (utils, config) {
+  return utils.rename('foo.jade', 'bar.jade');
+}
 
 ```
 
 We also provide you the power of [underscore.string](http://epeli.github.io/underscore.string/#api) in all of your ejs templates. This means you can run powerful string operations on your user input like:
 
-```js
-class <%= S.classify('user_model') %> // given 'user_model' is prompted by your init.coffee
+```javascript
+// given 'user_model' is prompted by your init.js
+function <%= S.classify('user_model') %> (foo, bar) {
+  // <%= S.classify('user_model') %> constructor!
+}
 ```
 
 So between this config file and the root folder, you should be able to make anything happen fairly easily. If not, please open up and issue and we'll try to make it happening-er and/or easier for you : )
 
 ### Hooks
-Sprout comes with the following events for you to write custom logic for. To utilize these events, export a function for the hook of your choosing in your `init.coffee`:
+Sprout comes with the following events for you to write custom logic for. Each hook is passed a utilities object for manipulating files in your template.  Each of these hooks accept A+ promises as return values.  To use these events, export a function for the hook (or multiple hooks) of your choosing in your `init.js`:
 
 - `before` - run before prompting for user input
-- `before_render` - run after use input but before your templates are rendered
-- `after` - run after rendering has completed
+- `beforeRender` - run after the project configuration is set; is passed a configuration object as the second argument.
+- `after` - run after rendering has completed; is passed a configuration object as the second argument.
 
-#### Template Utilities
-We've created a handful of useful utilities that you can utilize within your `init.coffee` file to make creating custom templates that much easier.
+The utilities object passed to each hook contains the following functions (each returns a promise):
 
-- `read(base_path, encoding = 'utf8')` - synchronously read a file
-- `write(path, content, opts)` - write an EJS template. pass target path, template content, and EJS options. The options you pass here will be merged with the sprout options from your before functions and user inputs
-- `rename(target, destination)` - rename a file
-- `remove(file_or_array_of_files)` - remove files(s)
-- `configure` - extend or override `@sprout.config_values`
+- `read(from)` - read a file at `from` (relative to the template's base directory).
+- `write(to, what, locals)` - write `what` to path `to` (relative to the template's _target_ directory), optionally with ejs locals at `locals`.
+- `rename(from, to)` - rename file at `from` to path at `to` (relative to the template's _target_ directory).
+- `remove(what)` - remove files at `what` (relative to the template's _target_ directory)
 
 ### Versioning Templates
 
-Sometimes changes happen and you might want to be able to specify different versions of a single template. Sprout handles this through [git tags](http://git-scm.com/book/en/Git-Basics-Tagging). You can specify a tag as a version when you initialize a template by adding a version number after an `@` sign, as such (examples provided via CLI here):
+Sometimes changes happen and you might want to be able to specify different versions of a single template. Sprout handles this through [git tags](http://git-scm.com/book/en/Git-Basics-Tagging). To specify which tag to use, simply pass a `tag` option to sprout's `init` method.
 
-```
-$ sprout init my-template@0.1.2
+```sh
+$ sprout init my-template ~/Projects/my-template-instance --tag 0.1.2
 ```
 
-If you do not specify any version, sprout will look for the most recent tag in the repo and use that, and if there are no tags simply use the latest commit.
+```javascript
+sprout.init('my-template', '~/Projects/my-template-instance', { tag: '0.1.2' })
+```
+
+`init` also accepts a branch option for specifying which branch to generate from:
+
+```sh
+$ sprout init my-template ~/Projects/my-template-instance --branch develop
+```
+
+```javascript
+sprout.init('my-template', '~/Projects/my-template-instance', { branch: 'develop' })
+```
 
 Although you are welcome to use whatever versioning system you are comfortable with, we would **strongly recommended** using [semver](http://semver.org/), the widely accepted standard in package versioning. This will provide you with a clear framework for managing situations when breaking changes have been made to your template.
-
-A couple edge cases to discuss. If you specify a tag that can't be found, you will get an error. If you added a template on a specific branch, the tag specified needs to be present on that branch. And if your tag starts with a `v` followed immeditely by a number, sprout will ignore the `v`, for convenience and in accordance with the convention that starts git tags with `v` just to refer to the version.
