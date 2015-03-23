@@ -91,7 +91,7 @@ Optional arguments:
 
 Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.
 
-**Options**: You can pass locals like `-l key=value key2=value2` as options which will override the prompts set in your templates.
+**Options**: You can pass locals like `-l key=value key2='value2'` as options which will override the prompts set in your templates.
 
 **Aliases**: `new`, `create`
 
