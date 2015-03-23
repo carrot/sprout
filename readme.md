@@ -14,10 +14,19 @@ A lot of the time you make projects with similar starting templates/boilerplates
 
 We are aware that the [yeoman project](https://github.com/yeoman/yo) serves a similar purpose, but built this anyway because we needed a project with a very clean and understandable generator API as well as a public javascript API for integration into other projects, and yeoman does not have either of these.
 
+## Try 'er out
+
+Try the [sprout-express template](http://www.github.com/carrot/sprout-express) for generating a boilerplate [express](http://expressjs.org) app:
+
+```sh
+$ npm install sprout --global
+$ sprout add express git@github.com:carrot/sprout-express
+$ sprout init express ~/Projects/sprout-express-instance
+```
 
 ## CLI
 
-Sprout can be used directly through the command line to initialize projects. Once installed, it exposes the `sprout` binary, which you can use to add, remove, and/or use your templates. The command line interface stores templates in a user folder, typically `~/.config/sprout`. The commands are more or less what you would expect, and are listed below.
+Sprout can be used directly through the command line to initialize projects. Once installed, it exposes the `sprout` command, which you can use to add, remove, and/or use your templates. The command line interface stores templates in a user folder, typically `~/.config/sprout`. The commands are more or less what you would expect, and are listed below.
 
 ### Installation
 
@@ -30,28 +39,26 @@ $ npm install sprout --global
 #### sprout add
 
 ```
-$ sprout add name src
+$ sprout add <name> <src>
 ```
 
 **Description**: Adds a template to your repertoire from `src` as `name`. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
 
 **Options**:
 
-- ```-v, --verbose```
-  Verbose mode.
+* `-v, --verbose`: Verbose mode.
 
 #### sprout remove
 
 ```
-$ sprout remove name
+$ sprout remove <name>
 ```
 
 **Description**: Removes the template with the specified `name` from sprout.
 
 **Options**:
 
-- `-v, --verbose`
-  Verbose mode.
+* `-v, --verbose`: Verbose mode.
 
 **Aliases**: `rm`, `delete`
 
@@ -67,7 +74,7 @@ $ sprout list
 #### sprout init
 
 ```sh
-$ sprout init name target
+$ sprout init <name> <target>
 ```
 
 **Description**: Initializes the template with the given `name` at the given `target`. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
@@ -76,27 +83,25 @@ Sprout also comes with a [man page](man) and will display a help menu as a refre
 
 **Options**:
 
-- `-l [LOCALS [LOCALS ...]], --locals [LOCALS [LOCALS ...]]`
+* `-l [LOCALS [LOCALS ...]]`, `--locals [LOCALS [LOCALS ...]]`:
   Pass locals as options which will override the prompts set in your templates.  Locals are passed to the CLI like so: `-l key1=value1 key2='value2'`
 
-- `-t TAG, --tag TAG`
+* `-t TAG`, `--tag TAG`:
   Pass a git tag to generate the template from.
 
-- `-b BRANCH, --branch BRANCH`
+* `-b BRANCH`, `--branch BRANCH`:
   Pass a git branch to generate the template from.
 
-- `-c CONFIG, --config CONFIG`
-  Pass a JSON or yaml file to pre-define a large set of values.
+* `-c CONFIG`, `--config CONFIG`:
+  Pass a JSON or yaml file to pre-define a large set of values, like so:
 
-- `-v, --verbose`
-  Verbose mode.
-
-```json
-{
-  "key1": "value1",
-  "key2": "value2"
-}
-```
+  ```json
+  {
+    "key1": "value1",
+    "key2": true,
+    "key3": 200
+  }
+  ```
 
 **Aliases**: `new`, `create`
 
@@ -164,14 +169,24 @@ Use a template called `name` and save instance to `target`.
 ```javascript
 var name = 'sprout-sprout';
 var target = '~/Projects/sprout-sprout-instance';
+
+/*
+ * Options:
+ * locals {Object} - EJS locals to template.
+ * tag {String} - A git tag to generate the template from.
+ * branch {String} - A git branch to generate the template from.
+ * config {String} - Path to a JSON or yaml file with pre-defined values.
+ */
+
 var options = {
   locals: {
     foo: 'bar'
   }
 };
+
 sprout.init(name, target, options).then(
   function (sprout) {
-    console.log('template removed!');
+    console.log('template generated!');
   }
 );
 ```
