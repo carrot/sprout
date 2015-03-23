@@ -668,6 +668,31 @@ describe('template',
           }
         )
 
+        it('should throw when target exists',
+          function (done) {
+            var name = 'targetExists'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = 'https://github.com/carrot/sprout-sprout'
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return template.save().then(
+              function () {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: ' + target + ' already exists');
+                return template.remove().then(
+                  function () {
+                    done();
+                  }
+                );
+              }
+            )
+          }
+        )
+
         it('should throw when no init.js or init.coffee provided',
           function (done) {
             var name = 'init'
@@ -899,6 +924,31 @@ describe('template',
           }
         )
 
+        it('should throw error if tag doesn\'t exist',
+          function (done) {
+            var name = 'tagMissing'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = 'https://github.com/carrot/sprout-sprout'
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return template.save().then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target, {tag: 'foooooooo'});
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: tag `foooooooo` does not exist');
+                return template.remove().then(
+                  function () {
+                    return rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
         it('should use .json configuration file',
           function (done) {
             var name = 'jsonConfig'
@@ -976,6 +1026,71 @@ describe('template',
             ).then(
               function (template) {
                 fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('<%= foo %>\n');
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('it should ignore one file specified in init',
+          function (done) {
+            var name = 'ignoreOne'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('<%= foo %>\n');
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('should ask questions if questionnaire is passed',
+          function (done) {
+            var name = 'questionnaire'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            var q = function (){
+              return new Promise(
+                function (resolve, reject) {
+                  return resolve({foo: 'bar'});
+                }
+              )
+            }
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target, {questionnaire: q});
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar\n');
                 return template.remove();
               }
             ).then(
@@ -1672,6 +1787,33 @@ describe('CLI',
       }
     )
 
+    it('should use inquirer if init contains questions',
+      function (done) {
+        var action = 'inquirer'
+          , fixture = path.join(cliFixturesPath, action)
+          , src = path.join(fixture, 'src')
+          , target = path.join(fixture, 'target');
+        return gitInit(src).then(
+          function () {
+            return cli.run({action: 'add', name: action, src: src});
+          }
+        ).then(
+          function () {
+            return cli.run({action: 'init', name: action, target: target, locals: {foo: 'bar'}});
+          }
+        ).then(
+          function () {
+            fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar\n');
+            return cli.run({action: 'remove', name: action});
+          }
+        ).then(
+          function () {
+            rimraf(target, done);
+          }
+        )
+      }
+    )
+
     it('should send config file to init',
       function (done) {
         var action = 'config'
@@ -1696,6 +1838,25 @@ describe('CLI',
             rimraf(target, done);
           }
         )
+      }
+    )
+
+    it('should emit error',
+      function (done) {
+        var onSuccess = function () {
+          throw new Error();
+        }
+        var onError = function () {
+          done();
+        }
+        emitter.on('success', onSuccess);
+        emitter.on('error', onError);
+        return cli.run({action: 'add', name: 'foo', src: 'foo'}).then(
+          function () {
+            emitter.removeListener('success', onSuccess);
+            emitter.removeListener('error', onError);
+          }
+        );
       }
     )
 
