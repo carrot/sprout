@@ -275,6 +275,10 @@ describe('api',
             ).then(
               function () {
                 fs.existsSync(target).should.be.true;
+                return apiRemove(sprout, action);
+              }
+            ).then(
+              function () {
                 return rimraf(target, done);
               }
             )
