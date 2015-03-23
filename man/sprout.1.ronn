@@ -1,0 +1,75 @@
+sprout(1) -- simple project templating
+======================================
+
+## SYNOPSIS
+
+`sprout` add name src<br />
+`sprout` remove name<br />
+`sprout` list<br />
+`sprout` init name target
+
+## DESCRIPTION
+
+Sprout helps with templating for new projects. It allows management of different project templates that can be copied quickly when starting fresh, and provides an interface to customize the new projects as specified by the template author.
+
+Underlined parameters are required, non-underlined optional.
+
+## ADD
+
+  `sprout add [-h] [-v] name src`
+
+  Adds a template to your repertoire from `src` as `name`. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
+
+### OPTIONS
+
+  `-v`, `--verbose`
+  Run in verbose mode.
+
+## REMOVE
+
+  `sprout remove [-h] [-v] name`:
+  Removes the template with the specified `name` from sprout.
+
+### OPTIONS
+
+  `-v`, `--verbose`
+  Run in verbose mode.
+
+## LIST
+
+  `list`
+
+  list all the templates that have been added to sprout.
+
+## INIT
+
+  `sprout init [-h] [-l [LOCALS [LOCALS ...]]] [-t TAG] [-b BRANCH] [-c CONFIG] [-v] name target`
+
+  Initializes the template with the given `name` at the given `target`. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
+
+### OPTIONS
+
+  `-l [LOCALS [LOCALS ...]]`, `--locals [LOCALS [LOCALS ...]]`:
+  Pass locals as options which will override the prompts set in your templates.  Locals are passed to the CLI like so: `-l key1=value1 key2='value2'`
+
+  `-t TAG`, `--tag TAG`:
+  Pass a git tag to generate the template from.
+
+  `-b BRANCH`, `--tag branch`:
+  Pass a git branch to generate the template from.
+
+  `-c CONFIG`, `--config CONFIG`:
+  Pass a JSON or yaml file to pre-define a large set of values.
+
+  `-v`, `--verbose`
+  Run in verbose mode.
+
+## HELP
+
+  `--help`, `-h`
+
+  usage docs, can be run for every sub-command as well for command-specific docs.
+
+## SOURCE
+
+Full source and docs can be found at <http://github.com/carrot/sprout>.
