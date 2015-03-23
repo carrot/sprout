@@ -1345,7 +1345,11 @@ describe('utils',
           function () {
             fs.existsSync(path.join(fixture, fn)).should.be.false;
             fs.existsSync(path.join(fixture, 'foo')).should.be.false;
-            return utils.write(fn, '');
+            return utils.write(fn, '').then(
+              function () {
+                return utils.write('foo', '');
+              }
+            );
           }
         ).then(
           function () {
