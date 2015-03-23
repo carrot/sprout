@@ -1,4 +1,7 @@
 var Sprout = require('./../lib')
+  , apiAdd = require('./../lib/api/add')
+  , apiInit = require('./../lib/api/init')
+  , apiRemove = require('./../lib/api/remove')
   , Template = require('./../lib/template')
   , Utils = require('./../lib/utils')
   , CLI = require('./../lib/cli')
@@ -170,6 +173,121 @@ describe('sprout',
           function (done) {
             (function () { sprout.init(null) }).should.throw;
             done();
+          }
+        )
+
+      }
+    )
+
+  }
+)
+
+describe('api',
+  function () {
+
+    var apiFixturesPath
+      , sprout;
+
+    before(
+      function () {
+        apiFixturesPath = path.join(fixturesPath, 'api');
+        sprout = new Sprout(path.join(apiFixturesPath, '__sprout__'));
+      }
+    )
+
+    describe('add',
+      function () {
+
+        it('should add template',
+          function (done) {
+            return apiAdd(sprout, 'foo', 'git@github.com:carrot/sprout-sprout').then(
+              function () {
+                sprout.templates['foo'].should.be.ok;
+                fs.existsSync(path.join(sprout.path, 'foo')).should.be.true;
+                return apiRemove(sprout, 'foo');
+              }
+            ).then(
+              function () {
+                done();
+              }
+            )
+          }
+        )
+
+      }
+    )
+
+    describe('remove',
+      function () {
+
+        it('should remove template',
+          function (done) {
+            return apiAdd(sprout, 'foo', 'git@github.com:carrot/sprout-sprout').then(
+              function () {
+                sprout.templates['foo'].should.be.ok;
+                fs.existsSync(path.join(sprout.path, 'foo')).should.be.true;
+                return apiRemove(sprout, 'foo');
+              }
+            ).then(
+              function () {
+                (sprout.templates['foo'] === undefined).should.be.true;
+                fs.existsSync(path.join(sprout.path, 'foo')).should.be.false;
+                done();
+              }
+            )
+          }
+        )
+
+        it('should throw if template does not exists',
+          function (done) {
+            return apiRemove(sprout, 'foo').catch(
+              function (error) {
+                error.toString().should.eq('Error: template foo does not exist');
+                done();
+              }
+            )
+          }
+        )
+
+      }
+    )
+
+    describe('init',
+      function () {
+
+        it('should init template',
+          function (done) {
+            var action = 'init'
+              , fixture = path.join(apiFixturesPath, action)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target');
+            return gitInit(src).then(
+              function () {
+                return apiAdd(sprout, action, src);
+              }
+            ).then(
+              function () {
+                sprout.templates[action].should.be.ok;
+                fs.existsSync(path.join(sprout.path, action)).should.be.true;
+                return apiInit(sprout, action, target);
+              }
+            ).then(
+              function () {
+                fs.existsSync(target).should.be.true;
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('should throw if template does not exists',
+          function (done) {
+            return apiInit(sprout, 'foo').catch(
+              function (error) {
+                error.toString().should.eq('Error: template foo does not exist');
+                done();
+              }
+            )
           }
         )
 
