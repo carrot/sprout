@@ -719,6 +719,35 @@ describe('template',
           }
         )
 
+        it('should throw when require init throws',
+          function (done) {
+            var name = 'initThrows'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: Cannot find module \'doge\'');
+                return template.remove().then(
+                  function () {
+                    rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
         it('should use init.js',
           function (done) {
             var name = 'initJs'
