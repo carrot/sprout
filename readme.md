@@ -1,6 +1,7 @@
 # Sprout
 
 [![npm](http://img.shields.io/npm/v/sprout.svg?style=flat)](https://badge.fury.io/js/sprout) [![tests](http://img.shields.io/travis/carrot/sprout/master.svg?style=flat)](https://travis-ci.org/carrot/sprout) [![coverage](http://img.shields.io/coveralls/carrot/sprout.svg?style=flat)](https://coveralls.io/r/carrot/sprout) [![dependencies](http://img.shields.io/gemnasium/carrot/sprout.svg?style=flat)](https://gemnasium.com/carrot/sprout)
+[![devDependencies](https://img.shields.io/david/dev/carrot/sprout.svg)](https://gemnasium.com/carrot/sprout)
 
 Simple project templating & skeletons
 
