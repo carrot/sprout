@@ -5,4 +5,4 @@ before_script:
   - git config --global user.email "dev@carrotcreative.com"
   - git config --global user.name "Carrot Creative"
 after_script:
-  - npm run coveralls
+  - istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage
