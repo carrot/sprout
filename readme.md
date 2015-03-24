@@ -5,8 +5,6 @@
 
 Simple project templating & skeletons
 
-**More documentation on sprout can be [found here](http://sprout.netlify.com)**
-
 > **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
 
 ## Why should you care?
