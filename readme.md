@@ -23,6 +23,8 @@ $ sprout add express git@github.com:carrot/sprout-express
 $ sprout init express ~/Projects/sprout-express-instance
 ```
 
+We'll do our best to keep an ongoing list of [publicly available sprout templates](https://github.com/carrot/sprout/wiki/Sprout-Templates), as well. Feel free to add your own!
+
 ## CLI
 
 Sprout can be used directly through the command line to initialize projects. Once installed, it exposes the `sprout` command, which you can use to add, remove, and/or use your templates. The command line interface stores templates in a user folder, typically `~/.config/sprout`. The commands are more or less what you would expect, and are listed below.
