@@ -78,9 +78,7 @@ $ sprout list
 $ sprout init <name> <target>
 ```
 
-**Description**: Initializes the template with the given `name` at the given `target`. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
-
-Sprout also comes with a [man page](man) and will display a help menu as a refresher on these commands if you type something wrong.
+**Description**: Initializes the template with the given `name` at the given `target`.
 
 **Options**:
 
@@ -105,6 +103,26 @@ Sprout also comes with a [man page](man) and will display a help menu as a refre
   ```
 
 **Aliases**: `new`, `create`
+
+#### sprout run
+
+```sh
+$ sprout run <name> <generator>
+```
+
+**Description**: Run a generator named `generator`, provided in a template with the given `name`, on a template instance in the current working directory.
+
+**Options**:
+
+  * `-t TARGET`, `--target TARGET`
+    Optionally pass the path to the template instance (relative to the current working directory).
+
+  * `[args, [args ...]]`
+    Pass arguments to the generator, like so:
+
+    ```sh
+    $ sprout run mvc model User name:string age:integer
+    ```
 
 ## Javascript API
 
@@ -192,6 +210,21 @@ sprout.init(name, target, options).then(
 );
 ```
 
+#### sprout.run(name, target, generator, args)
+
+Run a generator in a template called `name` and on template instance instance at `target`, optionally with an array of `args`.
+
+```javascript
+var name = 'mvc'
+var target = '~/Projects/mvc-instance';
+var generator = 'model';
+sprout.run(name, target, generator, ['User']).then(
+  function (sprout) {
+    console.log('a model named `User` was created!');
+  }
+);
+```
+
 ## Writing Your Own Templates
 
 For an example, as well as a sprout template that helps you create new sprout templates, be sure to check out [sprout-sprout](https://github.com/carrot/sprout-sprout).
@@ -202,6 +235,7 @@ First thing you'll want to do is set up your project structure, which will proba
 
 ```
 ├── root          Where the actual template goes.
+├── generators    Where generators go.
 │   ├── file1
 │   └── file2
 │   └── file3
@@ -306,6 +340,29 @@ The utilities object passed to each hook contains the following functions (each 
 - `rename(from, to)` - rename file at `from` to path at `to` (relative to the template's _target_ directory).
 - `remove(what)` - remove files; pass a path or an array of paths (relative to the template's _target_ directory).
 - `exec(cmd, cwd)` - run a child process with the _target_ directory set at the current working directory by default; optionally, pass a path to `cwd` (relative to the target directory).
+
+### Generators
+Sprout templates may also include "generators": small scripts to be executed on instances of a template.  For example, an `mvc` template may include `model`, `controller`, and `view` generators for quickly stubbing out an model-view-controller application.  Generators are passed `utils` (an instance of the `Utils` that reads from the _base_ directory and writes to the _target_ directory) in the first argument; any arguments passed to `sprout.run()` follow.  A model generator in an `mvc` template may look like this:
+
+```javascript
+module.exports = function (utils, name) {
+  return utils.read('templates/model').then(
+    function (output) {
+      return utils.write('lib/models/' + name + '.js', output, {name: name});
+    }
+  )
+}
+```
+
+These generators are stored in your template's `generators` folder and can be used with sprout's `run` method:
+
+```sh
+$ sprout run mvc model User
+```
+
+```javascript
+sprout.run('mvc', 'model', ['User']);
+```
 
 ### Versioning Templates
 
