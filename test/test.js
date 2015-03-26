@@ -1726,16 +1726,16 @@ describe('template',
               }
             ).then(
               function (template) {
-                return template.run(target, 'foo');
+                return template.run(target, 'foo2');
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: `foo` is not a generator in this template');
-                return template.remove(name);
-              }
-            ).then(
-              function () {
-                return rimraf(target, done);
+                error.toString().should.eq('Error: `foo2` is not a generator in this template');
+                return template.remove(name).then(
+                  function () {
+                    return rimraf(target, done);
+                  }
+                );
               }
             )
           }
