@@ -305,7 +305,7 @@ The utilities object passed to each hook contains the following functions (each 
 - `write(to, what, locals)` - write `what` to path `to` (relative to the template's _target_ directory), optionally with ejs locals at `locals`.
 - `rename(from, to)` - rename file at `from` to path at `to` (relative to the template's _target_ directory).
 - `remove(what)` - remove files; pass a path or an array of paths (relative to the template's _target_ directory).
-- `exec(cmd)` - run a child process (with the _target_ directory set at the current working directory).
+- `exec(cmd, cwd)` - run a child process with the _target_ directory set at the current working directory by default; optionally, pass a path to `cwd` (relative to the target directory).
 
 ### Versioning Templates
 

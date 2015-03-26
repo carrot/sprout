@@ -1640,6 +1640,20 @@ describe('utils',
       }
     )
 
+    it('should run a child process with the target as the cwd and a nested path passed.',
+      function (done) {
+        var fn = 'execRelative'
+          , fixture = path.join(utilsFixturesPath, fn)
+          , utils = new Utils(null, fixture);
+        return utils.exec('pwd', 'foo').then(
+          function (stdout) {
+            stdout.should.include(path.join(fixture, 'foo') + '\n');
+            done();
+          }
+        )
+      }
+    )
+
   }
 )
 
