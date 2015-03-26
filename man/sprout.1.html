@@ -60,6 +60,7 @@
     <a href="#REMOVE">REMOVE</a>
     <a href="#LIST">LIST</a>
     <a href="#INIT">INIT</a>
+    <a href="#RUN">RUN</a>
     <a href="#HELP">HELP</a>
     <a href="#SOURCE">SOURCE</a>
   </div>
@@ -119,7 +120,7 @@
 
 <p>  <code>sprout init [-h] [-l [LOCALS [LOCALS ...]]] [-t TAG] [-b BRANCH] [-c CONFIG] [-v] name target</code></p>
 
-<p>  Initializes the template with the given <code>name</code> at the given <code>target</code>. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.</p>
+<p>  Initializes the template with the given <code>name</code> at the given <code>target</code>.</p>
 
 <h3 id="OPTIONS">OPTIONS</h3>
 
@@ -134,6 +135,23 @@
 
 <p>  <code>-c CONFIG</code>, <code>--config CONFIG</code>:
   Pass a JSON or yaml file to pre-define a large set of values.</p>
+
+<p>  <code>-v</code>, <code>--verbose</code>
+  Run in verbose mode.</p>
+
+<h2 id="RUN">RUN</h2>
+
+<p>  <code>sprout run [-h] [-t TARGET] [-v] name generator [args [args ...]]</code></p>
+
+<p>  Run a generator named <code>generator</code>, provided in a template with the given <code>name</code>, on a template instance in the current working directory.</p>
+
+<h3 id="OPTIONS">OPTIONS</h3>
+
+<p>  <code>[args, [args ...]]</code>:
+  Pass arguments to the generator.</p>
+
+<p>  <code>-t TARGET</code>, <code>--target TARGET</code>:
+  Optionally pass the path to the template instance (relative to the current working directory).</p>
 
 <p>  <code>-v</code>, <code>--verbose</code>
   Run in verbose mode.</p>

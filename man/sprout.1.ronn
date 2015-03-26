@@ -45,7 +45,7 @@ Underlined parameters are required, non-underlined optional.
 
   `sprout init [-h] [-l [LOCALS [LOCALS ...]]] [-t TAG] [-b BRANCH] [-c CONFIG] [-v] name target`
 
-  Initializes the template with the given `name` at the given `target`. If no path is provided it will create a new folder with the same name as the template in the current working directory. If there already is one, it will throw an error.
+  Initializes the template with the given `name` at the given `target`.
 
 ### OPTIONS
 
@@ -60,6 +60,23 @@ Underlined parameters are required, non-underlined optional.
 
   `-c CONFIG`, `--config CONFIG`:
   Pass a JSON or yaml file to pre-define a large set of values.
+
+  `-v`, `--verbose`
+  Run in verbose mode.
+
+## RUN
+
+  `sprout run [-h] [-t TARGET] [-v] name generator [args [args ...]]`
+
+  Run a generator named `generator`, provided in a template with the given `name`, on a template instance in the current working directory.
+
+### OPTIONS
+
+  `[args, [args ...]]`:
+  Pass arguments to the generator.
+
+  `-t TARGET`, `--target TARGET`:
+  Optionally pass the path to the template instance (relative to the current working directory).
 
   `-v`, `--verbose`
   Run in verbose mode.
