@@ -1626,6 +1626,20 @@ describe('utils',
       }
     )
 
+    it('should run a child process with the target as the cwd',
+      function (done) {
+        var fn = 'exec'
+          , fixture = path.join(utilsFixturesPath, fn)
+          , utils = new Utils(null, fixture);
+        return utils.exec('pwd').then(
+          function (stdout) {
+            stdout.should.include(fixture + '\n');
+            done();
+          }
+        )
+      }
+    )
+
   }
 )
 
