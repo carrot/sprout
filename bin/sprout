@@ -68,6 +68,18 @@ init.addArgument(['-c', '--config'], { help: 'a config file with pre-defined val
 init.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
 init.setDefaults({ action: 'init' });
 
+/*
+ * $ sprout run
+ */
+
+var run = subParser.addParser('run', { aliases: ['generate'], addHelp: true });
+run.addArgument(['name'], { help: 'name of template' });
+run.addArgument(['generator'], { help: 'name of generator to run' });
+run.addArgument([], { nargs: '*', dest: 'args', help: 'arguments' });
+run.addArgument(['-t', '--target'], { help: 'destination path' });
+run.addArgument(['-v', '--verbose'], { action: 'storeTrue', help: 'verbose mode' });
+run.setDefaults({ action: 'run' });
+
 
 /* A helper function for determining a Sprout path.
  * @returns {String} - a path for Sprout.

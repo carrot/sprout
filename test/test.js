@@ -2,9 +2,9 @@ var Sprout = require('./../lib')
   , apiAdd = require('./../lib/api/add')
   , apiInit = require('./../lib/api/init')
   , apiRemove = require('./../lib/api/remove')
+  , apiRun = require('./../lib/api/run')
   , Template = require('./../lib/template')
   , Utils = require('./../lib/utils')
-  , ConfigFile = require('./../lib/configFile')
   , CLI = require('./../lib/cli')
   , helpers = require('./../lib/helpers')
   , chai = require('chai')
@@ -142,7 +142,7 @@ describe('sprout',
         it('should init template',
           function (done) {
             var name = 'init'
-              , fixture = path.join(sproutFixturesPath, 'init')
+              , fixture = path.join(sproutFixturesPath, name)
               , src = 'https://github.com/carrot/sprout-sprout'
               , target = path.join(fixture, 'target');
             sprout.add(name, src).then(
@@ -174,6 +174,53 @@ describe('sprout',
         it('should throw if no name',
           function (done) {
             (function () { sprout.init(null) }).should.throw;
+            done();
+          }
+        )
+
+      }
+    )
+
+    describe('run',
+      function () {
+
+        it('should run generator in template',
+          function (done) {
+            var name = 'run'
+              , fixture = path.join(sproutFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target');
+            return gitInit(src).then(
+              function () {
+                return sprout.add(name, src);
+              }
+            ).then(
+              function () {
+                sprout.templates[name].should.be.instanceof(Template);
+                sprout.templates[name].src.should.eq(src);
+                fs.existsSync(sprout.templates[name].path).should.be.true;
+                return sprout.init(name, target);
+              }
+            ).then(
+              function () {
+                return sprout.run(name, target, 'foo');
+              }
+            ).then(
+              function () {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+                return sprout.remove(name);
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('should throw if no name',
+          function (done) {
+            (function () { sprout.run(null) }).should.throw;
             done();
           }
         )
@@ -289,6 +336,57 @@ describe('api',
         it('should throw if template does not exists',
           function (done) {
             return apiInit(sprout, 'foo').catch(
+              function (error) {
+                error.toString().should.eq('Error: template foo does not exist');
+                done();
+              }
+            )
+          }
+        )
+
+      }
+    )
+
+    describe('run',
+      function () {
+
+        it('should run generator in template',
+          function (done) {
+            var action = 'run'
+              , fixture = path.join(apiFixturesPath, action)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target');
+            return gitInit(src).then(
+              function () {
+                return apiAdd(sprout, action, src);
+              }
+            ).then(
+              function () {
+                sprout.templates[action].should.be.ok;
+                fs.existsSync(path.join(sprout.path, action)).should.be.true;
+                return apiInit(sprout, action, target);
+              }
+            ).then(
+              function () {
+                fs.existsSync(target).should.be.true;
+                return apiRun(sprout, action, target, 'foo');
+              }
+            ).then(
+              function () {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+                return apiRemove(sprout, action);
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('should throw if template does not exists',
+          function (done) {
+            return apiRun(sprout, 'foo').catch(
               function (error) {
                 error.toString().should.eq('Error: template foo does not exist');
                 done();
@@ -1095,35 +1193,6 @@ describe('template',
           }
         )
 
-        it('should create target configuration file',
-          function (done) {
-            var name = 'configFile'
-              , fixture = path.join(initTemplateFixturesPath, name)
-              , src = path.join(fixture, 'src')
-              , target = path.join(fixture, 'target')
-              , template = new Template(sprout, name, src);
-            return gitInit(src).then(
-              function () {
-                return template.save();
-              }
-            ).then(
-              function (template) {
-                fs.existsSync(template.path).should.be.true;
-                return template.init(target);
-              }
-            ).then(
-              function (template) {
-                JSON.parse(fs.readFileSync(path.join(target, '.sproutrc'), 'utf8')).name.should.eq(name);
-                return template.remove();
-              }
-            ).then(
-              function () {
-                return rimraf(target, done);
-              }
-            )
-          }
-        )
-
         it('should ask questions if questionnaire is passed',
           function (done) {
             var name = 'questionnaire'
@@ -1492,6 +1561,341 @@ describe('template',
                     done();
                   }
                 );
+              }
+            )
+          }
+        )
+
+      }
+    )
+
+    describe('run',
+      function () {
+
+        var runTemplateFixturesPath;
+
+        before(
+          function () {
+            runTemplateFixturesPath = path.join(templateFixturesPath, 'run');
+          }
+        )
+
+        it('should run generator',
+          function (done) {
+            var name = 'run'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, 'foo');
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+                return template.remove(name);
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('should throw if no target set',
+          function (done) {
+            var name = 'noTarget'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(null, 'foo');
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: target path required')
+                return template.remove(name).then(
+                  function () {
+                    return rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('should throw if target missing',
+          function (done) {
+            var name = 'noTarget'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , fakeTarget = path.join(fixture, 'doge/doge/doge/doge/doge')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(fakeTarget, 'foo');
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: ' + fakeTarget + ' does not exist');
+                return template.remove(name).then(
+                  function () {
+                    return rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('should throw if no generator name',
+          function (done) {
+            var name = 'noGenerator'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, null);
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: generator name required');
+                return template.remove(name).then(
+                  function () {
+                    return rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('should throw if generator missing',
+          function (done) {
+            var name = 'generatorMissing'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, 'foo2');
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: `foo2` is not a generator in this template');
+                return template.remove(name).then(
+                  function () {
+                    return rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('should run generator if it\'s a .js file',
+          function (done) {
+            var name = 'generatorJs'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, 'foo');
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+                return template.remove(name);
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('should run generator if it\'s a .coffee file',
+          function (done) {
+            var name = 'generatorCoffee'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, 'foo');
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+                return template.remove(name);
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('should throw error if require returns error',
+          function (done) {
+            var name = 'requireError'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, 'foo');
+              }
+            ).catch(
+              function (error) {
+                error.toString().should.eq('Error: Cannot find module \'foo\'');
+                return template.remove(name).then(
+                  function () {
+                    return rimraf(target, done);
+                  }
+                );
+              }
+            )
+          }
+        )
+
+        it('it should pass arguments',
+          function (done) {
+            var name = 'arguments'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, 'foo', ['bar']);
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+                return template.remove(name);
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
+        it('it should not break if undefined is passed as arguments',
+          function (done) {
+            var name = 'undefinedArguments'
+              , fixture = path.join(runTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function () {
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                return template.run(target, 'foo', undefined);
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+                return template.remove(name);
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
               }
             )
           }
@@ -1928,6 +2332,37 @@ describe('CLI',
       }
     )
 
+    it('should run generator',
+      function (done) {
+        var action = 'generator'
+          , fixture = path.join(cliFixturesPath, action)
+          , src = path.join(fixture, 'src')
+          , target = path.join(fixture, 'target');
+        return gitInit(src).then(
+          function () {
+            return cli.run({action: 'add', name: action, src: src});
+          }
+        ).then(
+          function () {
+            return cli.run({action: 'init', name: action, target: target});
+          }
+        ).then(
+          function () {
+            return cli.run({action: 'run', name: action, target: target, generator: 'foo'});
+          }
+        ).then(
+          function () {
+            fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar');
+            return cli.run({action: 'remove', name: action});
+          }
+        ).then(
+          function () {
+            return rimraf(target, done);
+          }
+        )
+      }
+    )
+
     it('should emit error',
       function (done) {
         var onSuccess = function () {
@@ -2015,124 +2450,6 @@ describe('helpers',
             var obj = helpers.parseKeyValuesArray(['foo=2']);
             obj['foo'].should.eq(2);
             done();
-          }
-        )
-
-      }
-    )
-
-  }
-)
-
-describe('configFile',
-  function () {
-
-    var configFileFixturesPath;
-
-    before(
-      function () {
-        configFileFixturesPath = path.join(fixturesPath, 'configFile');
-      }
-    )
-
-    it('should construct with a valid path',
-      function (done) {
-        var p = path.join(configFileFixturesPath, 'validPath')
-          , configFile = new ConfigFile(p);
-        configFile.path.should.eq(path.join(p, '.sproutrc'));
-        configFile.config.should.be.instanceof(Object);
-        done();
-      }
-    )
-
-    it('should set defaults',
-      function (done) {
-        var p = path.join(configFileFixturesPath, 'setDefaults')
-          , configFile = new ConfigFile(p, {foo: 'bar'});
-        configFile.path.should.eq(path.join(p, '.sproutrc'));
-        configFile.config.foo.should.eq('bar');
-        done();
-      }
-    )
-
-    it('should throw an error if the path doesn\'t exist',
-      function (done) {
-        var p = 'foo/bar/foo/bar/foo/bar/doge';
-        (function () { return new ConfigFile(p) }).should.throw(p + ' does not exist');
-        done();
-      }
-    )
-
-    it('should throw if path is not a directory',
-      function (done) {
-        var p = path.join(configFileFixturesPath, 'notDirectory.foo');
-        (function () { return new ConfigFile(p) }).should.throw(p + ' is not a directory');
-        done();
-      }
-    )
-
-    describe('read',
-      function () {
-
-        var configFileReadFixturesPath;
-
-        before(
-          function () {
-            configFileReadFixturesPath = path.join(configFileFixturesPath, 'read');
-          }
-        )
-
-        it('should read a configuration file',
-          function (done) {
-            var fixture = path.join(configFileReadFixturesPath, 'read')
-              , configFile = new ConfigFile(fixture);
-            return configFile.read().then(
-              function (config) {
-                config.name.should.eq('foo');
-                done();
-              }
-            )
-          }
-        )
-
-        it('should resolve with empty config if config file doesn\'t exist',
-          function (done) {
-            var fixture = path.join(configFileReadFixturesPath, 'noConfig')
-              , configFile = new ConfigFile(fixture);
-            return configFile.read().then(
-              function (config) {
-                config.should.be.empty;
-                done();
-              }
-            )
-          }
-        )
-
-      }
-    )
-
-    describe('write',
-      function () {
-
-        var configFileWriteFixturesPath;
-
-        before(
-          function () {
-            configFileWriteFixturesPath = path.join(configFileFixturesPath, 'write');
-          }
-        )
-
-        it('should write a configuration file',
-          function (done) {
-            var fixture = path.join(configFileWriteFixturesPath, 'write')
-              , configFile = new ConfigFile(fixture, {foo: 'bar'});
-            return configFile.write().then(
-              function () {
-                JSON.parse(fs.readFileSync(configFile.path, 'utf8')).foo.should.eq('bar');
-                fs.unlinkSync(configFile.path);
-                done();
-              }
-            )
           }
         )
 
