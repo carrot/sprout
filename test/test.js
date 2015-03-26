@@ -4,6 +4,7 @@ var Sprout = require('./../lib')
   , apiRemove = require('./../lib/api/remove')
   , Template = require('./../lib/template')
   , Utils = require('./../lib/utils')
+  , ConfigFile = require('./../lib/configFile')
   , CLI = require('./../lib/cli')
   , helpers = require('./../lib/helpers')
   , chai = require('chai')
@@ -166,7 +167,7 @@ describe('sprout',
               function () {
                 rimraf(target, done);
               }
-            );
+            )
           }
         )
 
@@ -1094,6 +1095,35 @@ describe('template',
           }
         )
 
+        it('should create target configuration file',
+          function (done) {
+            var name = 'configFile'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                JSON.parse(fs.readFileSync(path.join(target, '.sproutrc'), 'utf8')).name.should.eq(name);
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
         it('should ask questions if questionnaire is passed',
           function (done) {
             var name = 'questionnaire'
@@ -1985,6 +2015,124 @@ describe('helpers',
             var obj = helpers.parseKeyValuesArray(['foo=2']);
             obj['foo'].should.eq(2);
             done();
+          }
+        )
+
+      }
+    )
+
+  }
+)
+
+describe('configFile',
+  function () {
+
+    var configFileFixturesPath;
+
+    before(
+      function () {
+        configFileFixturesPath = path.join(fixturesPath, 'configFile');
+      }
+    )
+
+    it('should construct with a valid path',
+      function (done) {
+        var p = path.join(configFileFixturesPath, 'validPath')
+          , configFile = new ConfigFile(p);
+        configFile.path.should.eq(path.join(p, '.sproutrc'));
+        configFile.config.should.be.instanceof(Object);
+        done();
+      }
+    )
+
+    it('should set defaults',
+      function (done) {
+        var p = path.join(configFileFixturesPath, 'setDefaults')
+          , configFile = new ConfigFile(p, {foo: 'bar'});
+        configFile.path.should.eq(path.join(p, '.sproutrc'));
+        configFile.config.foo.should.eq('bar');
+        done();
+      }
+    )
+
+    it('should throw an error if the path doesn\'t exist',
+      function (done) {
+        var p = 'foo/bar/foo/bar/foo/bar/doge';
+        (function () { return new ConfigFile(p) }).should.throw(p + ' does not exist');
+        done();
+      }
+    )
+
+    it('should throw if path is not a directory',
+      function (done) {
+        var p = path.join(configFileFixturesPath, 'notDirectory.foo');
+        (function () { return new ConfigFile(p) }).should.throw(p + ' is not a directory');
+        done();
+      }
+    )
+
+    describe('read',
+      function () {
+
+        var configFileReadFixturesPath;
+
+        before(
+          function () {
+            configFileReadFixturesPath = path.join(configFileFixturesPath, 'read');
+          }
+        )
+
+        it('should read a configuration file',
+          function (done) {
+            var fixture = path.join(configFileReadFixturesPath, 'read')
+              , configFile = new ConfigFile(fixture);
+            return configFile.read().then(
+              function (config) {
+                config.name.should.eq('foo');
+                done();
+              }
+            )
+          }
+        )
+
+        it('should resolve with empty config if config file doesn\'t exist',
+          function (done) {
+            var fixture = path.join(configFileReadFixturesPath, 'noConfig')
+              , configFile = new ConfigFile(fixture);
+            return configFile.read().then(
+              function (config) {
+                config.should.be.empty;
+                done();
+              }
+            )
+          }
+        )
+
+      }
+    )
+
+    describe('write',
+      function () {
+
+        var configFileWriteFixturesPath;
+
+        before(
+          function () {
+            configFileWriteFixturesPath = path.join(configFileFixturesPath, 'write');
+          }
+        )
+
+        it('should write a configuration file',
+          function (done) {
+            var fixture = path.join(configFileWriteFixturesPath, 'write')
+              , configFile = new ConfigFile(fixture, {foo: 'bar'});
+            return configFile.write().then(
+              function () {
+                JSON.parse(fs.readFileSync(configFile.path, 'utf8')).foo.should.eq('bar');
+                fs.unlinkSync(configFile.path);
+                done();
+              }
+            )
           }
         )
 
