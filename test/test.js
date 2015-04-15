@@ -1346,6 +1346,35 @@ describe('template',
           }
         )
 
+        it('should copy files that are binaries',
+          function (done) {
+            var name = 'binary'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                (fs.readFileSync(path.join(src, 'root', 'logo.png')).length == fs.readFileSync(path.join(target, 'logo.png')).length).should.be.true;
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
         it('should run before hook',
           function (done) {
             var name = 'before'

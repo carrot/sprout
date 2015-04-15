@@ -39,7 +39,8 @@
     "rimraf": "^2.3.2",
     "underscore.string": "^3.0.3",
     "which": "^1.0.9",
-    "minimatch": "^2.0.4"
+    "minimatch": "^2.0.4",
+    "isbinaryfile": "^2.0.3"
   },
   "devDependencies": {
     "jsdoc": "^3.3.0-beta2",
