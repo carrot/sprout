@@ -313,6 +313,12 @@ exports.after = function (utils, config) {
   return utils.rename('foo.jade', 'bar.jade');
 }
 
+/*
+ * Optionally specify globs to ignore.
+ */
+
+ exports.ignore = ['foo.*'];
+
 ```
 
 We also provide you the power of [underscore.string](http://epeli.github.io/underscore.string/#api) in all of your ejs templates. This means you can run powerful string operations on your user input like:
