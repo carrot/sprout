@@ -335,6 +335,7 @@ Sprout comes with the following events for you to write custom logic for. Each h
 
 The utilities object passed to each hook contains the following functions (each returns a promise):
 
+- `copy(from, to)` - copy a file at `from` (relative to the template's _base_ directory) to the path at `target` (relative to the template's _target_ directory).
 - `read(from)` - read a file at `from` (relative to the template's _base_ directory).
 - `write(to, what, locals)` - write `what` to path `to` (relative to the template's _target_ directory), optionally with ejs locals at `locals`.
 - `rename(from, to)` - rename file at `from` to path at `to` (relative to the template's _target_ directory).
