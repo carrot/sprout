@@ -7,6 +7,8 @@ var CLI = require('./../lib/cli')
   , osenv = require('osenv')
   , crypto = require('crypto')
   , path = require('path')
+  , fs = require('fs')
+  , mkdirp = require('mkdirp')
   , chalk = require('chalk');
 
 /*
@@ -113,11 +115,24 @@ var generateFakeUser = function () {
 var args = parser.parseArgs()
 
 /*
+ * Determine Sprout path; create
+ * user path if it's necessary.
+ */
+
+ var sproutPath = process.env.SPROUT_PATH;
+ if (!sproutPath) {
+   sproutPath = userSproutPath();
+   if (!fs.existsSync(sproutPath)) {
+     mkdirp(sproutPath);
+   }
+ }
+
+/*
  * Initialize CLI interface and
  * event handlers.
  */
 
-var cli = new CLI(process.env.SPROUT_PATH ? process.env.SPROUT_PATH : userSproutPath())
+var cli = new CLI(sproutPath)
   , emitter = cli.emitter;
 
 emitter.on('success',
