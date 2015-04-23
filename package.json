@@ -40,7 +40,8 @@
     "underscore.string": "3.0.x",
     "which": "1.0.x",
     "minimatch": "2.0.x",
-    "isbinaryfile": "2.0.x"
+    "isbinaryfile": "2.0.x",
+    "mkdirp": "^0.5.0"
   },
   "devDependencies": {
     "jsdoc": "^3.3.0-beta2",
