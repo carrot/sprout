@@ -15,7 +15,7 @@ We are aware that the [yeoman project](https://github.com/yeoman/yo) serves a si
 
 ### Usage
 
-Sprout is most commonly manipulated through its [command-line interface](http://github.com/carrot/sprout-cli). Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [bluebird](https://github.com/petkaantonov/bluebird)).
+Sprout is most commonly manipulated through its [command-line interface](http://github.com/carrot/sprout-cli). However, Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [bluebird](https://github.com/petkaantonov/bluebird)).
 
 ### Installation
 
