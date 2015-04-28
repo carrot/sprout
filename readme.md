@@ -13,120 +13,9 @@ A lot of the time you make projects with similar starting templates/boilerplates
 
 We are aware that the [yeoman project](https://github.com/yeoman/yo) serves a similar purpose, but built this anyway because we needed a project with a very clean and understandable generator API as well as a public javascript API for integration into other projects, and yeoman does not have either of these.
 
-## Try 'er out
+### Usage
 
-Try the [sprout-express template](http://www.github.com/carrot/sprout-express) for generating a boilerplate [express](http://expressjs.org) app:
-
-```sh
-$ npm install sprout --global
-$ sprout add express git@github.com:carrot/sprout-express
-$ sprout init express ~/Projects/sprout-express-instance
-```
-
-We'll do our best to keep an ongoing list of [publicly available sprout templates](https://github.com/carrot/sprout/wiki/Sprout-Templates), as well. Feel free to add your own!
-
-## CLI
-
-Sprout can be used directly through the command line to initialize projects. Once installed, it exposes the `sprout` command, which you can use to add, remove, and/or use your templates. The command line interface stores templates in a user folder, typically `~/.config/sprout`. The commands are more or less what you would expect, and are listed below.
-
-### Installation
-
-```
-$ npm install sprout --global
-```
-
-### Commands
-
-#### sprout add
-
-```
-$ sprout add <name> <src>
-```
-
-**Description**: Adds a template to your repertoire from `src` as `name`. Name represents how you would like the template to be named within sprout. You are required to add a _template_ which can be either a clone url or a path to a local template. If no name is provided, sprout will use the last piece of the template as the name.
-
-**Options**:
-
-* `-v, --verbose`: Verbose mode.
-
-#### sprout remove
-
-```
-$ sprout remove <name>
-```
-
-**Description**: Removes the template with the specified `name` from sprout.
-
-**Options**:
-
-* `-v, --verbose`: Verbose mode.
-
-**Aliases**: `rm`, `delete`
-
-#### sprout list
-
-```
-$ sprout list
-```
-**Description**: Lists all templates that you have added to sprout.
-
-**Aliases**: `ls`, `all`
-
-#### sprout init
-
-```sh
-$ sprout init <name> <target>
-```
-
-**Description**: Initializes the template with the given `name` at the given `target`.
-
-**Options**:
-
-* `-l [LOCALS [LOCALS ...]]`, `--locals [LOCALS [LOCALS ...]]`:
-  Pass locals as options which will override the prompts set in your templates.  Locals are passed to the CLI like so: `-l key1=value1 key2='value2'`
-
-* `-t TAG`, `--tag TAG`:
-  Pass a git tag to generate the template from.
-
-* `-b BRANCH`, `--branch BRANCH`:
-  Pass a git branch to generate the template from.
-
-* `-c CONFIG`, `--config CONFIG`:
-  Pass a JSON or yaml file to pre-define a large set of values, like so:
-
-  ```json
-  {
-    "key1": "value1",
-    "key2": true,
-    "key3": 200
-  }
-  ```
-
-**Aliases**: `new`, `create`
-
-#### sprout run
-
-```sh
-$ sprout run <name> <generator>
-```
-
-**Description**: Run a generator named `generator`, provided in a template with the given `name`, on a template instance in the current working directory.
-
-**Options**:
-
-  * `-t TARGET`, `--target TARGET`
-    Optionally pass the path to the template instance (relative to the current working directory).
-
-  * `[args, [args ...]]`
-    Pass arguments to the generator, like so:
-
-    ```sh
-    $ sprout run mvc model User name:string age:integer
-    ```
-
-## Javascript API
-
-Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [bluebird](https://github.com/petkaantonov/bluebird)) Example code given in coffeescript:
+Sprout is most commonly manipulated through its [command-line interface](http://github.com/carrot/sprout-cli). However, Sprout was made specifically to be easy to integrate into javascript applications and libraries that create project structures for you. It can be installed locally via npm and used directly in a node project. The API is similar to the CLI interface described above. Each method returns a [A+ compliant](http://promises-aplus.github.io/promises-spec/) promise (with extra sugar from [bluebird](https://github.com/petkaantonov/bluebird)).
 
 ### Installation
 
@@ -363,10 +252,6 @@ module.exports = function (utils, name) {
 
 These generators are stored in your template's `generators` folder and can be used with sprout's `run` method:
 
-```sh
-$ sprout run mvc model User
-```
-
 ```javascript
 sprout.run('mvc', 'model', ['User']);
 ```
@@ -375,9 +260,6 @@ sprout.run('mvc', 'model', ['User']);
 
 Sometimes changes happen and you might want to be able to specify different versions of a single template. Sprout handles this through [git tags](http://git-scm.com/book/en/Git-Basics-Tagging). To specify which tag to use, simply pass a `tag` option to sprout's `init` method.
 
-```sh
-$ sprout init my-template ~/Projects/my-template-instance --tag 0.1.2
-```
 
 ```javascript
 sprout.init('my-template', '~/Projects/my-template-instance', { tag: '0.1.2' })
@@ -385,12 +267,13 @@ sprout.init('my-template', '~/Projects/my-template-instance', { tag: '0.1.2' })
 
 `init` also accepts a branch option for specifying which branch to generate from:
 
-```sh
-$ sprout init my-template ~/Projects/my-template-instance --branch develop
-```
-
 ```javascript
 sprout.init('my-template', '~/Projects/my-template-instance', { branch: 'develop' })
 ```
 
 Although you are welcome to use whatever versioning system you are comfortable with, we would **strongly recommended** using [semver](http://semver.org/), the widely accepted standard in package versioning. This will provide you with a clear framework for managing situations when breaking changes have been made to your template.
+
+### License & Contributing
+
+- Details on the license [can be found here](LICENSE.md)
+- Details on running tests and contributing [can be found here](CONTRIBUTING.md)
