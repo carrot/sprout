@@ -272,3 +272,8 @@ sprout.init('my-template', '~/Projects/my-template-instance', { branch: 'develop
 ```
 
 Although you are welcome to use whatever versioning system you are comfortable with, we would **strongly recommended** using [semver](http://semver.org/), the widely accepted standard in package versioning. This will provide you with a clear framework for managing situations when breaking changes have been made to your template.
+
+### License & Contributing
+
+- Details on the license [can be found here](LICENSE.md)
+- Details on running tests and contributing [can be found here](CONTRIBUTING.md)

@@ -3,8 +3,8 @@
   "version": "0.2.4",
   "author": "Carrot Creative <dev@carrotcreative.com>",
   "contributors": [
+    "Noah Portes Chaikin <noah@porteschaikin.com>",
     "Jeff Escalante <hello@jenius.me>",
-    "Noah Portes Chaikin <noah.porteschaikin@carrotcreative.com>",
     "Kyle MacDonald <kyle@carrotcreative.com>"
   ],
   "description": "Simple project templating",
