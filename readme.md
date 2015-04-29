@@ -5,7 +5,7 @@
 
 Simple project templating & skeletons
 
-> **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
+> **To use Sprout via the command line, install the [sprout-cli package](http://npmjs.org/package/sprout-cli) ([github](http://www.github.com/carrot/sprout-cli))**.
 
 ## Why should you care?
 
