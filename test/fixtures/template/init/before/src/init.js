@@ -3,6 +3,6 @@ var fs = require('fs')
 
 module.exports = {
   before: function (utils) {
-    return utils.write('bar', '');
+    return utils.target.write('bar', '');
   }
 }

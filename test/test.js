@@ -1978,146 +1978,176 @@ describe('utils',
       }
     )
 
-    it('should read a file relative to src path',
-      function (done) {
-        var fn = 'read'
-          , fixture = path.join(utilsFixturesPath, fn)
-          , utils = new Utils(fixture);
-        return utils.read(fn).then(
-          function (output) {
-            output.should.eq('bar\n');
-            done();
+    describe('src',
+      function () {
+
+        var utilsSrcFixturesPath;
+
+        before(
+          function () {
+            utilsSrcFixturesPath = path.join(utilsFixturesPath, 'src');
           }
         )
-      }
-    )
 
-    it('should write relative to target path',
-      function (done) {
-        var fn = 'write'
-          , fixture = path.join(utilsFixturesPath, fn)
-          , utils = new Utils(null, fixture);
-        return utils.write(fn, 'bar').then(
-          function () {
-            fs.readFileSync(path.join(fixture, fn), 'utf8').should.eq('bar');
-            return utils.remove(fn);
-          }
-        ).then(
-          function () {
-            done();
-          }
-        )
-      }
-    )
-
-    it('should write relative to target path and should parse locals passed to third argument',
-      function (done) {
-        var fn = 'writeEjs'
-          , fixture = path.join(utilsFixturesPath, fn)
-          , utils = new Utils(null, fixture);
-        return utils.write(fn, '<%= foo %>', {foo: fn}).then(
-          function () {
-            fs.readFileSync(path.join(fixture, fn), 'utf8').should.eq(fn);
-            return utils.remove(fn);
-          }
-        ).then(
-          function () {
-            done();
-          }
-        )
-      }
-    )
-
-    it('should rename path in target path to path relative to target path',
-      function (done) {
-        var fixture = path.join(utilsFixturesPath, 'rename')
-          , src = fixture
-          , target = fixture
-          , utils = new Utils(src, target);
-        return utils.rename('foo', 'bar').then(
-          function () {
-            fs.existsSync(path.join(target, 'bar')).should.be.true;
-            return utils.rename('bar', 'foo');
-          }
-        ).then(
-          function () {
-            done();
-          }
-        )
-      }
-    )
-
-    it('should remove a path relative to the target path',
-      function (done) {
-        var fn = 'remove'
-          , fixture = path.join(utilsFixturesPath, fn)
-          , utils = new Utils(null, fixture);
-        return utils.remove(fn).then(
-          function () {
-            fs.existsSync(path.join(fixture, fn)).should.be.false;
-            return utils.write(fn, '');
-          }
-        ).then(
-          function () {
-            done();
-          }
-        )
-      }
-    )
-
-    it('should remove an array of paths relative to the target path',
-      function (done) {
-        var fn = 'removeArray'
-          , fixture = path.join(utilsFixturesPath, fn)
-          , utils = new Utils(null, fixture);
-        return utils.remove([fn, 'foo']).then(
-          function () {
-            fs.existsSync(path.join(fixture, fn)).should.be.false;
-            fs.existsSync(path.join(fixture, 'foo')).should.be.false;
-            return utils.write(fn, '').then(
-              function () {
-                return utils.write('foo', '');
+        it('should read from a path relative to the source path',
+          function (done) {
+            var fixture = path.join(utilsSrcFixturesPath, 'read')
+              , utils = new Utils(fixture, null);
+            return utils.src.read('foo').then(
+              function (output) {
+                output.should.eq('bar\n');
+                done();
               }
-            );
+            )
           }
-        ).then(
+        )
+
+      }
+    )
+
+    describe('target',
+      function () {
+
+        var utilsTargetFixturesPath;
+
+        before(
           function () {
-            done();
+            utilsTargetFixturesPath = path.join(utilsFixturesPath, 'target');
           }
         )
-      }
-    )
 
-    it('should run a child process with the target as the cwd',
-      function (done) {
-        var fn = 'exec'
-          , fixture = path.join(utilsFixturesPath, fn)
-          , utils = new Utils(null, fixture);
-        return utils.exec('pwd').then(
-          function (stdout) {
-            stdout.should.include(fixture + '\n');
-            done();
+        it('should copy from one path to another, relative to the target',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'copy')
+              , utils = new Utils(null, fixture);
+            return utils.target.copy('foo', 'bar').then(
+              function () {
+                fs.readFileSync(path.join(fixture, 'bar'), 'utf8').should.eq('bar\n');
+                fs.unlinkSync(path.join(fixture, 'bar'));
+                done();
+              }
+            )
           }
         )
-      }
-    )
 
-    it('should run a child process with the target as the cwd and a nested path passed.',
-      function (done) {
-        var fn = 'execRelative'
-          , fixture = path.join(utilsFixturesPath, fn)
-          , utils = new Utils(null, fixture);
-        return utils.exec('pwd', 'foo').then(
-          function (stdout) {
-            stdout.should.include(path.join(fixture, 'foo') + '\n');
-            done();
+        it('should read from a path relative to the source path',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'read')
+              , utils = new Utils(null, fixture);
+            return utils.target.read('foo').then(
+              function (output) {
+                output.should.eq('bar\n');
+                done();
+              }
+            )
           }
         )
+
+        it('should write to path relative to the source path',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'write')
+              , utils = new Utils(null, fixture);
+            return utils.target.write('foo', 'bar').then(
+              function (output) {
+                fs.readFileSync(path.join(fixture, 'foo'), 'utf8').should.eq('bar');
+                fs.unlinkSync(path.join(fixture, 'foo'));
+                done();
+              }
+            )
+          }
+        )
+
+        it('should write to path relative to the source path and use locals',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'writeLocals')
+              , utils = new Utils(null, fixture);
+            return utils.target.write('foo', '<%= foo %>', {foo: 'bar'}).then(
+              function (output) {
+                fs.readFileSync(path.join(fixture, 'foo'), 'utf8').should.eq('bar');
+                fs.unlinkSync(path.join(fixture, 'foo'));
+                done();
+              }
+            )
+          }
+        )
+
+        it('should rename from one path to another, relative to the target',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'rename')
+              , utils = new Utils(null, fixture);
+            return utils.target.rename('foo', 'bar').then(
+              function () {
+                fs.existsSync(path.join(fixture, 'bar')).should.be.true;
+                fs.renameSync(path.join(fixture, 'bar'), path.join(fixture, 'foo'));
+                done();
+              }
+            )
+          }
+        )
+
+        it('should remove from a path, relative to the target',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'remove')
+              , utils = new Utils(null, fixture);
+            return utils.target.remove('foo').then(
+              function () {
+                fs.existsSync(path.join(fixture, 'foo')).should.be.false;
+                fs.writeFileSync(path.join(fixture, 'foo'), '', 'utf8');
+                done();
+              }
+            )
+          }
+        )
+
+        it('should remove an array of paths, relative to the target',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'removeArray')
+              , utils = new Utils(null, fixture);
+            return utils.target.remove(['foo', 'bar']).then(
+              function () {
+                fs.existsSync(path.join(fixture, 'foo')).should.be.false;
+                fs.existsSync(path.join(fixture, 'bar')).should.be.false;
+                fs.writeFileSync(path.join(fixture, 'foo'), '', 'utf8');
+                fs.writeFileSync(path.join(fixture, 'bar'), '', 'utf8');
+                done();
+              }
+            )
+          }
+        )
+
+        it('should execute a command with the target as a working directory',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'exec')
+              , utils = new Utils(null, fixture);
+            return utils.target.exec('rm -rf foo').then(
+              function () {
+                fs.existsSync(path.join(fixture, 'foo')).should.be.false;
+                fs.writeFileSync(path.join(fixture, 'foo'), '', 'utf8');
+                done();
+              }
+            )
+          }
+        )
+
+        it('should execute a command with a path relative to the target as a working directory',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'execRelative')
+              , utils = new Utils(null, fixture);
+            return utils.target.exec('rm -rf foo', 'bar').then(
+              function () {
+                fs.existsSync(path.join(fixture, 'bar', 'foo')).should.be.false;
+                fs.writeFileSync(path.join(fixture, 'bar', 'foo'), '', 'utf8');
+                done();
+              }
+            )
+          }
+        )
+
       }
     )
 
   }
-)
+);
 
 describe('helpers',
   function () {

@@ -1,3 +1,3 @@
 module.exports = function (utils, foo) {
-  return utils.write('foo', foo)
+  return utils.target.write('foo', foo)
 }
