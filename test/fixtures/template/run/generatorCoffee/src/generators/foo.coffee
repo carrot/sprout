@@ -1,2 +1,2 @@
 module.exports = (utils) ->
-  utils.write 'foo', 'bar'
+  utils.target.write 'foo', 'bar'

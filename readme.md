@@ -188,7 +188,7 @@ exports.configure = [
 
 exports.beforeRender = function (utils, config) {
   config.foo = 'bar';
-  return utils.write('foo.jade', 'h1 Hello World!', config);
+  return utils.target.write('foo.jade', 'h1 Hello World!', config);
 }
 
 
@@ -199,7 +199,7 @@ exports.beforeRender = function (utils, config) {
  */
 
 exports.after = function (utils, config) {
-  return utils.rename('foo.jade', 'bar.jade');
+  return utils.target.rename('foo.jade', 'bar.jade');
 }
 
 /*
@@ -230,12 +230,13 @@ Sprout comes with the following events for you to write custom logic for. Each h
 
 The utilities object passed to each hook contains the following functions (each returns a promise):
 
-- `copy(from, to)` - copy a file at `from` (relative to the template's _base_ directory) to the path at `target` (relative to the template's _target_ directory).
-- `read(from)` - read a file at `from` (relative to the template's _base_ directory).
-- `write(to, what, locals)` - write `what` to path `to` (relative to the template's _target_ directory), optionally with ejs locals at `locals`.
-- `rename(from, to)` - rename file at `from` to path at `to` (relative to the template's _target_ directory).
-- `remove(what)` - remove files; pass a path or an array of paths (relative to the template's _target_ directory).
-- `exec(cmd, cwd)` - run a child process with the _target_ directory set at the current working directory by default; optionally, pass a path to `cwd` (relative to the target directory).
+- `utils.src.read(from)` - read a file at `from` (relative to the template's _base_ directory).
+- `utils.target.copy(from, to)` - copy a file at `from` (relative to the template's _target_ directory) to the path at `to` (relative to the template's _target_ directory).
+- `utils.target.read(from)` - read a file at `from` (relative to the template's _target_ directory).
+- `utils.target.write(to, what, locals)` - write `what` to path `to` (relative to the template's _target_ directory), optionally with ejs locals at `locals`.
+- `utils.target.rename(from, to)` - rename file at `from` to path at `to` (relative to the template's _target_ directory).
+- `utils.target.remove(what)` - remove files; pass a path or an array of paths (relative to the template's _target_ directory).
+- `utils.target.exec(cmd, cwd)` - run a child process with the _target_ directory set at the current working directory by default; optionally, pass a path to `cwd` (relative to the target directory).
 
 ### Generators
 Sprout templates may also include "generators": small scripts to be executed on instances of a template.  For example, an `mvc` template may include `model`, `controller`, and `view` generators for quickly stubbing out an model-view-controller application.  Generators are passed `utils` (an instance of the `Utils` that reads from the _base_ directory and writes to the _target_ directory) in the first argument; any arguments passed to `sprout.run()` follow.  A model generator in an `mvc` template may look like this:
@@ -244,7 +245,7 @@ Sprout templates may also include "generators": small scripts to be executed on 
 module.exports = function (utils, name) {
   return utils.read('templates/model').then(
     function (output) {
-      return utils.write('lib/models/' + name + '.js', output, {name: name});
+      return utils.target.write('lib/models/' + name + '.js', output, {name: name});
     }
   )
 }
