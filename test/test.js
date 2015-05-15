@@ -2002,6 +2002,20 @@ describe('utils',
           }
         )
 
+        it('should copy from one path relative to the src to another, relative to the target',
+          function (done) {
+            var fixture = path.join(utilsSrcFixturesPath, 'copy')
+              , utils = new Utils(null, fixture);
+            return utils.src.copy('foo', 'bar').then(
+              function () {
+                fs.readFileSync(path.join(fixture, 'bar'), 'utf8').should.eq('bar\n');
+                fs.unlinkSync(path.join(fixture, 'bar'));
+                done();
+              }
+            )
+          }
+        )
+
       }
     )
 
