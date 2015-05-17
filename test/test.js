@@ -1993,7 +1993,7 @@ describe('utils',
           function (done) {
             var fixture = path.join(utilsCopyFixturesPath, 'base')
               , utils = new Utils(fixture, fixture);
-            return utils.copy('foo', path.join(utils._target, 'bar')).then(
+            return utils.copy('foo', 'bar').then(
               function () {
                 fs.readFileSync(path.join(fixture, 'bar'), 'utf8').should.eq('bar\n');
                 fs.unlinkSync(path.join(fixture, 'bar'));

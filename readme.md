@@ -230,7 +230,7 @@ Sprout comes with the following events for you to write custom logic for. Each h
 
 The utilities object passed to each hook contains the following functions (each returns a promise):
 
-- `utils.copy(from, to)` - copy a file at `from` (relative to the template's _base_ directory) to the path at `to`
+- `utils.copy(from, to)` - copy a file at `from` (relative to the template's _base_ directory) to the path at `to` (relative to the template's _target_ directory).
 - `utils.src.read(from)` - read a file at `from` (relative to the template's _base_ directory).
 - `utils.target.copy(from, to)` - copy a file at `from` (relative to the template's _target_ directory) to the path at `to` (relative to the template's _target_ directory).
 - `utils.target.read(from)` - read a file at `from` (relative to the template's _target_ directory).
