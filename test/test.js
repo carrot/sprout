@@ -1978,6 +1978,34 @@ describe('utils',
       }
     )
 
+    describe('copy',
+      function () {
+
+        var utilsCopyFixturesPath;
+
+        before(
+          function () {
+            utilsCopyFixturesPath = path.join(utilsFixturesPath, 'copy');
+          }
+        )
+
+        it('should copy from one path relative to the src, to another',
+          function (done) {
+            var fixture = path.join(utilsCopyFixturesPath, 'base')
+              , utils = new Utils(fixture, fixture);
+            return utils.copy('foo', path.join(utils._target, 'bar')).then(
+              function () {
+                fs.readFileSync(path.join(fixture, 'bar'), 'utf8').should.eq('bar\n');
+                fs.unlinkSync(path.join(fixture, 'bar'));
+                done();
+              }
+            )
+          }
+        )
+
+      }
+    )
+
     describe('src',
       function () {
 
