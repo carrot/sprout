@@ -46,8 +46,8 @@
     "coveralls": "2.11.x"
   },
   "scripts": {
-    "test": "mocha",
-    "coverage": "istanbul cover _mocha --report html -- -R spec"
+    "test": "istanbul cover _mocha -- -u exports -R spec",
+    "coverage": "istanbul cover _mocha --report html -- -R spec && open coverage/lcov-report/index.html"
   },
   "engines": {
     "node": ">=0.10.0"
