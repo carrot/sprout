@@ -7,7 +7,7 @@
     "Jeff Escalante <hello@jenius.me>",
     "Kyle MacDonald <kyle@carrotcreative.com>"
   ],
-  "description": "Simple project templating",
+  "description": "Simple project templating & skeletons",
   "main": "lib",
   "license": "MIT",
   "repository": {
@@ -39,7 +39,7 @@
   "devDependencies": {
     "jsdoc": "^3.3.0-beta2",
     "mocha": "2.2.x",
-    "chai": "2.1.x",
+    "chai": "2.3.x",
     "mockery": "1.4.x",
     "errno": "0.1.x",
     "istanbul": "0.3.x",
