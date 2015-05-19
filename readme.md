@@ -116,7 +116,7 @@ sprout.run(name, target, generator, ['User']).then(
 
 ## Writing Your Own Templates
 
-For an example, as well as a sprout template that helps you create new sprout templates, be sure to check out [sprout-sprout](https://github.com/carrot/sprout-sprout).
+For an example, as well as a sprout template that helps you create new sprout templates, be sure to check out [sprout-sprout](https://github.com/carrot/sprout-sprout). If you would like a more generic example, check out [sprout-example](https://github.com/carrot/sprout-example)
 
 Ok so enough about how this is used, I'm sure you are super excited at this point to get in there and write a template. Probably more excited than a [party gorilla](http://www.ivanwalsh.com/wp-content/uploads/2011/08/the-oatmeal-cartoon.jpg), which is pretty wild. So let's take a look.
 
