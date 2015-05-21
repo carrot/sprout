@@ -144,9 +144,11 @@ First thing you'll want to do is set up your project structure, which will proba
  * This function is executed before any of the configuration happens.
  * It's a good place to put any introductory messages you want to display.
  * It is of course optional, and can be asynchronous.
+ * The `config` object that is passed here will always be empty and not
+ * representative of what you set up in `exports.configure`
  */
 
-exports.before = function (utils) {
+exports.before = function (utils, config) {
   console.log('Getting started...');
 }
 
@@ -231,8 +233,9 @@ Sprout comes with the following events for you to write custom logic for. Each h
 The utilities object passed to each hook contains the following functions (each returns a promise):
 
 function                               | description
-:------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+:------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 `utils.copy(from, to)`                 | copy a file at `from` (relative to the template's _base_ directory) to the path at `to` (relative to the template's _target_ directory).
+`utils.copyDir(from, to)`              | recursively copy a directory at `from` (relative to the template's _base_ directory) to the path at `to` (relative to the template's _target_ directory). uses [ncp](https://github.com/AvianFlu/ncp).
 `utils.src.read(from)`                 | read a file at `from` (relative to the template's _base_ directory).
 `utils.target.copy(from, to)`          | copy a file at `from` (relative to the template's _target_ directory) to the path at `to` (relative to the template's _target_ directory).
 `utils.target.read(from)`              | read a file at `from` (relative to the template's _target_ directory).

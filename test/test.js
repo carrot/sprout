@@ -2006,6 +2006,42 @@ describe('utils',
       }
     )
 
+    describe('copyDir',
+      function () {
+
+        var utilsCopyDirFixturesPath;
+
+        before(
+          function () {
+            utilsCopyDirFixturesPath = path.join(utilsFixturesPath, 'copyDir');
+          }
+        )
+
+        it('should copy a dir from one path relative to the src, to another relative to the target',
+          function (done) {
+            var fixture = path.join(utilsCopyDirFixturesPath, 'base')
+              , tgt = path.join(fixture, 'src')
+              , dest = path.join(fixture, 'dest')
+              , utils = new Utils(fixture, fixture);
+            return utils.copyDir(tgt, dest).then(
+              function () {
+                fs.readFileSync(path.join(dest, 'foo'), 'utf8').should.eq('bar\n');
+                fs.unlinkSync(path.join(dest, 'foo'));
+              }
+            ).then(
+              function () {
+                fs.readFileSync(path.join(dest, 'fizz'), 'utf8').should.eq('buzz\n');
+                fs.unlinkSync(path.join(dest, 'fizz'));
+              }
+            ).then(function(){
+              done();
+            })
+          }
+        )
+
+      }
+    )
+
     describe('src',
       function () {
 
