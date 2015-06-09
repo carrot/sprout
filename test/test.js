@@ -2030,6 +2030,15 @@ describe('utils',
           }
         )
 
+        it('should return the source path',
+          function (done) {
+            var fixture = path.join(utilsSrcFixturesPath, 'path')
+              , utils = new Utils(fixture, null);
+            utils.src.path.should.eq(fixture);
+            done();
+          }
+        )
+
       }
     )
 
@@ -2041,6 +2050,15 @@ describe('utils',
         before(
           function () {
             utilsTargetFixturesPath = path.join(utilsFixturesPath, 'target');
+          }
+        )
+
+        it('should return the target path',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'path')
+              , utils = new Utils(fixture, null);
+            utils.src.path.should.eq(fixture);
+            done();
           }
         )
 
