@@ -224,7 +224,7 @@ So between this config file and the root folder, you should be able to make anyt
 ### Hooks
 Sprout comes with the following events for you to write custom logic for. Each hook is passed a utilities object for manipulating files in your template.  Each of these hooks accept A+ promises as return values.  To use these events, export a function for the hook (or multiple hooks) of your choosing in your `init.js`:
 
-- `before` - run before prompting for user input
+- `before` - run before prompting for user input; is passed a configuration object as the second argument.
 - `beforeRender` - run after the project configuration is set; is passed a configuration object as the second argument.
 - `after` - run after rendering has completed; is passed a configuration object as the second argument.
 
@@ -232,7 +232,7 @@ The utilities object passed to each hook contains the following functions (each 
 
 function                               | description
 :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-`utils.copy(from, to)`                 | copy a file at `from` (relative to the template's _base_ directory) to the path at `to` (relative to the template's _target_ directory).
+`utils.copy(from, to)`                 | copy a file or directory recursively at `from` (relative to the template's _base_ directory) to the path at `to` (relative to the template's _target_ directory).
 `utils.src.read(from)`                 | read a file at `from` (relative to the template's _base_ directory).
 `utils.target.copy(from, to)`          | copy a file at `from` (relative to the template's _target_ directory) to the path at `to` (relative to the template's _target_ directory).
 `utils.target.read(from)`              | read a file at `from` (relative to the template's _target_ directory).
