@@ -208,6 +208,13 @@ exports.after = function (utils, config) {
 
  exports.ignore = ['foo.*'];
 
+ /*
+  * Optionally specify a defaults object to your templates.
+  * Helpful for adding locals to use within your templates
+  */
+
+  exports.defaults = { moment: require('moment') }
+
 ```
 
 We also provide you the power of [underscore.string](http://epeli.github.io/underscore.string/#api) in all of your ejs templates. This means you can run powerful string operations on your user input like:

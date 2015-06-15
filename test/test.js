@@ -1316,6 +1316,36 @@ describe('template',
           }
         )
 
+        it('should apply moment.js as a local',
+          function (done) {
+            var name = 'defaultsLocals'
+              , fixture = path.join(initTemplateFixturesPath, name)
+              , src = path.join(fixture, 'src')
+              , target = path.join(fixture, 'target')
+              , template = new Template(sprout, name, src);
+            return gitInit(src).then(
+              function () {
+                return template.save();
+              }
+            ).then(
+              function (template) {
+                fs.existsSync(template.path).should.be.true;
+                return template.init(target);
+              }
+            ).then(
+              function (template) {
+                fs.readFileSync(path.join(target, 'foo'), 'utf8')
+                  .should.eq('1984\n');
+                return template.remove();
+              }
+            ).then(
+              function () {
+                return rimraf(target, done);
+              }
+            )
+          }
+        )
+
         it('should install npm dependencies',
           function (done) {
             var name = 'npm'
