@@ -247,7 +247,7 @@ Sprout templates may also include "generators": small scripts to be executed on 
 
 ```javascript
 module.exports = function (utils, name) {
-  return utils.read('templates/model').then(
+  return utils.src.read('templates/model').then(
     function (output) {
       return utils.target.write('lib/models/' + name + '.js', output, {name: name});
     }
