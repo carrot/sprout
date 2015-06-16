@@ -2117,6 +2117,34 @@ describe('utils',
           }
         )
 
+        it('should write to path relative to the source path recursively',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'writeRecursive')
+              , utils = new Utils(null, fixture);
+            return utils.target.write('nested/deep/foo', 'bar').then(
+              function (output) {
+                fs.readFileSync(path.join(fixture, 'nested', 'deep', 'foo'), 'utf8').should.eq('bar');
+                rimraf.sync(path.join(fixture, 'nested'));
+                done();
+              }
+            )
+          }
+        )
+
+        it('should write to path relative to the source path recursively, even if dir exists',
+          function (done) {
+            var fixture = path.join(utilsTargetFixturesPath, 'writeRecursiveExists')
+              , utils = new Utils(null, fixture);
+            return utils.target.write('nested/deep/foo', 'bar').then(
+              function (output) {
+                fs.readFileSync(path.join(fixture, 'nested', 'deep', 'foo'), 'utf8').should.eq('bar');
+                rimraf.sync(path.join(fixture, 'nested', 'deep'));
+                done();
+              }
+            )
+          }
+        )
+
         it('should rename from one path to another, relative to the target',
           function (done) {
             var fixture = path.join(utilsTargetFixturesPath, 'rename')
