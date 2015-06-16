@@ -35,7 +35,7 @@ var Sprout = require('sprout')
 
 A `Sprout` instance has the following public values:
 
-- `path`: (string) the path where the templates leive.
+- `path`: (string) the path where the templates live.
 - `templates`: (object) a dictionary of `Template` objects.
 - `emitter`: (object) an `EventEmitter`.
 
