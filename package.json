@@ -26,7 +26,7 @@
     "bluebird": "^2.9.27",
     "coffee-script": "^1.9.3",
     "ejs": "^2.3.1",
-    "isbinaryfile": "^2.0.4",
+    "isbinaryfile": "^3.0.0",
     "js-yaml": "^3.3.1",
     "lodash": "^3.9.3",
     "minimatch": "^3.0.0",
