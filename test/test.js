@@ -1,3 +1,5 @@
+/* global describe, it, before */
+
 var Sprout = require('./../lib')
   , apiAdd = require('./../lib/api/add')
   , apiInit = require('./../lib/api/init')
