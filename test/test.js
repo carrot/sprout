@@ -1897,7 +1897,7 @@ describe('template',
           }
         )
 
-        it('it should pass arguments',
+        it.skip('it should pass arguments',
           function (done) {
             var name = 'arguments'
               , fixture = path.join(runTemplateFixturesPath, name)
