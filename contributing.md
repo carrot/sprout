@@ -9,7 +9,7 @@ If you are opening an issue about a bug, make sure that you include clear steps 
 ### Getting Set Up
 
 - Clone the project down
-- Make sure [nodejs](http://nodejs.org) has been installed and is above version `0.10.x`
+- Make sure [nodejs](http://nodejs.org) has been installed and is above version `4.x`
 - Run `npm install`
 - Put in work
 
@@ -21,7 +21,7 @@ To run the test suite, make sure you have installed mocha (`npm install mocha -g
 
 ### Code Style
 
-To keep a consistant coding style in the project, we're using [Polar Mobile's guide](https://github.com/polarmobile/coffeescript-style-guide), with one difference begin that much of this project uses `under_scores` rather than `camelCase` for variable naming. For any inline documentation in the code, we're using [JSDoc](http://usejsdoc.org/).
+To keep a consistent coding style in the project, we use [standard](http://standardjs.com). For any inline documentation in the code, we're using [JSDoc](http://usejsdoc.org/).
 
 ### Commit Cleanliness
 
