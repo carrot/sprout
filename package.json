@@ -1,26 +1,14 @@
 {
   "name": "sprout",
+  "description": "Simple project templating & skeletons",
   "version": "0.4.4",
   "author": "Carrot Creative <dev@carrotcreative.com>",
+  "bugs": "https://github.com/carrot/sprout/issues",
   "contributors": [
     "Noah Portes Chaikin <noah@porteschaikin.com>",
     "Jeff Escalante <hello@jenius.me>",
     "Kyle MacDonald <kyle@carrotcreative.com>"
   ],
-  "description": "Simple project templating & skeletons",
-  "main": "lib",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/carrot/sprout"
-  },
-  "keywords": [
-    "new",
-    "project",
-    "templating",
-    "configuration"
-  ],
-  "bugs": "https://github.com/carrot/sprout/issues",
   "dependencies": {
     "argparse": "^1.0.2",
     "bluebird": "^2.9.27",
@@ -44,13 +32,36 @@
     "istanbul": "^0.4.1",
     "jsdoc": "^3.3.1",
     "mocha": "^2.2.5",
-    "mockery": "^1.4.0"
-  },
-  "scripts": {
-    "test": "istanbul cover _mocha -- -u exports -R spec",
-    "coverage": "istanbul cover _mocha --report html -- -R spec && open coverage/lcov-report/index.html"
+    "mockery": "^1.4.0",
+    "snazzy": "^3.0.0",
+    "standard": "^6.0.8"
   },
   "engines": {
     "node": ">=0.10.0"
+  },
+  "homepage": "https://github.com/carrot/sprout",
+  "keywords": [
+    "configuration",
+    "new",
+    "project",
+    "templating"
+  ],
+  "license": "MIT",
+  "main": "lib",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carrot/sprout"
+  },
+  "scripts": {
+    "coverage": "istanbul cover _mocha --report html -- -R spec && open coverage/lcov-report/index.html",
+    "lint": "standard --verbose | snazzy",
+    "precommit": "npm run lint -s",
+    "pretest": "npm run lint -s",
+    "test": "istanbul cover _mocha -- -u exports -R spec"
+  },
+  "standard": {
+    "ignore": [
+      "/test/*"
+    ]
   }
 }

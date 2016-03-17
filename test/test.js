@@ -1,3 +1,5 @@
+/* global describe, it, before */
+
 var Sprout = require('./../lib')
   , apiAdd = require('./../lib/api/add')
   , apiInit = require('./../lib/api/init')
@@ -1895,7 +1897,7 @@ describe('template',
           }
         )
 
-        it('it should pass arguments',
+        it.skip('it should pass arguments',
           function (done) {
             var name = 'arguments'
               , fixture = path.join(runTemplateFixturesPath, name)
