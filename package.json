@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "argparse": "^1.0.2",
-    "bluebird": "^3.3.4",
+    "bluebird": "^2.9.27",
     "coffee-script": "^1.9.3",
     "ejs": "^2.3.1",
     "isbinaryfile": "^3.0.0",
