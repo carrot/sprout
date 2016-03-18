@@ -11,7 +11,6 @@
   ],
   "dependencies": {
     "argparse": "^1.0.2",
-    "bluebird": "^2.9.27",
     "coffee-script": "^1.9.3",
     "ejs": "^2.3.1",
     "isbinaryfile": "^3.0.0",
@@ -23,6 +22,7 @@
     "readdirp": "^2.0.0",
     "rimraf": "^2.5.2",
     "underscore.string": "^3.1.1",
+    "when": "^3.7.7",
     "which": "^1.1.1"
   },
   "devDependencies": {
