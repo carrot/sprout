@@ -3,12 +3,13 @@
 import chai from 'chai'
 import path from 'path'
 import fs from 'fs'
-import rimraf from 'rimraf'
+import W from 'when'
+import node from 'when/node'
+import _rimraf from 'rimraf'
 import mockery from 'mockery'
 import errno from 'errno'
-import { exec } from 'child_process'
+import { exec as _exec } from 'child_process'
 import os from 'os'
-import Promise from 'bluebird'
 import Sprout from '..'
 import apiAdd from '../lib/api/add'
 import apiInit from '../lib/api/init'
@@ -18,7 +19,9 @@ import Template from '../lib/template'
 import Utils from '../lib/utils'
 import * as helpers from '../lib/helpers'
 
-var fixturesPath = path.join(__dirname, 'fixtures')
+const exec = node.lift(_exec)
+const rimraf = node.lift(_rimraf)
+const fixturesPath = path.join(__dirname, 'fixtures')
 
 chai.should()
 
@@ -670,7 +673,7 @@ describe('template',
             ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
-                return Promise.promisify(rimraf)(template.root)
+                return rimraf(template.root)
               }
             ).then(
               function () {
@@ -724,7 +727,7 @@ describe('template',
             return template.save().then(
               function () {
                 fs.existsSync(template.path).should.be.true
-                return Promise.promisify(rimraf)(path.join(template.path, '.git'))
+                return rimraf(path.join(template.path, '.git'))
               }
             ).then(
               function () {
@@ -891,10 +894,10 @@ describe('template',
             var srcInit = path.join(src, 'init.js')
             var target = path.join(fixture, 'target')
             var template
-            return Promise.promisify(rimraf)(sproutPath).then(
+            return rimraf(sproutPath).then(
               function () {
                 fs.mkdirSync(sproutPath)
-                return Promise.promisify(rimraf)(src)
+                return rimraf(src)
               }
             ).then(
               function () {
@@ -962,10 +965,10 @@ describe('template',
             var srcInit = path.join(src, 'init.js')
             var target = path.join(fixture, 'target')
             var template
-            return Promise.promisify(rimraf)(sproutPath).then(
+            return rimraf(sproutPath).then(
               function () {
                 fs.mkdirSync(sproutPath)
-                return Promise.promisify(rimraf)(src)
+                return rimraf(src)
               }
             ).then(
               function () {
@@ -1177,11 +1180,7 @@ describe('template',
             var target = path.join(fixture, 'target')
             var template = new Template(sprout, name, src)
             var q = function () {
-              return new Promise(
-                function (resolve, reject) {
-                  return resolve({foo: 'bar'})
-                }
-              )
+              return W.resolve({ foo: 'bar' })
             }
             return gitInit(src).then(
               function () {
@@ -1578,7 +1577,7 @@ describe('template',
             ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
-                return Promise.promisify(rimraf)(path.join(template.path, '.git'))
+                return rimraf(path.join(template.path, '.git'))
               }
             ).then(
               function () {
@@ -2107,8 +2106,7 @@ describe('utils',
             return utils.target.write('nested/deep/foo', 'bar').then(
               function (output) {
                 fs.readFileSync(path.join(fixture, 'nested', 'deep', 'foo'), 'utf8').should.eq('bar')
-                rimraf.sync(path.join(fixture, 'nested'))
-                done()
+                rimraf(path.join(fixture, 'nested')).then(_ => done())
               }
             )
           }
@@ -2121,8 +2119,7 @@ describe('utils',
             return utils.target.write('nested/deep/foo', 'bar').then(
               function (output) {
                 fs.readFileSync(path.join(fixture, 'nested', 'deep', 'foo'), 'utf8').should.eq('bar')
-                rimraf.sync(path.join(fixture, 'nested', 'deep'))
-                done()
+                rimraf(path.join(fixture, 'nested', 'deep')).then(_ => done())
               }
             )
           }
@@ -2233,7 +2230,7 @@ describe('helpers',
  */
 
 var gitInit = function (dir) {
-  return Promise.promisify(exec)('git init .', { cwd: dir })
+  return exec('git init .', { cwd: dir })
 }
 
 /*
@@ -2244,7 +2241,7 @@ var gitInit = function (dir) {
  */
 
 var gitTag = function (dir, tag) {
-  return Promise.promisify(exec)('git tag ' + tag, { cwd: dir })
+  return exec('git tag ' + tag, { cwd: dir })
 }
 
 /*
@@ -2255,7 +2252,7 @@ var gitTag = function (dir, tag) {
  */
 
 var gitCreateBranch = function (dir, branch) {
-  return Promise.promisify(exec)('git checkout -b ' + branch, { cwd: dir })
+  return exec('git checkout -b ' + branch, { cwd: dir })
 }
 
 /*
@@ -2266,7 +2263,7 @@ var gitCreateBranch = function (dir, branch) {
  */
 
 var gitCheckout = function (dir, branch) {
-  return Promise.promisify(exec)('git checkout ' + branch, { cwd: dir })
+  return exec('git checkout ' + branch, { cwd: dir })
 }
 
 /*
@@ -2276,7 +2273,7 @@ var gitCheckout = function (dir, branch) {
  */
 
 var gitCommitAdd = function (dir) {
-  return Promise.promisify(exec)('git add . && git commit -m "sprout test" .', { cwd: dir })
+  return exec('git add . && git commit -m "sprout test" .', { cwd: dir })
 }
 
 /*
@@ -2286,7 +2283,7 @@ var gitCommitAdd = function (dir) {
  */
 
 var gitCurrentBranch = function (dir) {
-  return Promise.promisify(exec)('git rev-parse --abbrev-ref HEAD', { cwd: dir }).spread(
+  return exec('git rev-parse --abbrev-ref HEAD', { cwd: dir }).spread(
     function (stdout) {
       return stdout
     }
