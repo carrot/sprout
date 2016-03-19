@@ -28,9 +28,8 @@ $ npm install sprout --save
 To construct a `Sprout` instance:
 
 ```javascript
-
-var Sprout = require('sprout')
-  , sprout = new Sprout('/path/where/templates/live');
+import Sprout from 'sprout'
+const sprout = new Sprout('/path/where/templates/live')
 ```
 
 A `Sprout` instance has the following public values:
@@ -48,13 +47,11 @@ Each method returns an A+ promise.  The promise, on success, returns the same sp
 Create a new template called `name` from `src`.
 
 ```javascript
-var name = 'sprout-sprout';
-var src = 'git@github.com:carrot/sprout-sprout';
-sprout.add(name, src).then(
-  function (sprout) {
-    console.log('template added!');
-  }
-);
+const name = 'sprout-sprout'
+const src = 'git@github.com:carrot/sprout-sprout'
+sprout.add(name, src).then((sprout) =>
+  console.log('template added!')
+)
 ```
 
 #### sprout.remove(name)
@@ -62,12 +59,10 @@ sprout.add(name, src).then(
 Remove an existing template called `name`.
 
 ```javascript
-var name = 'sprout-sprout';
-sprout.remove(name).then(
-  function (sprout) {
-    console.log('template removed!');
-  }
-);
+const name = 'sprout-sprout'
+sprout.remove(name).then((sprout) =>
+  console.log('template removed!')
+)
 ```
 
 #### sprout.init(name, target, options)
@@ -75,8 +70,8 @@ sprout.remove(name).then(
 Use a template called `name` and save instance to `target`.
 
 ```javascript
-var name = 'sprout-sprout';
-var target = '~/Projects/sprout-sprout-instance';
+const name = 'sprout-sprout'
+const target = '~/Projects/sprout-sprout-instance'
 
 /*
  * Options:
@@ -86,17 +81,15 @@ var target = '~/Projects/sprout-sprout-instance';
  * config {String} - Path to a JSON or yaml file with pre-defined values.
  */
 
-var options = {
+const options = {
   locals: {
     foo: 'bar'
   }
-};
+}
 
-sprout.init(name, target, options).then(
-  function (sprout) {
-    console.log('template generated!');
-  }
-);
+sprout.init(name, target, options).then((sprout) =>
+  console.log('template generated!')
+)
 ```
 
 #### sprout.run(name, target, generator, args)
@@ -104,14 +97,12 @@ sprout.init(name, target, options).then(
 Run a generator in a template called `name` and on template instance instance at `target`, optionally with an array of `args`.
 
 ```javascript
-var name = 'mvc'
-var target = '~/Projects/mvc-instance';
-var generator = 'model';
-sprout.run(name, target, generator, ['User']).then(
-  function (sprout) {
-    console.log('a model named `User` was created!');
-  }
-);
+const name = 'mvc'
+const target = '~/Projects/mvc-instance'
+const generator = 'model'
+sprout.run(name, target, generator, ['User']).then((sprout) =>
+  console.log('a model named `User` was created!')
+)
 ```
 
 ## Writing Your Own Templates
@@ -139,7 +130,6 @@ First thing you'll want to do is set up your project structure, which will proba
 `init.js` (or `init.coffee`) sets the hooks and configuration for your sprout template.
 
 ```javascript
-
 /*
  * This function is executed before any of the configuration happens.
  * It's a good place to put any introductory messages you want to display.
@@ -147,7 +137,7 @@ First thing you'll want to do is set up your project structure, which will proba
  */
 
 exports.before = function (utils) {
-  console.log('Getting started...');
+  console.log('Getting started...')
 }
 
 /*
@@ -173,9 +163,9 @@ exports.configure = [
     message: 'What is your github handle?'
   },
   {
-    type: "confirm",
-    name: "travis",
-    message: "Do you want to utilize Travis CI?",
+    type: 'confirm',
+    name: 'travis',
+    message: 'Do you want to utilize Travis CI?',
     default: false
   }
 ]
@@ -187,10 +177,9 @@ exports.configure = [
  */
 
 exports.beforeRender = function (utils, config) {
-  config.foo = 'bar';
-  return utils.target.write('foo.jade', 'h1 Hello World!', config);
+  config.foo = 'bar'
+  return utils.target.write('foo.jade', 'h1 Hello World!', config)
 }
-
 
 /*
  * This function is executed after the templates are rendered.  It's a good place
@@ -199,21 +188,21 @@ exports.beforeRender = function (utils, config) {
  */
 
 exports.after = function (utils, config) {
-  return utils.target.rename('foo.jade', 'bar.jade');
+  return utils.target.rename('foo.jade', 'bar.jade')
 }
 
 /*
  * Optionally specify globs to ignore.
  */
 
- exports.ignore = ['foo.*'];
+exports.ignore = ['fizz.*']
 
- /*
-  * Optionally specify a defaults object to your templates.
-  * Helpful for adding locals to use within your templates
-  */
+/*
+* Optionally specify a defaults object to your templates.
+* Helpful for adding locals to use within your templates
+*/
 
-  exports.defaults = { moment: require('moment') }
+exports.defaults = { moment: require('moment') }
 
 ```
 
@@ -254,18 +243,16 @@ Sprout templates may also include "generators": small scripts to be executed on 
 
 ```javascript
 module.exports = function (utils, name) {
-  return utils.src.read('templates/model').then(
-    function (output) {
-      return utils.target.write('lib/models/' + name + '.js', output, {name: name});
-    }
-  )
+  return utils.src.read('templates/model').then(function (output) {
+    return utils.target.write('lib/models/' + name + '.js', output, {name: name})
+  })
 }
 ```
 
 These generators are stored in your template's `generators` folder and can be used with sprout's `run` method:
 
 ```javascript
-sprout.run('mvc', 'model', ['User']);
+sprout.run('mvc', 'model', ['User'])
 ```
 
 ### Versioning Templates
