@@ -589,6 +589,7 @@ describe('template',
               }
             ).catch(
               function (error) {
+                console.log('here we are')
                 fs.existsSync(template.path).should.be.false
                 error.toString().should.eq('Error: neither init.coffee nor init.js exist in this template')
                 done()
