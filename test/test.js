@@ -589,7 +589,6 @@ describe('template',
               }
             ).catch(
               function (error) {
-                console.log('here we are')
                 fs.existsSync(template.path).should.be.false
                 error.toString().should.eq('Error: neither init.coffee nor init.js exist in this template')
                 done()
@@ -1046,7 +1045,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: tag \'foooooooo\' does not exist')
+                error.toString().should.match(/Error: Command failed: git checkout tags\/foooooooo/)
                 return template.remove().then(
                   function () {
                     return rimraf(target, done)
@@ -1224,7 +1223,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: could not open configuration file ' + configPath)
+                error.toString().should.match(/Error: ENOENT: no such file or directory/)
                 return template.remove().then(
                   function () {
                     done()
