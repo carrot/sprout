@@ -1045,7 +1045,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.match(/Error: Command failed: git checkout tags\/foooooooo/)
+                error.toString().should.match(/Error: Command failed:.*git checkout tags\/foooooooo/)
                 return template.remove().then(
                   function () {
                     return rimraf(target, done)
