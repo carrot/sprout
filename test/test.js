@@ -1070,7 +1070,7 @@ describe('template',
             ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
-                return template.init(target, {config: path.join(fixture, 'config.json')})
+                return template.init(target, {configPath: path.join(fixture, 'config.json')})
               }
             ).then(
               function (template) {
@@ -1099,7 +1099,7 @@ describe('template',
             ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
-                return template.init(target, {config: path.join(fixture, 'config.yaml')})
+                return template.init(target, {configPath: path.join(fixture, 'config.yaml')})
               }
             ).then(
               function (template) {
@@ -1219,7 +1219,7 @@ describe('template',
             ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
-                return template.init(target, {config: configPath})
+                return template.init(target, {configPath: configPath})
               }
             ).catch(
               function (error) {

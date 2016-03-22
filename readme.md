@@ -78,7 +78,8 @@ const target = '~/Projects/sprout-sprout-instance'
  * locals {Object} - EJS locals to template.
  * tag {String} - A git tag to generate the template from.
  * branch {String} - A git branch to generate the template from.
- * config {String} - Path to a JSON or yaml file with pre-defined values.
+ * configPath {String} - Path to a JSON or yaml file with pre-defined values.
+ * questionnaire {Function} - Function that returns a promise for an object
  */
 
 const options = {
