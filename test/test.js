@@ -1661,7 +1661,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: target path required')
+                error.toString().should.eq('ValidationError: child "target" fails because ["target" must be a string]')
                 return template.remove(name).then(
                   function () {
                     return rimraf(target, done)
@@ -1726,7 +1726,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: generator name required')
+                error.toString().should.eq('ValidationError: child "generator" fails because ["generator" must be a string]')
                 return template.remove(name).then(
                   function () {
                     return rimraf(target, done)
