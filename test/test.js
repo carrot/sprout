@@ -680,7 +680,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.eq("Error: root path doesn't exist in " + name)
+                error.toString().should.match(/ENOENT: no such file or directory/)
                 fs.mkdirSync(template.rootPath)
                 fs.writeFileSync(path.join(template.rootPath, '.keep'), '')
                 return template.remove().then(
@@ -705,7 +705,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: target path required')
+                error.toString().should.match(/"target" must be a string/)
                 return template.remove().then(
                   function () {
                     done()
