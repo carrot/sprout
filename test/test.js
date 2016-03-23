@@ -401,7 +401,7 @@ describe('template',
       function (done) {
         var name = 'validNamePath'
         var src = path.join(templateFixturesPath, name)
-        ;(function () { return new Template(sprout, name, src) }).should.be.ok
+        ;(function () { return new Template({ sprout: sprout, name: name, src: src }) }).should.be.ok
         done()
       }
     )
@@ -410,7 +410,7 @@ describe('template',
       function (done) {
         var name = null
         var src = path.join(templateFixturesPath, 'foo')
-        ;(function () { return new Template(sprout, name, src) }).should.throw
+        ;(function () { return new Template({ sprout: sprout, name: name, src: src }) }).should.throw
         done()
       }
     )
@@ -419,7 +419,7 @@ describe('template',
       function (done) {
         var name = 'foo'
         var src = 'https://github.com/carrot/sprout-sprout'
-        var template = new Template(sprout, name, src)
+        var template = new Template({ sprout: sprout, name: name, src: src })
         template.isRemote.should.be.true
         done()
       }
@@ -429,7 +429,7 @@ describe('template',
       function (done) {
         var name = 'foo'
         var src = path.join(templateFixturesPath, 'isLocal')
-        var template = new Template(sprout, name, src)
+        var template = new Template({ sprout: sprout, name: name, src: src })
         template.isRemote.should.be.false
         done()
       }
@@ -449,7 +449,7 @@ describe('template',
           function (done) {
             var name = 'remote'
             var src = 'https://github.com/carrot/sprout-sprout'
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
@@ -467,7 +467,7 @@ describe('template',
           function (done) {
             var name = 'local'
             var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             gitInit(src).then(
               function () {
                 return template.save()
@@ -489,7 +489,7 @@ describe('template',
           function (done) {
             var name = 'replace'
             var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template(sprout, name, 'https://github.com/carrot/sprout-sprout')
+            var template = new Template({ sprout: sprout, name: name, src: 'https://github.com/carrot/sprout-sprout' })
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
@@ -497,7 +497,7 @@ describe('template',
               }
             ).then(
               function () {
-                return (new Template(sprout, name, src)).save()
+                return (new Template({ sprout: sprout, name: name, src: src })).save()
               }
             ).then(
               function () {
@@ -517,8 +517,7 @@ describe('template',
         it('should throw if template has no src',
           function (done) {
             var name = 'noSrc'
-            var src = null
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name })
             return template.save().catch(
               function (error) {
                 error.toString().should.eq('Error: no source provided')
@@ -538,7 +537,7 @@ describe('template',
             })
             var name = 'noInternet'
             var src = 'https://github.com/carrot/sprout-sprout'
-            var template = new (require('./../lib/template'))(sprout, name, src)
+            var template = new (require('./../lib/template'))({ sprout: sprout, name: name, src: src })
             return template.save().catch(
               function (error) {
                 error.toString().should.eq('Error: make sure that you are connected to the internet!')
@@ -554,7 +553,7 @@ describe('template',
           function (done) {
             var name = 'noLocal'
             var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().catch(
               function (error) {
                 error.toString().should.eq('Error: there is no sprout template located at ' + src)
@@ -568,7 +567,7 @@ describe('template',
           function (done) {
             var name = 'noGit'
             var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().catch(
               function (error) {
                 error.toString().should.eq('Error: ' + src + ' is not a git repository')
@@ -582,7 +581,7 @@ describe('template',
           function (done) {
             var name = 'noInit'
             var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -601,7 +600,7 @@ describe('template',
           function (done) {
             var name = 'noRoot'
             var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -634,7 +633,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = 'https://github.com/carrot/sprout-sprout'
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
@@ -665,7 +664,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -673,7 +672,7 @@ describe('template',
             ).then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
-                return rimraf(template.root)
+                return rimraf(template.rootPath)
               }
             ).then(
               function () {
@@ -682,8 +681,8 @@ describe('template',
             ).catch(
               function (error) {
                 error.toString().should.eq("Error: root path doesn't exist in " + name)
-                fs.mkdirSync(template.root)
-                fs.writeFileSync(path.join(template.root, '.keep'), '')
+                fs.mkdirSync(template.rootPath)
+                fs.writeFileSync(path.join(template.rootPath, '.keep'), '')
                 return template.remove().then(
                   function () {
                     done()
@@ -698,7 +697,7 @@ describe('template',
           function (done) {
             var name = 'noRoot'
             var src = 'https://github.com/carrot/sprout-sprout'
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
@@ -723,7 +722,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = 'https://github.com/carrot/sprout-sprout'
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function () {
                 fs.existsSync(template.path).should.be.true
@@ -752,7 +751,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = 'https://github.com/carrot/sprout-sprout'
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function () {
                 fs.existsSync(template.path).should.be.true
@@ -777,7 +776,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = 'https://github.com/carrot/sprout-sprout'
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
@@ -803,7 +802,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -832,7 +831,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -861,7 +860,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -905,7 +904,7 @@ describe('template',
                 fs.writeFileSync(srcInit, 'module.exports={};')
                 fs.mkdirSync(srcRoot)
                 fs.writeFileSync(path.join(srcRoot, '.keep'), '')
-                template = new Template(new Sprout(sproutPath), name, src)
+                template = new Template({ sprout: new Sprout(sproutPath), name: name, src: src })
               }
             ).then(
               function () {
@@ -926,7 +925,7 @@ describe('template',
                 }
             ).then(
               function () {
-                fs.writeFileSync(path.join(template.root, 'foo'), '', 'utf8')
+                fs.writeFileSync(path.join(template.rootPath, 'foo'), '', 'utf8')
                 return gitCommitAdd(template.path)
               }
             ).then(
@@ -976,7 +975,7 @@ describe('template',
                 fs.writeFileSync(srcInit, 'module.exports={};')
                 fs.mkdirSync(srcRoot)
                 fs.writeFileSync(path.join(srcRoot, '.keep'), '')
-                template = new Template(new Sprout(sproutPath), name, src)
+                template = new Template({ sprout: new Sprout(sproutPath), name: name, src: src })
               }
             ).then(
               function () {
@@ -992,7 +991,7 @@ describe('template',
               }
             ).then(
               function () {
-                fs.writeFileSync(path.join(template.root, 'foo'), '', 'utf8')
+                fs.writeFileSync(path.join(template.rootPath, 'foo'), '', 'utf8')
                 return gitCommitAdd(template.path)
               }
             )
@@ -1002,7 +1001,7 @@ describe('template',
                 }
             ).then(
               function () {
-                fs.writeFileSync(path.join(template.root, 'foo2'), '', 'utf8')
+                fs.writeFileSync(path.join(template.rootPath, 'foo2'), '', 'utf8')
                 return gitCommitAdd(template.path)
               }
             ).then(
@@ -1037,7 +1036,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = 'https://github.com/carrot/sprout-sprout'
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
@@ -1062,7 +1061,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1091,7 +1090,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1120,7 +1119,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1149,7 +1148,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1178,7 +1177,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             var q = function () {
               return W.resolve({ foo: 'bar' })
             }
@@ -1211,7 +1210,7 @@ describe('template',
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
             var configPath = path.join(fixture, 'foobar')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1240,7 +1239,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1269,7 +1268,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1298,7 +1297,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1328,7 +1327,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1357,7 +1356,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1386,7 +1385,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1415,7 +1414,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1444,7 +1443,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1473,7 +1472,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1508,7 +1507,7 @@ describe('template',
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1547,7 +1546,7 @@ describe('template',
           function (done) {
             var name = 'update'
             var src = 'https://github.com/carrot/sprout-sprout'
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
@@ -1569,7 +1568,7 @@ describe('template',
           function (done) {
             var name = 'noGit'
             var src = path.join(updateTemplateFixturesPath, name)
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1614,7 +1613,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1646,7 +1645,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1679,7 +1678,7 @@ describe('template',
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
             var fakeTarget = path.join(fixture, 'doge/doge/doge/doge/doge')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1711,7 +1710,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1743,7 +1742,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1775,7 +1774,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1807,7 +1806,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1839,7 +1838,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1871,7 +1870,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1903,7 +1902,7 @@ describe('template',
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return gitInit(src).then(
               function () {
                 return template.save()
@@ -1937,7 +1936,7 @@ describe('template',
           function (done) {
             var name = 'remove'
             var src = 'https://github.com/carrot/sprout-sprout'
-            var template = new Template(sprout, name, src)
+            var template = new Template({ sprout: sprout, name: name, src: src })
             return template.save().then(
               function () {
                 return template.remove()
