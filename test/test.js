@@ -576,44 +576,6 @@ describe('template',
             )
           }
         )
-
-        it("should throw and remove template when init.coffee and init.js don't exist in template",
-          function (done) {
-            var name = 'noInit'
-            var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template({ sprout: sprout, name: name, src: src })
-            return gitInit(src).then(
-              function () {
-                return template.save()
-              }
-            ).catch(
-              function (error) {
-                fs.existsSync(template.path).should.be.false
-                error.toString().should.eq('Error: neither init.coffee nor init.js exist in this template')
-                done()
-              }
-            )
-          }
-        )
-
-        it("should throw and remove template when root path doesn't exist in template",
-          function (done) {
-            var name = 'noRoot'
-            var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template({ sprout: sprout, name: name, src: src })
-            return gitInit(src).then(
-              function () {
-                return template.save()
-              }
-            ).catch(
-              function (error) {
-                fs.existsSync(template.path).should.be.false
-                error.toString().should.eq("Error: root path doesn't exist in template")
-                done()
-              }
-            )
-          }
-        )
       }
     )
 
@@ -680,7 +642,7 @@ describe('template',
               }
             ).catch(
               function (error) {
-                error.toString().should.match(/ENOENT: no such file or directory/)
+                error.toString().should.eq('Error: root path does not exist in template')
                 fs.mkdirSync(template.rootPath)
                 fs.writeFileSync(path.join(template.rootPath, '.keep'), '')
                 return template.remove().then(
@@ -770,7 +732,7 @@ describe('template',
           }
         )
 
-        it('should throw when no init.js or init.coffee provided',
+        it('should throw when no init.js provided',
           function (done) {
             var name = 'init'
             var fixture = path.join(initTemplateFixturesPath, name)
@@ -780,12 +742,12 @@ describe('template',
             return template.save().then(
               function (template) {
                 fs.existsSync(template.path).should.be.true
-                fs.unlinkSync(path.join(template.path, 'init.coffee'))
+                fs.unlinkSync(path.join(template.path, 'init.js'))
                 return template.init(target)
               }
             ).catch(
               function (error) {
-                error.toString().should.eq('Error: neither init.coffee nor init.js exist')
+                error.toString().should.eq('Error: init.js does not exist in this template')
                 return template.remove().then(
                   function () {
                     rimraf(target, done)
@@ -828,35 +790,6 @@ describe('template',
         it('should use init.js',
           function (done) {
             var name = 'initJs'
-            var fixture = path.join(initTemplateFixturesPath, name)
-            var src = path.join(fixture, 'src')
-            var target = path.join(fixture, 'target')
-            var template = new Template({ sprout: sprout, name: name, src: src })
-            return gitInit(src).then(
-              function () {
-                return template.save()
-              }
-            ).then(
-              function (template) {
-                fs.existsSync(template.path).should.be.true
-                return template.init(target)
-              }
-            ).then(
-              function (template) {
-                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar\n')
-                return template.remove()
-              }
-            ).then(
-              function () {
-                return rimraf(target, done)
-              }
-            )
-          }
-        )
-
-        it('should use init.coffee',
-          function (done) {
-            var name = 'initCoffee'
             var fixture = path.join(initTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
@@ -1771,38 +1704,6 @@ describe('template',
         it("should run generator if it's a .js file",
           function (done) {
             var name = 'generatorJs'
-            var fixture = path.join(runTemplateFixturesPath, name)
-            var src = path.join(fixture, 'src')
-            var target = path.join(fixture, 'target')
-            var template = new Template({ sprout: sprout, name: name, src: src })
-            return gitInit(src).then(
-              function () {
-                return template.save()
-              }
-            ).then(
-              function () {
-                return template.init(target)
-              }
-            ).then(
-              function (template) {
-                return template.run(target, 'foo')
-              }
-            ).then(
-              function (template) {
-                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('bar')
-                return template.remove(name)
-              }
-            ).then(
-              function () {
-                return rimraf(target, done)
-              }
-            )
-          }
-        )
-
-        it("should run generator if it's a .coffee file",
-          function (done) {
-            var name = 'generatorCoffee'
             var fixture = path.join(runTemplateFixturesPath, name)
             var src = path.join(fixture, 'src')
             var target = path.join(fixture, 'target')
