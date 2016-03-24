@@ -120,15 +120,14 @@ First thing you'll want to do is set up your project structure, which will proba
 │   ├── file1
 │   └── file2
 │   └── file3
-└── init.js       The Sprout configuration file. Also
-                  compatible with CoffeeScript (init.coffee).
+└── init.js       The Sprout configuration file.
 └── package.json  Optionally, include a package.json file; all
                   dependencies will be installed on init.
 ```
 
 ### init.js
 
-`init.js` (or `init.coffee`) sets the hooks and configuration for your sprout template.
+`init.js` sets the hooks and configuration for your sprout template.
 
 ```javascript
 /*
