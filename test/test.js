@@ -1064,7 +1064,7 @@ describe('template',
               }
             ).then(
               function (template) {
-                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('<%= foo %>\n')
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('{{ foo }}\n')
                 return template.remove()
               }
             ).then(
@@ -1093,7 +1093,7 @@ describe('template',
               }
             ).then(
               function (template) {
-                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('<%= foo %>\n')
+                fs.readFileSync(path.join(target, 'foo'), 'utf8').should.eq('{{ foo }}\n')
                 return template.remove()
               }
             ).then(
@@ -1989,7 +1989,7 @@ describe('utils',
           function (done) {
             var fixture = path.join(utilsTargetFixturesPath, 'writeLocals')
             var utils = new Utils(null, fixture)
-            return utils.target.write('foo', '<%= foo %>', {foo: 'bar'}).then(
+            return utils.target.write('foo', '{{ foo }}', {foo: 'bar'}).then(
               function (output) {
                 fs.readFileSync(path.join(fixture, 'foo'), 'utf8').should.eq('bar')
                 fs.unlinkSync(path.join(fixture, 'foo'))

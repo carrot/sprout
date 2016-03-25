@@ -210,8 +210,8 @@ We also provide you the power of [underscore.string](http://epeli.github.io/unde
 
 ```javascript
 // given 'user_model' is prompted by your init.js
-function <%= S.classify('user_model') %> (foo, bar) {
-  // <%= S.classify('user_model') %> constructor!
+function {{ S.classify('user_model') }} (foo, bar) {
+  // {{ S.classify('user_model') }} constructor!
 }
 ```
 

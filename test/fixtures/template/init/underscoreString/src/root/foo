@@ -1,1 +1,1 @@
-<%= S(foo).capitalize().value() %>
+{{ S(foo).capitalize().value() }}
