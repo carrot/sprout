@@ -36,7 +36,8 @@ A `Sprout` instance has the following public values:
 
 - `path`: (string) the path where the templates live.
 - `templates`: (object) a dictionary of `Template` objects.
-- `emitter`: (object) an `EventEmitter`.
+
+It also is an instance of `EventEmitter` and emits a few events for feedback.
 
 ### Methods
 
@@ -46,30 +47,32 @@ Each method returns an A+ promise.  The promise, on success, returns the same sp
 
 Create a new template called `name` from `src`.
 
-```javascript
+```js
 const name = 'sprout-sprout'
 const src = 'git@github.com:carrot/sprout-sprout'
-sprout.add(name, src).then((sprout) =>
+
+sprout.add(name, src).then((sprout) => {
   console.log('template added!')
-)
+})
 ```
 
 #### sprout.remove(name)
 
 Remove an existing template called `name`.
 
-```javascript
+```js
 const name = 'sprout-sprout'
-sprout.remove(name).then((sprout) =>
+
+sprout.remove(name).then((sprout) => {
   console.log('template removed!')
-)
+})
 ```
 
 #### sprout.init(name, target, options)
 
 Use a template called `name` and save instance to `target`.
 
-```javascript
+```js
 const name = 'sprout-sprout'
 const target = '~/Projects/sprout-sprout-instance'
 
@@ -88,22 +91,23 @@ const options = {
   }
 }
 
-sprout.init(name, target, options).then((sprout) =>
+sprout.init(name, target, options).then((sprout) => {
   console.log('template generated!')
-)
+})
 ```
 
 #### sprout.run(name, target, generator, args)
 
-Run a generator in a template called `name` and on template instance instance at `target`, optionally with an array of `args`.
+Run a generator in a template called `name` and on template instance instance at `target`, optionally with an array of `args` (or string if just one).
 
-```javascript
+```js
 const name = 'mvc'
 const target = '~/Projects/mvc-instance'
 const generator = 'model'
-sprout.run(name, target, generator, ['User']).then((sprout) =>
+
+sprout.run(name, target, generator, 'User').then((sprout) => {
   console.log('a model named `User` was created!')
-)
+})
 ```
 
 ## Writing Your Own Templates
@@ -129,7 +133,7 @@ First thing you'll want to do is set up your project structure, which will proba
 
 `init.js` sets the hooks and configuration for your sprout template.
 
-```javascript
+```js
 /*
  * This function is executed before any of the configuration happens.
  * It's a good place to put any introductory messages you want to display.
@@ -208,7 +212,7 @@ exports.defaults = { moment: require('moment') }
 
 We also provide you the power of [underscore.string](http://epeli.github.io/underscore.string/#api) in all of your ejs templates. This means you can run powerful string operations on your user input like:
 
-```javascript
+```js
 // given 'user_model' is prompted by your init.js
 function <%= S.classify('user_model') %> (foo, bar) {
   // <%= S.classify('user_model') %> constructor!
@@ -241,18 +245,18 @@ function                               | description
 ### Generators
 Sprout templates may also include "generators": small scripts to be executed on instances of a template.  For example, an `mvc` template may include `model`, `controller`, and `view` generators for quickly stubbing out an model-view-controller application.  Generators are passed `utils` (an instance of the `Utils` that reads from the _base_ directory and writes to the _target_ directory) in the first argument; any arguments passed to `sprout.run()` follow.  A model generator in an `mvc` template may look like this:
 
-```javascript
-module.exports = function (utils, name) {
-  return utils.src.read('templates/model').then(function (output) {
-    return utils.target.write('lib/models/' + name + '.js', output, {name: name})
+```js
+module.exports = (utils, name) => {
+  return utils.src.read('templates/model').then((output) => {
+    return utils.target.write(`lib/models/${name}.js`, output, { name: name })
   })
 }
 ```
 
 These generators are stored in your template's `generators` folder and can be used with sprout's `run` method:
 
-```javascript
-sprout.run('mvc', 'model', ['User'])
+```js
+sprout.run('mvc', 'model', 'User')
 ```
 
 ### Versioning Templates
@@ -260,13 +264,13 @@ sprout.run('mvc', 'model', ['User'])
 Sometimes changes happen and you might want to be able to specify different versions of a single template. Sprout handles this through [git tags](http://git-scm.com/book/en/Git-Basics-Tagging). To specify which tag to use, simply pass a `tag` option to sprout's `init` method.
 
 
-```javascript
+```js
 sprout.init('my-template', '~/Projects/my-template-instance', { tag: '0.1.2' })
 ```
 
 `init` also accepts a branch option for specifying which branch to generate from:
 
-```javascript
+```js
 sprout.init('my-template', '~/Projects/my-template-instance', { branch: 'develop' })
 ```
 
