@@ -562,20 +562,6 @@ describe('template',
             )
           }
         )
-
-        it("should throw if src is local and isn't a git repo",
-          function (done) {
-            var name = 'noGit'
-            var src = path.join(saveTemplateFixturesPath, name)
-            var template = new Template({ sprout: sprout, name: name, src: src })
-            return template.save().catch(
-              function (error) {
-                error.toString().should.eq('Error: ' + src + ' is not a git repository')
-                done()
-              }
-            )
-          }
-        )
       }
     )
 
@@ -668,35 +654,6 @@ describe('template',
             ).catch(
               function (error) {
                 error.toString().should.match(/"target" must be a string/)
-                return template.remove().then(
-                  function () {
-                    done()
-                  }
-                )
-              }
-            )
-          }
-        )
-
-        it('should throw when target is not git repository',
-          function (done) {
-            var name = 'noGit'
-            var fixture = path.join(initTemplateFixturesPath, name)
-            var src = 'https://github.com/carrot/sprout-sprout'
-            var target = path.join(fixture, 'target')
-            var template = new Template({ sprout: sprout, name: name, src: src })
-            return template.save().then(
-              function () {
-                fs.existsSync(template.path).should.be.true
-                return rimraf(path.join(template.path, '.git'))
-              }
-            ).then(
-              function () {
-                return template.init(target)
-              }
-            ).catch(
-              function (error) {
-                error.toString().should.eq('Error: ' + name + ' is not a git repository')
                 return template.remove().then(
                   function () {
                     done()
@@ -1492,37 +1449,6 @@ describe('template',
             ).then(
               function () {
                 done()
-              }
-            )
-          }
-        )
-
-        it('should throw error if not a git repo',
-          function (done) {
-            var name = 'noGit'
-            var src = path.join(updateTemplateFixturesPath, name)
-            var template = new Template({ sprout: sprout, name: name, src: src })
-            return gitInit(src).then(
-              function () {
-                return template.save()
-              }
-            ).then(
-              function (template) {
-                fs.existsSync(template.path).should.be.true
-                return rimraf(path.join(template.path, '.git'))
-              }
-            ).then(
-              function () {
-                return template.update()
-              }
-            ).catch(
-              function (error) {
-                error.toString().should.eq('Error: ' + name + ' is not a git repository')
-                return template.remove().then(
-                  function () {
-                    done()
-                  }
-                )
               }
             )
           }
