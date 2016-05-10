@@ -1426,12 +1426,6 @@ describe('template',
 
     describe('update',
       function () {
-        var updateTemplateFixturesPath
-
-        before(function () {
-          updateTemplateFixturesPath = path.join(templateFixturesPath, 'update')
-        })
-
         it('should update',
           function (done) {
             var name = 'update'
@@ -1932,7 +1926,7 @@ describe('utils',
             return utils.target.write('nested/deep/foo', 'bar').then(
               function (output) {
                 fs.readFileSync(path.join(fixture, 'nested', 'deep', 'foo'), 'utf8').should.eq('bar')
-                rimraf(path.join(fixture, 'nested')).then(_ => done())
+                rimraf(path.join(fixture, 'nested')).then(() => done())
               }
             )
           }
@@ -1945,7 +1939,7 @@ describe('utils',
             return utils.target.write('nested/deep/foo', 'bar').then(
               function (output) {
                 fs.readFileSync(path.join(fixture, 'nested', 'deep', 'foo'), 'utf8').should.eq('bar')
-                rimraf(path.join(fixture, 'nested', 'deep')).then(_ => done())
+                rimraf(path.join(fixture, 'nested', 'deep')).then(() => done())
               }
             )
           }
