@@ -1,7 +1,7 @@
 {
   "name": "sprout",
   "description": "Simple project templating & skeletons",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Carrot Creative <dev@carrotcreative.com>",
   "bugs": "https://github.com/carrot/sprout/issues",
   "contributors": [
