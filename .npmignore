@@ -1,0 +1,8 @@
+test/
+src/
+Makefile
+.travis.yml
+.babelrc
+.editorconfig
+contributing.md
+yarn.lock
