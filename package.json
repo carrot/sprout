@@ -34,7 +34,7 @@
     "errno": "^0.1.2",
     "istanbul": "^0.4.1",
     "jsdoc": "^3.5.4",
-    "mocha": "^2.5.3",
+    "mocha": "^3.5.0",
     "mockery": "^2.1.0",
     "snazzy": "^7.0.0",
     "standard": "^10.0.3"
