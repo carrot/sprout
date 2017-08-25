@@ -3,3 +3,4 @@ node_modules
 test/testproj
 coverage
 test/support/.config
+test/**/package-lock.json
